@@ -17,8 +17,15 @@ architectury {
 
 loom {
 	silentMojangMappingsLicense()
-}
+	splitEnvironmentSourceSets()
 
+	mods {
+		register("wildbosses") {
+			sourceSet("main")
+			sourceSet("client")
+		}
+	}
+}
 repositories {
 	mavenCentral()
 	maven("https://artefacts.cobblemon.com/releases/")
@@ -31,12 +38,23 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-loader:0.17.2")
 	modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:0.116.6+1.21.1")
 	modImplementation(fabricApi.module("fabric-command-api-v2", "0.116.6+1.21.1"))
+	modImplementation(fabricApi.module("fabric-lifecycle-events-v1", "0.116.6+1.21.1"))git a
 	modImplementation("net.fabricmc:fabric-language-kotlin:1.13.6+kotlin.2.2.20")
 
 	// Configuração oficial do Cobblemon via Architectury
 	modCompileOnly("com.cobblemon:mod:1.7.3+1.21.1") { isTransitive = false }
 	modImplementation("com.cobblemon:fabric:1.7.3+1.21.1")
 }
+
+sourceSets {
+	main {
+		kotlin.srcDirs("src/main/kotlin")
+	}
+	named("client") {
+		kotlin.srcDirs("src/client/kotlin")
+	}
+}
+
 
 tasks {
 	processResources {
@@ -46,6 +64,9 @@ tasks {
 		}
 	}
 	java {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(21))
+		}
 		withSourcesJar()
 		sourceCompatibility = JavaVersion.VERSION_21
 		targetCompatibility = JavaVersion.VERSION_21
@@ -53,7 +74,7 @@ tasks {
 	compileJava {
 		options.release.set(21)
 	}
-	compileKotlin {
+	withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
 		compilerOptions {
 			jvmTarget.set(JvmTarget.JVM_21)
 		}
