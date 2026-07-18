@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "wildbosses",
+	"version": "${version}",
+	"name": "WildBosses",
+	"description": "Adds rare, roaming Boss Pokémon to Cobblemon with dynamic level scaling, forced 1v1 encounters, and tiered NBT-aware loot.",
+	"authors": [
+		"kaizzinho"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/wildbosses",
+		"sources": "https://github.com/kaizzinho/WildBosses",
+		"issues": "https://github.com/kaizzinho/WildBosses/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/wildbosses/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"adapter": "kotlin",
+				"value": "com.kaizzinho.wildbosses.WildBosses"
+			}
+		],
+		"client": [
+			{
+				"adapter": "kotlin",
+				"value": "com.kaizzinho.wildbosses.WildBossesClient"
+			}
+		]
+	},
+	"depends": {
+		"minecraft": "1.21.1",
+		"fabricloader": ">=0.17.2",
+		"fabric-language-kotlin": ">=1.13.6+kotlin.2.2.20",
+		"cobblemon": ">=1.7.3"
+	}
+}
