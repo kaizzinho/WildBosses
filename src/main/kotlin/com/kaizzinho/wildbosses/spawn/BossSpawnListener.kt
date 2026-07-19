@@ -9,12 +9,11 @@ import com.kaizzinho.wildbosses.boss.BossTier
 import kotlin.random.Random
 
 object BossSpawnListener {
-    private const val BOSS_SPAWN_CHANCE = 1.0
+    private const val BOSS_SPAWN_CHANCE = 1.0/20
 
     fun register() {
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
             val entity: PokemonEntity = event.entity
-            WildBosses.logger.info("[WildBosses] DEBUG: POKEMON_ENTITY_SPAWN fired for ${entity.pokemon.species.name}")
             if (Random.nextDouble() < BOSS_SPAWN_CHANCE) {
                 promoteToBoss(entity)
             }

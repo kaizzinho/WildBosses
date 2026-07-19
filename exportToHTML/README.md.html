@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #56a8f5;}
+.ln { color: #4b5059; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+README.md</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0"># </span><span class="s2">WildBosses 🐾⚔️</span>
+<a name="l2"><span class="ln">2    </span></a>
+<a name="l3"><span class="ln">3    </span></a><span class="s1">*</span><span class="s2">Read this in </span><span class="s1">[</span><span class="s2">English</span><span class="s1">](</span><span class="s2">#english</span><span class="s1">) </span><span class="s2">| Leia em </span><span class="s1">[</span><span class="s2">Português</span><span class="s1">](</span><span class="s2">#português</span><span class="s1">)*</span>
+<a name="l4"><span class="ln">4    </span></a>
+<a name="l5"><span class="ln">5    </span></a><span class="s0">---</span>
+<a name="l6"><span class="ln">6    </span></a>
+<a name="l7"><span class="ln">7    </span></a><span class="s0">## </span><span class="s2">English</span>
+<a name="l8"><span class="ln">8    </span></a>
+<a name="l9"><span class="ln">9    </span></a><span class="s0">### </span><span class="s2">Overview</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s1">**</span><span class="s2">WildBosses</span><span class="s1">** </span><span class="s2">is an ARPG-inspired endgame addon for Cobblemon </span><span class="s1">(</span><span class="s2">Fabric/Kotlin</span><span class="s1">)</span><span class="s2">. It introduces dynamic Pokémon Boss encounters that scale according to the player's level, focusing on valuable loot drops and a strictly controlled server economy, especially regarding Mega Evolutions.</span>
+<a name="l11"><span class="ln">11   </span></a>
+<a name="l12"><span class="ln">12   </span></a><span class="s0">### </span><span class="s2">Key Features</span>
+<a name="l13"><span class="ln">13   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Dynamic Spawn &amp; Lifecycle</span><span class="s1">:** </span><span class="s2">Wild Pokémon have a 1/128 chance to spawn as a Boss. Bosses roam peacefully for exactly 10 minutes </span><span class="s1">(</span><span class="s2">12,000 ticks</span><span class="s1">) </span><span class="s2">before despawning to prevent server lag. They cannot be captured </span><span class="s1">(</span><span class="s2">`isCapturable = false`</span><span class="s1">)</span><span class="s2">.</span>
+<a name="l14"><span class="ln">14   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Hidden Level &amp; Scaling</span><span class="s1">:** </span><span class="s2">Boss levels are hidden </span><span class="s1">(&quot;</span><span class="s2">Level ??</span><span class="s1">&quot;) </span><span class="s2">in the overworld. Upon starting a battle, the Boss's level is calculated based on the player</span><span class="s1">'</span><span class="s2">s strongest party Pokémon, adding +10 to +50 levels depending on the Boss tier </span><span class="s1">(</span><span class="s2">Uncommon to Mythic</span><span class="s1">)</span><span class="s2">. Stats </span><span class="s1">(</span><span class="s2">HP/Atk</span><span class="s1">) </span><span class="s2">receive massive multipliers to compensate for the level 100 cap.</span>
+<a name="l15"><span class="ln">15   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Instanced 1v1 Battles</span><span class="s1">:** </span><span class="s2">Battles are strictly 1v1. If a player loses or runs, the Boss resets to 100% HP in the overworld, ready for the next challenger with recalculated scaling.</span>
+<a name="l16"><span class="ln">16   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Tiered Economy &amp; Loot</span><span class="s1">:** </span><span class="s2">Custom JSON loot tables provide scaling rewards. Epic drops focus on breeding </span><span class="s1">(</span><span class="s2">Destiny Knot, Mints</span><span class="s1">)</span><span class="s2">, Legendary on stat maximization </span><span class="s1">(</span><span class="s2">Bottle Caps</span><span class="s1">)</span><span class="s2">, and Mythic on Mega Stones.</span>
+<a name="l17"><span class="ln">17   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Anti-Exploit Mega Stones </span><span class="s1">(</span><span class="s2">NBT Memory</span><span class="s1">):** </span><span class="s2">Defeating a Mythic Boss guarantees a Mega Stone drop for that species, but only once per player </span><span class="s1">(</span><span class="s2">tracked via NBT tags</span><span class="s1">)</span><span class="s2">. Subsequent kills of the same Mythic species reward premium alternative items </span><span class="s1">(</span><span class="s2">e.g., Gold Bottle Caps</span><span class="s1">) </span><span class="s2">to prevent infinite farming and protect the server economy.</span>
+<a name="l18"><span class="ln">18   </span></a>
+<a name="l19"><span class="ln">19   </span></a><span class="s0">### </span><span class="s2">Setup</span>
+<a name="l20"><span class="ln">20   </span></a><span class="s2">For setup instructions, please see the </span><span class="s1">[</span><span class="s2">Fabric Documentation page</span><span class="s1">](</span><span class="s3">https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up</span><span class="s1">) </span><span class="s2">related to the IDE that you are using.</span>
+<a name="l21"><span class="ln">21   </span></a>
+<a name="l22"><span class="ln">22   </span></a><span class="s0">### </span><span class="s2">License</span>
+<a name="l23"><span class="ln">23   </span></a><span class="s2">This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.</span>
+<a name="l24"><span class="ln">24   </span></a>
+<a name="l25"><span class="ln">25   </span></a><span class="s0">---</span>
+<a name="l26"><span class="ln">26   </span></a>
+<a name="l27"><span class="ln">27   </span></a><span class="s0">## </span><span class="s2">Português</span>
+<a name="l28"><span class="ln">28   </span></a>
+<a name="l29"><span class="ln">29   </span></a><span class="s0">### </span><span class="s2">Visão Geral</span>
+<a name="l30"><span class="ln">30   </span></a><span class="s1">**</span><span class="s2">WildBosses</span><span class="s1">** </span><span class="s2">é um addon de endgame inspirado em ARPGs para o Cobblemon </span><span class="s1">(</span><span class="s2">Fabric/Kotlin</span><span class="s1">)</span><span class="s2">. Ele introduz encontros dinâmicos com Pokémon Bosses que escalam de acordo com o nível do jogador, focando em drops valiosos e controle rígido da economia do servidor, especialmente em relação às Mega Evoluções.</span>
+<a name="l31"><span class="ln">31   </span></a>
+<a name="l32"><span class="ln">32   </span></a><span class="s0">### </span><span class="s2">Funcionalidades Principais</span>
+<a name="l33"><span class="ln">33   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Spawn Dinâmico e Ciclo de Vida</span><span class="s1">:** </span><span class="s2">Pokémon selvagens têm 1/128 de chance de spawnar como Boss. Eles andam pacificamente por exatos 10 minutos </span><span class="s1">(</span><span class="s2">12.000 ticks</span><span class="s1">) </span><span class="s2">antes de sofrerem despawn para evitar lag no servidor. Eles não podem ser capturados </span><span class="s1">(</span><span class="s2">`isCapturable = false`</span><span class="s1">)</span><span class="s2">.</span>
+<a name="l34"><span class="ln">34   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Nível Oculto e Escalonamento</span><span class="s1">:** </span><span class="s2">O nível do Boss fica oculto </span><span class="s1">(&quot;</span><span class="s2">Level ??</span><span class="s1">&quot;) </span><span class="s2">no overworld. Ao iniciar a batalha, o nível é calculado com base no Pokémon mais forte da party do jogador, adicionando de +10 a +50 níveis dependendo do Tier </span><span class="s1">(</span><span class="s2">Uncommon a Mythic</span><span class="s1">)</span><span class="s2">. Os status </span><span class="s1">(</span><span class="s2">HP/Atk</span><span class="s1">) </span><span class="s2">recebem multiplicadores absurdos para compensar o limite do nível 100.</span>
+<a name="l35"><span class="ln">35   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Batalhas Instanciadas 1v1</span><span class="s1">:** </span><span class="s2">As lutas são estritamente 1v1. Se o jogador perder ou fugir, o Boss reseta para 100% de HP no overworld, pronto para um novo desafiante com escalonamento recalculado.</span>
+<a name="l36"><span class="ln">36   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Economia e Loot por Tier</span><span class="s1">:** </span><span class="s2">Loot tables em JSON customizadas fornecem recompensas escalonadas. Tier Epic foca em breeding </span><span class="s1">(</span><span class="s2">Destiny Knot, Mints</span><span class="s1">)</span><span class="s2">, Legendary em maximização de status </span><span class="s1">(</span><span class="s2">Bottle Caps</span><span class="s1">)</span><span class="s2">, e Mythic foca em Mega Stones.</span>
+<a name="l37"><span class="ln">37   </span></a><span class="s0">*   </span><span class="s1">**</span><span class="s2">Mega Stones Anti-Exploit </span><span class="s1">(</span><span class="s2">Memória NBT</span><span class="s1">):** </span><span class="s2">Derrotar um Boss Mítico garante o drop de uma Mega Stone daquela espécie, mas apenas uma vez por jogador </span><span class="s1">(</span><span class="s2">rastreado via tags NBT</span><span class="s1">)</span><span class="s2">. Derrotar o mesmo Mítico no futuro recompensa o jogador com itens premium alternativos </span><span class="s1">(</span><span class="s2">ex</span><span class="s1">: </span><span class="s2">Gold Bottle Caps</span><span class="s1">) </span><span class="s2">para evitar farm infinito e proteger a economia.</span>
+<a name="l38"><span class="ln">38   </span></a>
+<a name="l39"><span class="ln">39   </span></a><span class="s0">### </span><span class="s2">Setup</span>
+<a name="l40"><span class="ln">40   </span></a><span class="s2">For setup instructions, please see the </span><span class="s1">[</span><span class="s2">Fabric Documentation page</span><span class="s1">](</span><span class="s3">https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up</span><span class="s1">) </span><span class="s2">related to the IDE that you are using.</span>
+<a name="l41"><span class="ln">41   </span></a>
+<a name="l42"><span class="ln">42   </span></a><span class="s0">### </span><span class="s2">Licença</span>
+<a name="l43"><span class="ln">43   </span></a><span class="s2">This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.</span></pre>
+</body>
+</html>

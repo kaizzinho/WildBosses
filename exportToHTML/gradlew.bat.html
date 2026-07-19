@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>gradlew.bat</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #cf8e6d;}
+.s2 { color: #7a7e85;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #c77dbb; font-style: italic;}
+.s6 { color: #2aacb8; font-style: italic;}
+.ln { color: #4b5059; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+gradlew.bat</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">@</span><span class="s1">rem</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Copyright 2015 the original author or authors. 
+<a name="l3"><span class="ln">3    </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l4"><span class="ln">4    </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); 
+<a name="l5"><span class="ln">5    </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">you may not use this file except in compliance with the License. 
+<a name="l6"><span class="ln">6    </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">You may obtain a copy of the License at 
+<a name="l7"><span class="ln">7    </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l8"><span class="ln">8    </span></a><span class="s0">@</span><span class="s1">rem      </span><span class="s2">https://www.apache.org/licenses/LICENSE-2.0 
+<a name="l9"><span class="ln">9    </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Unless required by applicable law or agreed to in writing, software 
+<a name="l11"><span class="ln">11   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+<a name="l12"><span class="ln">12   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<a name="l13"><span class="ln">13   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">See the License for the specific language governing permissions and 
+<a name="l14"><span class="ln">14   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">limitations under the License. 
+<a name="l15"><span class="ln">15   </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l16"><span class="ln">16   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">SPDX-License-Identifier: Apache-2.0 
+<a name="l17"><span class="ln">17   </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l18"><span class="ln">18   </span></a>
+<a name="l19"><span class="ln">19   </span></a><span class="s0">@</span><span class="s3">if </span><span class="s0">&quot;%DEBUG%&quot;==&quot;&quot; @</span><span class="s1">echo off</span>
+<a name="l20"><span class="ln">20   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">########################################################################## 
+<a name="l21"><span class="ln">21   </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l22"><span class="ln">22   </span></a><span class="s0">@</span><span class="s1">rem  </span><span class="s2">Gradle startup script for Windows 
+<a name="l23"><span class="ln">23   </span></a></span><span class="s0">@</span><span class="s1">rem</span>
+<a name="l24"><span class="ln">24   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">########################################################################## 
+<a name="l25"><span class="ln">25   </span></a></span>
+<a name="l26"><span class="ln">26   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Set local scope for the variables, and ensure extensions are enabled 
+<a name="l27"><span class="ln">27   </span></a></span><span class="s1">setlocal EnableExtensions</span>
+<a name="l28"><span class="ln">28   </span></a>
+<a name="l29"><span class="ln">29   </span></a><span class="s1">set </span><span class="s0">DIRNAME=%~dp0</span>
+<a name="l30"><span class="ln">30   </span></a><span class="s1">if </span><span class="s0">&quot;%DIRNAME%&quot;==&quot;&quot; </span><span class="s1">set </span><span class="s0">DIRNAME=</span><span class="s3">. 
+<a name="l31"><span class="ln">31   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">This is normally unused 
+<a name="l32"><span class="ln">32   </span></a></span><span class="s1">set </span><span class="s0">APP_BASE_NAME=%~n0</span>
+<a name="l33"><span class="ln">33   </span></a><span class="s1">set </span><span class="s0">APP_HOME=%DIRNAME%</span>
+<a name="l34"><span class="ln">34   </span></a>
+<a name="l35"><span class="ln">35   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Resolve any &quot;.&quot; and &quot;..&quot; in APP_HOME to make it shorter. 
+<a name="l36"><span class="ln">36   </span></a></span><span class="s1">for </span><span class="s0">%%i </span><span class="s1">in </span><span class="s0">(&quot;%APP_HOME%&quot;) </span><span class="s1">do set </span><span class="s0">APP_HOME=%%~fi</span>
+<a name="l37"><span class="ln">37   </span></a>
+<a name="l38"><span class="ln">38   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script. 
+<a name="l39"><span class="ln">39   </span></a></span><span class="s1">set </span><span class="s0">DEFAULT_JVM_OPTS=&quot;</span><span class="s4">-Xmx64m</span><span class="s0">&quot; &quot;</span><span class="s4">-Xms64m</span><span class="s0">&quot;</span>
+<a name="l40"><span class="ln">40   </span></a>
+<a name="l41"><span class="ln">41   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Find java.exe 
+<a name="l42"><span class="ln">42   </span></a></span><span class="s1">if defined </span><span class="s3">JAVA_HOME </span><span class="s1">goto </span><span class="s3">findJavaFromJavaHome 
+<a name="l43"><span class="ln">43   </span></a></span>
+<a name="l44"><span class="ln">44   </span></a><span class="s1">set </span><span class="s0">JAVA_EXE=</span><span class="s3">java.exe 
+<a name="l45"><span class="ln">45   </span></a></span><span class="s0">%JAVA_EXE% </span><span class="s3">-version </span><span class="s0">&gt;</span><span class="s5">NUL </span><span class="s6">2</span><span class="s0">&gt;&amp;</span><span class="s3">1 
+<a name="l46"><span class="ln">46   </span></a></span><span class="s1">if </span><span class="s0">%ERRORLEVEL% equ </span><span class="s6">0 </span><span class="s1">goto </span><span class="s3">execute 
+<a name="l47"><span class="ln">47   </span></a></span>
+<a name="l48"><span class="ln">48   </span></a><span class="s1">echo</span><span class="s3">. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l49"><span class="ln">49   </span></a></span><span class="s1">echo </span><span class="s3">ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l50"><span class="ln">50   </span></a></span><span class="s1">echo</span><span class="s3">. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l51"><span class="ln">51   </span></a></span><span class="s1">echo </span><span class="s3">Please set the JAVA_HOME variable in your environment to match the </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l52"><span class="ln">52   </span></a></span><span class="s1">echo </span><span class="s3">location of your Java installation. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l53"><span class="ln">53   </span></a></span>
+<a name="l54"><span class="ln">54   </span></a><span class="s0">&quot;%COMSPEC%&quot; </span><span class="s3">/c </span><span class="s1">exit </span><span class="s6">1</span>
+<a name="l55"><span class="ln">55   </span></a>
+<a name="l56"><span class="ln">56   </span></a><span class="s0">:</span><span class="s1">findJavaFromJavaHome</span>
+<a name="l57"><span class="ln">57   </span></a><span class="s1">set </span><span class="s0">JAVA_HOME=%JAVA_HOME:</span><span class="s4">&quot;</span><span class="s0">=%</span>
+<a name="l58"><span class="ln">58   </span></a><span class="s1">set </span><span class="s0">JAVA_EXE=%JAVA_HOME%</span><span class="s3">/bin/java.exe 
+<a name="l59"><span class="ln">59   </span></a></span>
+<a name="l60"><span class="ln">60   </span></a><span class="s1">if exist </span><span class="s0">&quot;%JAVA_EXE%&quot; </span><span class="s1">goto </span><span class="s3">execute 
+<a name="l61"><span class="ln">61   </span></a></span>
+<a name="l62"><span class="ln">62   </span></a><span class="s1">echo</span><span class="s3">. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l63"><span class="ln">63   </span></a></span><span class="s1">echo </span><span class="s3">ERROR: JAVA_HOME is set to an invalid directory: </span><span class="s0">%JAVA_HOME% </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l64"><span class="ln">64   </span></a></span><span class="s1">echo</span><span class="s3">. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l65"><span class="ln">65   </span></a></span><span class="s1">echo </span><span class="s3">Please set the JAVA_HOME variable in your environment to match the </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l66"><span class="ln">66   </span></a></span><span class="s1">echo </span><span class="s3">location of your Java installation. </span><span class="s6">1</span><span class="s0">&gt;&amp;</span><span class="s3">2 
+<a name="l67"><span class="ln">67   </span></a></span>
+<a name="l68"><span class="ln">68   </span></a><span class="s0">&quot;%COMSPEC%&quot; </span><span class="s3">/c </span><span class="s1">exit </span><span class="s6">1</span>
+<a name="l69"><span class="ln">69   </span></a>
+<a name="l70"><span class="ln">70   </span></a><span class="s0">:</span><span class="s1">execute</span>
+<a name="l71"><span class="ln">71   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Setup the command line 
+<a name="l72"><span class="ln">72   </span></a></span>
+<a name="l73"><span class="ln">73   </span></a>
+<a name="l74"><span class="ln">74   </span></a>
+<a name="l75"><span class="ln">75   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Execute Gradle 
+<a name="l76"><span class="ln">76   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">endlocal doesn't take effect until after the line is parsed and variables are expanded 
+<a name="l77"><span class="ln">77   </span></a></span><span class="s0">@</span><span class="s1">rem </span><span class="s2">which allows us to clear the local environment before executing the java command 
+<a name="l78"><span class="ln">78   </span></a></span><span class="s1">endlocal </span><span class="s0">&amp; &quot;%JAVA_EXE%&quot; %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% &quot;</span><span class="s4">-Dorg.gradle.appname=</span><span class="s0">%APP_BASE_NAME%&quot; </span><span class="s3">-jar </span><span class="s0">&quot;%APP_HOME%</span><span class="s4">\gradle\wrapper\gradle-wrapper.jar</span><span class="s0">&quot; %* &amp; </span><span class="s1">call </span><span class="s0">:</span><span class="s1">exitWithErrorLevel</span>
+<a name="l79"><span class="ln">79   </span></a>
+<a name="l80"><span class="ln">80   </span></a><span class="s0">:</span><span class="s1">exitWithErrorLevel</span>
+<a name="l81"><span class="ln">81   </span></a><span class="s0">@</span><span class="s1">rem </span><span class="s2">Use &quot;%COMSPEC%&quot; /c exit to allow operators to work properly in scripts 
+<a name="l82"><span class="ln">82   </span></a></span><span class="s0">&quot;%COMSPEC%&quot; </span><span class="s3">/c </span><span class="s1">exit </span><span class="s0">%ERRORLEVEL%</span>
+<a name="l83"><span class="ln">83   </span></a></pre>
+</body>
+</html>
