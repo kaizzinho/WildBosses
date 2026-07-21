@@ -7,6 +7,8 @@ import com.cobblemon.mod.common.battles.actor.PlayerBattleActor
 import com.cobblemon.mod.common.battles.actor.PokemonBattleActor
 import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossRegistry
+import net.minecraft.network.chat.Component
+
 
 object BattleTierScalingListener {
 
@@ -45,6 +47,21 @@ object BattleTierScalingListener {
             val bossPokemon = bossEntity.pokemon
             bossPokemon.level = cappedLevel
             bossInstance.currentLevelOverride = cappedLevel
+
+// Reveal the true scaled level to the player right as the battle begins —
+// the overworld nameplate stays "??" forever, this is the one moment it matters.
+            val chatMessage = Component.literal(
+                "${tier.name.lowercase().replaceFirstChar { it.uppercase() }} Boss ${bossPokemon.species.name} " +
+                        "scaled to level $cappedLevel (your strongest: Lv.$highestPlayerLevel +${tier.levelBonus})"
+            ).withStyle(tier.color)
+
+            player.sendSystemMessage(chatMessage)
+
+            WildBosses.logger.info(
+                "[WildBosses] Scaled ${tier.name} boss ${bossPokemon.species.name} to level $cappedLevel " +
+                        "(player highest: $highestPlayerLevel, tier bonus: +${tier.levelBonus}, overflow: $overflow)"
+            )
+
 
             WildBosses.logger.info(
                 "[WildBosses] Scaled ${tier.name} boss ${bossPokemon.species.name} to level $cappedLevel " +

@@ -1,9 +1,13 @@
 {
 	"required": true,
-	"package": "kaizzinho.wildbosses.mixin",
+	"package": "com.kaizzinho.wildbosses.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"PokemonEntityMixin"
+	],
+	"client": [
+		"client.PokemonEntityLabelMixin",
+		"client.PokemonRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

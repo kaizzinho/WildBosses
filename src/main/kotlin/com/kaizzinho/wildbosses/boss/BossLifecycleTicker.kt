@@ -6,8 +6,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
 object BossLifecycleTicker {
 
-    private const val BOSS_LIFETIME_TICKS = 12000L // 10 minutes
-    private const val CHECK_INTERVAL_TICKS = 20L   // throttle to once per second, not every tick
+    private const val BOSS_LIFETIME_TICKS = 12000L // 10 minutos
+    private const val CHECK_INTERVAL_TICKS = 20L
 
     private var tickCounter = 0L
 
@@ -22,9 +22,6 @@ object BossLifecycleTicker {
             }
 
             for (instance in expired) {
-                // BossInstance only stores the UUID, not a live entity reference,
-                // so we have to look it up across dimensions - a boss's exact
-                // level isn't tracked, so we check every loaded level.
                 var found: PokemonEntity? = null
                 for (level in server.allLevels) {
                     val entity = level.getEntity(instance.entityUuid)
