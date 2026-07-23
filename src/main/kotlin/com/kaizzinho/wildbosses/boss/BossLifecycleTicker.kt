@@ -42,6 +42,11 @@ object BossLifecycleTicker {
                     )
                 }
 
+                // Remove the tier's glow-team membership. This works purely off the string
+                // UUID, so it's safe even in the "entity already gone" branch above - team
+                // membership isn't tied to a live entity reference.
+                server.scoreboard.removePlayerFromTeam(instance.entityUuid.toString())
+
                 BossRegistry.unregister(instance.entityUuid)
             }
         }
