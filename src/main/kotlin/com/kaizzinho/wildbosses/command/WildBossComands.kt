@@ -41,7 +41,8 @@ object WildBossCommands {
         HelpEntry("/wb killall", "Despawns every active boss and clears the registry."),
         HelpEntry("/wb version", "Shows the mod version."),
         HelpEntry("/wb help", "Shows this list."),
-                HelpEntry("/wb cooldown", "Checks whether you're currently on boss-spawn cooldown.")
+        HelpEntry("/wb cooldown", "Checks whether you're currently on boss-spawn cooldown."),
+        HelpEntry("/wb leaderboard [tier]", "Shows the top 10 boss hunters overall, or for a specific tier.")
     )
 
 
@@ -102,6 +103,12 @@ object WildBossCommands {
                         .requires { it.hasPermission(2) }
                         .then(Commands.argument("tier", StringArgumentType.word())
                             .executes { ctx -> giveLoot(ctx) }
+                        )
+                    )
+                    .then(Commands.literal("leaderboard")
+                        .executes { ctx -> showLeaderboard(ctx, null) }
+                        .then(Commands.argument("tier", StringArgumentType.word())
+                            .executes { ctx -> showLeaderboard(ctx, StringArgumentType.getString(ctx, "tier")) }
                         )
                     )
                     .then(Commands.literal("cooldown")
@@ -227,6 +234,30 @@ object WildBossCommands {
         player.teleportTo(entity.x, entity.y, entity.z)
         ctx.source.sendSuccess({ Component.literal("Teleported to ${entity.pokemon.species.name}.") }, false)
         return 1
+    }
+
+    // --- /wildbosses leaderboard [tier] ---
+    private fun showLeaderboard(ctx: CommandContext<CommandSourceStack>, tierName: String?): Int {
+        val source = ctx.source
+        val overworld = source.server.overworld()
+        val data = com.kaizzinho.wildbosses.boss.BossKillLeaderboardData.get(overworld)
+
+        if (tierName == null) {
+            val top = data.topByTotal(10)
+            source.sendSuccess({ Component.literal("=== Top Boss Hunters (Total) ===") }, false)
+            top.forEachIndexed { i, (record, count) ->
+                source.sendSuccess({ Component.literal("${i + 1}. ${record.playerName} - $count kill(s)") }, false)
+            }
+            return top.size
+        }
+
+        val tier = parseTier(tierName)
+        val top = data.topByTier(tier, 10)
+        source.sendSuccess({ Component.literal("=== Top Boss Hunters (${tier.name}) ===") }, false)
+        top.forEachIndexed { i, (record, count) ->
+            source.sendSuccess({ Component.literal("${i + 1}. ${record.playerName} - $count kill(s)") }, false)
+        }
+        return top.size
     }
 
     // --- /wildbosses despawn <target> ---

@@ -19,11 +19,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 
 object BossBattleResultListener {
 
-    // Awarding loot right at BATTLE_VICTORY can crash Cobblemon's own Showdown JS bridge -
-    // BattleRegistry ticks ALL active battles in one parallel pass (ForkJoinTask-based), and
-    // our loot logic touching LootParams/registries synchronously inside that dispatch chain
-    // caused an uncaught exception to corrupt the battle's teardown. Delaying by a handful of
-    // real ticks moves this fully outside Cobblemon's own event-dispatch call stack.
     private const val LOOT_AWARD_DELAY_TICKS = 5
 
     private data class PendingLootAward(val bossInstance: BossInstance, val readyAtTick: Long)
@@ -37,6 +32,8 @@ object BossBattleResultListener {
 
             if (BossRegistry.isBoss(bossEntity.uuid)) {
                 resetBossHp(bossEntity)
+                BossHealthBarManager.end(bossEntity.uuid)
+                BossEnrageManager.stopTracking(bossEntity.uuid)
                 WildBosses.logger.info("[WildBosses] Boss ${bossEntity.pokemon.species.name} HP reset after player fled")
             }
         }
@@ -47,6 +44,8 @@ object BossBattleResultListener {
                 val bossEntity = wildWinner.entity ?: return@subscribe
                 if (BossRegistry.isBoss(bossEntity.uuid)) {
                     resetBossHp(bossEntity)
+                    BossHealthBarManager.end(bossEntity.uuid)
+                    BossEnrageManager.stopTracking(bossEntity.uuid)
                     WildBosses.logger.info("[WildBosses] Boss ${bossEntity.pokemon.species.name} HP reset after defeating the player")
                 }
                 return@subscribe
@@ -63,6 +62,9 @@ object BossBattleResultListener {
                 WildBosses.logger.warn("[WildBosses] Player-victory branch: no BossInstance found for pokemonUuid=$pokemonUuid, aborting")
                 return@subscribe
             }
+
+            BossHealthBarManager.end(bossInstance.entityUuid)
+            BossEnrageManager.stopTracking(bossInstance.entityUuid)
 
             val currentTick = bossInstance.lastKnownLevel?.server?.overworld()?.gameTime ?: 0L
             pendingAwards.add(PendingLootAward(bossInstance, currentTick + LOOT_AWARD_DELAY_TICKS))
@@ -104,10 +106,6 @@ object BossBattleResultListener {
         )
         val lootTable = server.reloadableRegistries().getLootTable(lootTableKey)
 
-        // LootContextParamSets.EMPTY permits ZERO parameters - not "no requirements," but
-        // "none allowed at all." Our loot tables only use random_chance/set_count, neither of
-        // which needs ORIGIN, so we build LootParams with no parameters and use `pos` directly
-        // when spawning items below instead.
         val lootParams = LootParams.Builder(level)
             .create(LootContextParamSets.EMPTY)
 
@@ -123,13 +121,7 @@ object BossBattleResultListener {
             "[WildBosses] Awarded ${items.size} item(s) from boss/$tierName loot table for ${bossInstance.speciesName}"
         )
 
-        // Clean up immediately on confirmed defeat, rather than waiting for
-        // BossLifecycleTicker's periodic sweep to notice the entity is gone (up to 10 minutes
-        // later otherwise). Removes both the registry entry and the glow-team membership.
         server.scoreboard.removePlayerFromTeam(bossInstance.entityUuid.toString())
         BossRegistry.unregister(bossInstance.entityUuid)
     }
 }
-
-
-
