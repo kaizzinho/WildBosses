@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:root",
+  "display": {
+    "icon": {
+      "id": "cobblemon:poke_ball"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.uncommon_slayer.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.uncommon_slayer.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "tier": "UNCOMMON"
+      }
+    }
+  }
+}

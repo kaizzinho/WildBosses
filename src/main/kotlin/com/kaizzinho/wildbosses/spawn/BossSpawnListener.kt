@@ -5,7 +5,6 @@ import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.pokemon.properties.UncatchableProperty
-import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossSpawnCooldownData
 import com.kaizzinho.wildbosses.boss.BossTier
@@ -14,6 +13,7 @@ import com.kaizzinho.wildbosses.boss.WildBossEntityData
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.kaizzinho.wildbosses.boss.BossEvolutionResolver
+import com.kaizzinho.wildbosses.boss.BossMessageFormat
 import net.minecraft.server.level.ServerLevel
 
 
@@ -40,11 +40,10 @@ object BossSpawnListener {
 
     private fun announceSpawn(entity: PokemonEntity, tier: BossTier, targetPlayer: ServerPlayer) {
         val server = entity.server ?: return
-
-        val tierLabel = tier.name.lowercase().replaceFirstChar { it.uppercase() }
-        val message = Component.literal(tierLabel).withStyle(tier.color)
-            .append(Component.literal(" Boss ${entity.pokemon.species.name} spawned near ${targetPlayer.name.string}!"))
-
+        val message = BossMessageFormat.build(
+            BossMessageFormat.bossName(tier, entity.pokemon.species.name)
+                .append(BossMessageFormat.plainKey("wildbosses.message.spawned_near", targetPlayer.name.string))
+        )
         server.playerList.broadcastSystemMessage(message, false)
     }
 
@@ -153,9 +152,5 @@ object BossSpawnListener {
 
         cooldownData.startCooldown(targetPlayer.uuid, currentTick, SPAWN_COOLDOWN_TICKS)
 
-        WildBosses.logger.info(
-            "[WildBosses] Spawned ${tier.name} boss: ${entity.pokemon.species.name} at ${entity.blockPosition()} " +
-                    "(target: ${targetPlayer.name.string}, cooldown starts)"
-        )
     }
 }

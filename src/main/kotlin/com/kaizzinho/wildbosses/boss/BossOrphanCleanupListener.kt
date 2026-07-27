@@ -47,10 +47,10 @@ object BossOrphanCleanupListener {
 
             BossRegistry.register(entity, tier, world.gameTime)
 
-            WildBosses.logger.info(
-                "[WildBosses] Recovered ${tier.name} boss ${entity.pokemon.species.name} (uuid=${entity.uuid}) " +
-                        "after server restart - re-registered with a fresh lifetime timer"
-            )
+            //WildBosses.logger.info(
+             //   "[WildBosses] Recovered ${tier.name} boss ${entity.pokemon.species.name} (uuid=${entity.uuid}) " +
+             //           "after server restart - re-registered with a fresh lifetime timer"
+            //)
         }
     }
 }

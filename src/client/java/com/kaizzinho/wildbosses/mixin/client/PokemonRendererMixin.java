@@ -25,21 +25,15 @@ public abstract class PokemonRendererMixin {
         try {
             tier = BossTier.valueOf(tierName);
         } catch (IllegalArgumentException e) {
-            return; // tier not synced yet, fall through safely
+            return;
         }
 
-        String tierWord = capitalize(tier.name());
-        String rest = " Boss " + entity.getPokemon().getSpecies().getName() + " Lv. ??";
-
-        MutableComponent display = Component.literal(tierWord)
-                .setStyle(Style.EMPTY.withColor(tier.getColor()));
-        display.append(Component.literal(rest));
+        MutableComponent display = Component.translatable(
+                "wildbosses.label.boss_full",
+                Component.translatable("wildbosses.tier." + tier.name().toLowerCase()),
+                entity.getPokemon().getSpecies().getTranslatedName()
+        ).setStyle(Style.EMPTY.withColor(tier.getColor()));
 
         cir.setReturnValue(display);
-    }
-
-    private static String capitalize(String input) {
-        if (input.isEmpty()) return input;
-        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 }

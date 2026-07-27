@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:nether_star"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.shiny_showdown.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.shiny_showdown.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat_shiny": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "shiny": true
+      }
+    }
+  }
+}

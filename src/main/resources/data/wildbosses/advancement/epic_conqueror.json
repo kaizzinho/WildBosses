@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:rare_hunter",
+  "display": {
+    "icon": {
+      "id": "cobblemon:ultra_ball"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.epic_conqueror.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.epic_conqueror.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "tier": "EPIC"
+      }
+    }
+  }
+}

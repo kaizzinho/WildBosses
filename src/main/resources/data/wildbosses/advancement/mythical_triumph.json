@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:legendary_vanquisher",
+  "display": {
+    "icon": {
+      "id": "cobblemon:relic_coin_sack"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.mythical_triumph.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.mythical_triumph.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "tier": "MYTHIC"
+      }
+    }
+  }
+}

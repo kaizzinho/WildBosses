@@ -12,13 +12,14 @@ import java.util.UUID
 
 object BossEnrageManager {
 
-    private const val ENRAGE_INTERVAL = 5 // enrages at turn 5, 10, 15, 20... warns one turn before each
+    private const val ENRAGE_INTERVAL = 8 // enrages at turn 8, 16, 24, 32... warns one turn before each
 
     private data class TrackedBattle(
         val battle: PokemonBattle,
         val wildActor: PokemonBattleActor,
         val tier: BossTier,
-        var lastProcessedTurn: Int = -1
+        var lastProcessedTurn: Int = -1,
+        var hasEnragedAtLeastOnce: Boolean = false
     )
     private val trackedBattles = mutableMapOf<UUID, TrackedBattle>()
 
@@ -29,6 +30,13 @@ object BossEnrageManager {
     fun stopTracking(bossEntityUuid: UUID) {
         trackedBattles.remove(bossEntityUuid)
     }
+
+    /**
+     * Whether this boss enraged at least once during the current battle. Must be read BEFORE
+     * stopTracking() is called, since that clears the tracking entry entirely.
+     */
+    fun hasEnraged(bossEntityUuid: UUID): Boolean =
+        trackedBattles[bossEntityUuid]?.hasEnragedAtLeastOnce == true
 
     fun register() {
         ServerTickEvents.END_SERVER_TICK.register {
@@ -50,10 +58,12 @@ object BossEnrageManager {
     private fun sendEnrageWarning(tracked: TrackedBattle) {
         val displayName = tracked.wildActor.pokemon.effectedPokemon.species.name
         tracked.battle.broadcastChatMessage(
-            Component.literal("$displayName is gathering power...")
+            Component.translatable("wildbosses.enrage.warning", displayName)
                 .withStyle(tracked.tier.color, ChatFormatting.ITALIC)
         )
     }
+
+
 
     private fun triggerEnrage(tracked: TrackedBattle, currentTurn: Int) {
         val slot = "a"
@@ -63,10 +73,9 @@ object BossEnrageManager {
         val displayName = tracked.wildActor.pokemon.effectedPokemon.species.name
 
         tracked.battle.broadcastChatMessage(
-            Component.literal("$displayName is enraging! It is overflowing with power!")
-                .withStyle(tracked.tier.color, ChatFormatting.BOLD)
+            Component.translatable("wildbosses.enrage.warning", displayName)
+                .withStyle(tracked.tier.color, ChatFormatting.ITALIC)
         )
-
         val rawMessage = buildString {
             append("update\n")
             append("|-boost|$identifier|atk|1\n")
@@ -78,9 +87,10 @@ object BossEnrageManager {
 
         try {
             ShowdownInterpreter.interpret(tracked.battle, rawMessage)
-            WildBosses.logger.info("[WildBosses] Boss $displayName enraged at turn $currentTurn (identifier: $identifier)")
-        } catch (e: Exception) {
-            WildBosses.logger.error("[WildBosses] Failed to trigger enrage for $displayName at turn $currentTurn (identifier: $identifier)", e)
+            tracked.hasEnragedAtLeastOnce = true
+            //WildBosses.logger.info("[WildBosses] Boss $displayName enraged at turn $currentTurn (identifier: $identifier)")
+        } catch (_: Exception) {
+            //WildBosses.logger.error("[WildBosses] Failed to trigger enrage for $displayName at turn $currentTurn (identifier: $identifier)", e)
         }
     }
 }

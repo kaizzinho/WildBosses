@@ -1,6 +1,7 @@
 package com.kaizzinho.wildbosses.boss
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.phys.Vec3
 import java.util.UUID
@@ -11,13 +12,10 @@ data class BossInstance(
     val tier: BossTier,
     val spawnedAtTick: Long,
     var currentLevelOverride: Int? = null,
-    // Captured at battle start (BattleTierScalingListener), while the entity still exists.
-    // The boss's PokemonEntity gets removed from the world once it faints, so by the time
-    // BATTLE_VICTORY fires, wildLoser.entity is already null - we need these stashed ahead
-    // of time to know where/how to award loot.
     var lastKnownPos: Vec3? = null,
     var lastKnownLevel: ServerLevel? = null,
-    var speciesName: String? = null
+    var speciesName: String? = null,
+    var megaStoneItemId: ResourceLocation? = null // set if this boss Mega Evolved this fight
 )
 
 object BossRegistry {

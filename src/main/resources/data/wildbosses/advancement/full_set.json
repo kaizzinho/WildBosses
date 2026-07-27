@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:mythical_triumph",
+  "display": {
+    "icon": {
+      "id": "minecraft:netherite_ingot"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.full_set.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.full_set.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "all_tiers": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "all_tiers": true
+      }
+    }
+  }
+}

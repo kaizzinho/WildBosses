@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:uncommon_slayer",
+  "display": {
+    "icon": {
+      "id": "cobblemon:great_ball"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.rare_hunter.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.rare_hunter.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "tier": "RARE"
+      }
+    }
+  }
+}

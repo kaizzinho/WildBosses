@@ -18,14 +18,14 @@ public abstract class PokemonEntityMixin {
         builder.define(WildBossEntityData.TIER, "");
     }
 
-    // Bosses use WildBosses's own custom loot tables (see BossBattleResultListener), applied
-    // manually on BATTLE_VICTORY. Cancel Cobblemon's normal wild-Pokémon death loot for bosses
-    // specifically, so they don't drop both the custom loot AND the species' default drop.
     @Inject(method = "dropAllDeathLoot", at = @At("HEAD"), cancellable = true)
     private void wildbosses$cancelDefaultLootForBosses(net.minecraft.server.level.ServerLevel world, DamageSource source, CallbackInfo ci) {
         PokemonEntity self = (PokemonEntity) (Object) this;
-        if (self.getTags().contains("wildbosses:is_boss")) {
+        boolean isBoss = self.getTags().contains("wildbosses:is_boss");
+        System.out.println("[WildBosses-DEBUG] dropAllDeathLoot fired for " + self.getPokemon().getSpecies().getName() + ", isBoss=" + isBoss + ", tags=" + self.getTags());
+        if (isBoss) {
             ci.cancel();
         }
     }
+
 }

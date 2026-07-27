@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:epic_conqueror",
+  "display": {
+    "icon": {
+      "id": "cobblemon:relic_coin_pouch"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.legendary_vanquisher.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.legendary_vanquisher.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "tier": "LEGENDARY"
+      }
+    }
+  }
+}

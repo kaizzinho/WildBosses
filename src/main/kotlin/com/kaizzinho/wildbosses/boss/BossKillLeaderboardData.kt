@@ -32,6 +32,11 @@ class BossKillLeaderboardData : SavedData() {
         records.values.mapNotNull { r -> r.killsByTier[tier.name]?.let { r to it } }
             .sortedByDescending { it.second }.take(limit)
 
+    fun totalKillsFor(playerUuid: UUID): Int = records[playerUuid]?.total() ?: 0
+
+    fun tiersDefeatedBy(playerUuid: UUID): Set<String> =
+        records[playerUuid]?.killsByTier?.filterValues { it > 0 }?.keys ?: emptySet()
+
     override fun save(compoundTag: CompoundTag, provider: HolderLookup.Provider): CompoundTag {
         val listTag = ListTag()
         records.forEach { (uuid, record) ->

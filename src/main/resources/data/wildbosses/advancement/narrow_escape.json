@@ -1,0 +1,23 @@
+{
+  "parent": "wildbosses:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:feather"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.narrow_escape.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.narrow_escape.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "fled": {
+      "trigger": "wildbosses:boss_fled",
+      "conditions": {}
+    }
+  }
+}

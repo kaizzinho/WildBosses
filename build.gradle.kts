@@ -29,6 +29,14 @@ loom {
 repositories {
 	mavenCentral()
 	maven("https://artefacts.cobblemon.com/releases/")
+	exclusiveContent {
+		forRepository {
+			maven("https://api.modrinth.com/maven") { name = "Modrinth" }
+		}
+		filter {
+			includeGroup("maven.modrinth")
+		}
+	}
 }
 
 dependencies {
@@ -43,6 +51,7 @@ dependencies {
 
 	// Configuração oficial do Cobblemon via Architectury
 	modCompileOnly("com.cobblemon:mod:1.7.3+1.21.1") { isTransitive = false }
+	modCompileOnly("maven.modrinth:cobblemon-mega-showdown:1.9.2+1.7.3+1.21.1-hotfix")
 	modImplementation("com.cobblemon:fabric:1.7.3+1.21.1")
 }
 

@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:evolutionary_power",
+  "display": {
+    "icon": {
+      "id": "minecraft:amethyst_shard"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.first_stone.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.first_stone.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "receive_stone": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "mega_evolved": true
+      }
+    }
+  }
+}

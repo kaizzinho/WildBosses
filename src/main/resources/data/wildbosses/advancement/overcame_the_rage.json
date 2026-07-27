@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:overflowing_power",
+  "display": {
+    "icon": {
+      "id": "minecraft:blaze_rod"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.overcame_the_rage.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.overcame_the_rage.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat_enraged": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "enraged": true
+      }
+    }
+  }
+}

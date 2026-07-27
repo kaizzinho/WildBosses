@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "cobblemon:master_ball"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.root.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.root.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+  },
+  "criteria": {
+    "first_win": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {}
+    }
+  }
+}

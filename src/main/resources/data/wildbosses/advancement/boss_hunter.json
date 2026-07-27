@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:getting_started",
+  "display": {
+    "icon": {
+      "id": "cobblemon:exp_candy_xl"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.boss_hunter.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.boss_hunter.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "twentyfive_kills": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "min_kills": 25
+      }
+    }
+  }
+}

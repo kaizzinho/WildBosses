@@ -1,7 +1,6 @@
 package com.kaizzinho.wildbosses.boss
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
-import com.kaizzinho.wildbosses.WildBosses
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
 object BossLifecycleTicker {
@@ -32,14 +31,7 @@ object BossLifecycleTicker {
                 }
 
                 if (found != null && !found.isRemoved) {
-                    WildBosses.logger.info(
-                        "[WildBosses] Boss lifetime expired, despawned ${instance.tier.name} ${found.pokemon.species.name} at ${found.blockPosition()}"
-                    )
                     found.discard()
-                } else {
-                    WildBosses.logger.info(
-                        "[WildBosses] Boss lifetime expired for ${instance.entityUuid} (entity already gone, cleaning up registry only)"
-                    )
                 }
 
                 // Remove the tier's glow-team membership. This works purely off the string

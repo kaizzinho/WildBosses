@@ -13,6 +13,8 @@ import com.cobblemon.mod.common.battles.ai.StrongBattleAI
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.kaizzinho.wildbosses.WildBosses
+import com.kaizzinho.wildbosses.boss.BossInstance
+import com.kaizzinho.wildbosses.boss.BossMessageFormat
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossTier
 import net.minecraft.ChatFormatting
@@ -25,6 +27,8 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.ItemStack
 
 
 object BattleTierScalingListener {
@@ -52,15 +56,18 @@ object BattleTierScalingListener {
         "uproar", "thrash", "petaldance", "outrage", "rollout", "iceball"
     )
 
-    private val MECHANIC_DEPENDENT_MOVES = setOf(
-        "terablast", "terastarstorm" // require Terastallization data bosses don't currently have
-    )
-
     private val CONDITIONAL_FAIL_MOVES = setOf(
         "dreameater", "lastresort", "synchronoise", "focuspunch",
         "counter", "mirrorcoat", "metalburst", "bide",
         "hiddenpower" // effective type depends on IVs, not fixed - our type-bucketing/STAB logic
         // reads the raw template type, which would be wrong for this move specifically
+    )
+
+    private val SELF_NERFING_MOVES = setOf(
+        // -2 stage self-debuff on use
+        "dracometeor", "leafstorm", "overheat", "psychoboost", "fleurcannon",
+        // -1 stage self-debuff on use
+        "superpower", "closecombat", "vcreate"
     )
 
     private val BLACKLISTED_MOVESET_SPECIES = setOf(
@@ -84,7 +91,8 @@ object BattleTierScalingListener {
             bossInstance.speciesName = bossEntity.pokemon.species.name
 
             try {
-                battleAIField.set(wildActor, StrongBattleAI(bossInstance.tier.aiSkill))
+                val realAI = StrongBattleAI(bossInstance.tier.aiSkill)
+                battleAIField.set(wildActor, MegaTriggeringAI(realAI, bossEntity.uuid))
             } catch (e: Exception) {
                 WildBosses.logger.error("[WildBosses] Failed to apply StrongBattleAI to boss ${bossEntity.pokemon.species.name} - falling back to default AI", e)
             }
@@ -95,7 +103,7 @@ object BattleTierScalingListener {
             val player = playerActor.entity ?: return@subscribe
 
             val party = Cobblemon.storage.getParty(player)
-            val highestPlayerLevel = party.mapNotNull { it?.level }.maxOrNull()
+            val highestPlayerLevel = party.mapNotNull { it.level }.maxOrNull()
 
             if (highestPlayerLevel == null) {
                 WildBosses.logger.warn("[WildBosses] Player ${player.name.string} has an empty party during boss battle - skipping scaling")
@@ -109,29 +117,38 @@ object BattleTierScalingListener {
             bossPokemon.level = scaledLevel
             bossInstance.currentLevelOverride = scaledLevel
 
+            StrayLootWatcher.startWatching(bossEntity.uuid, bossInstance.lastKnownLevel!!)
             applyDamagingMoveset(bossPokemon)
+            applyMegaEvolutionIfEligible(bossEntity, bossInstance)
 
             BossHealthBarManager.start(bossEntity, player, tier, scaledLevel)
             BossEnrageManager.startTracking(bossEntity.uuid, battle, wildActor, tier)
             announceBattleEngage(bossEntity, player, tier)
 
-            val chatMessage = Component.literal(
-                "${tier.name.lowercase().replaceFirstChar { it.uppercase() }} Boss ${bossPokemon.species.name} " +
-                        "scaled to level $scaledLevel (your strongest: Lv.$highestPlayerLevel +${tier.levelBonus})"
-            ).withStyle(tier.color)
-
+            val chatMessage = BossMessageFormat.build(
+                BossMessageFormat.bossName(tier, bossPokemon.species.name)
+                    .append(BossMessageFormat.plainKey("wildbosses.message.scaled_to_level"))
+                    .append(BossMessageFormat.levelValue(tier, scaledLevel))
+                    .append(
+                        Component.translatable(
+                            "wildbosses.message.scaling_detail",
+                            highestPlayerLevel,
+                            tier.levelBonus
+                        ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                    )
+            )
             player.sendSystemMessage(chatMessage)
 
-            WildBosses.logger.info(
-                "[WildBosses] Scaled ${tier.name} boss ${bossPokemon.species.name} to level $scaledLevel " +
-                        "(player highest: $highestPlayerLevel, tier bonus: +${tier.levelBonus}, AI skill: ${tier.aiSkill})"
-            )
+//            WildBosses.logger.info(
+//                "[WildBosses] Scaled ${tier.name} boss ${bossPokemon.species.name} to level $scaledLevel " +
+//                        "(player highest: $highestPlayerLevel, tier bonus: +${tier.levelBonus}, AI skill: ${tier.aiSkill})"
+//            )
         }
     }
 
     private fun applyDamagingMoveset(bossPokemon: Pokemon) {
         if (bossPokemon.species.showdownId() in BLACKLISTED_MOVESET_SPECIES) {
-            WildBosses.logger.info("[WildBosses] Skipping moveset curation for ${bossPokemon.species.name} (blacklisted)")
+            //WildBosses.logger.info("[WildBosses] Skipping moveset curation for ${bossPokemon.species.name} (blacklisted)")
             return
         }
         val favorsPhysical = Cobblemon.statProvider.getStatForPokemon(bossPokemon, Stats.ATTACK) >=
@@ -141,6 +158,7 @@ object BattleTierScalingListener {
         val bossTypes = bossPokemon.species.types.toSet()
 
         val allCandidates = bossPokemon.species.moves.getAllLegalMoves()
+            .asSequence()
             .filter { it.damageCategory != DamageCategories.STATUS }
             .filter { it.accuracy <= 0 || it.accuracy >= 90 }
             .filter { it.name !in SELF_DESTRUCT_MOVES }
@@ -148,6 +166,8 @@ object BattleTierScalingListener {
             .filter { it.name !in CHARGE_TURN_MOVES }
             .filter { it.name !in LOCKED_IN_MOVES }
             .filter { it.name !in CONDITIONAL_FAIL_MOVES }
+            .filter { it.name !in SELF_NERFING_MOVES }
+            .toList()
 
         if (allCandidates.isEmpty()) {
             WildBosses.logger.warn("[WildBosses] No damaging moves passed filters for ${bossPokemon.species.name} - leaving natural moveset unchanged")
@@ -185,9 +205,9 @@ object BattleTierScalingListener {
                 .sortedByDescending { it.power }
                 .take(4 - selected.size)
             selected.addAll(backfill)
-            if (backfill.isNotEmpty()) {
-                WildBosses.logger.info("[WildBosses] ${bossPokemon.species.name} needed ${backfill.size} off-category backfill move(s) to reach 4")
-            }
+            //if (backfill.isNotEmpty()) {
+            //WildBosses.logger.info("[WildBosses] ${bossPokemon.species.name} needed ${backfill.size} off-category backfill move(s) to reach 4")
+            // }
         }
 
         val finalMoves = selected.sortedByDescending { it.power }.map { it.name }
@@ -203,9 +223,40 @@ object BattleTierScalingListener {
         properties.apply(bossPokemon)
     }
 
+    private fun applyMegaEvolutionIfEligible(bossEntity: PokemonEntity, bossInstance: BossInstance) {
+        val chance = when (bossInstance.tier) {
+            BossTier.LEGENDARY -> 0.50
+            BossTier.MYTHIC -> 1.0
+            else -> return // only Legendary/Mythic eligible at all
+        }
+
+        val bossPokemon = bossEntity.pokemon
+        val eligibleEntries = MegaEvolutionManager.getEligibleEntries(bossPokemon.species.name)
+        //WildBosses.logger.info("[WildBosses] Mega eligibility check for ${bossPokemon.species.name}: ${eligibleEntries.size} entries found")
+        if (eligibleEntries.isEmpty()) return
+        if (kotlin.random.Random.nextDouble() >= chance) return
+
+        val chosen = eligibleEntries.random()
+        val item = BuiltInRegistries.ITEM.get(chosen.itemId)
+        if (item == Items.AIR) {
+            //  WildBosses.logger.warn("[WildBosses] Mega stone item ${chosen.itemId} not found in registry - skipping mega evolution for ${bossPokemon.species.name}")
+            return
+        }
+
+        val stoneStack = ItemStack(item)
+        bossPokemon.swapHeldItem(stoneStack, decrement = false, aiCanDrop = false)
+        bossPokemon.heldItemVisible = false
+        bossInstance.megaStoneItemId = chosen.itemId
+        MegaEvolutionManager.markPendingMegaTrigger(bossEntity.uuid)
+
+        //WildBosses.logger.info("[WildBosses] Boss ${bossPokemon.species.name} given ${chosen.itemId}, queued to Mega Evolve turn 1 (${chosen.showdownId})")
+    }
+
     private fun announceBattleEngage(entity: PokemonEntity, player: ServerPlayer, tier: BossTier) {
-        val tierLabel = tier.name.lowercase().replaceFirstChar { it.uppercase() }
-        val title = Component.literal("$tierLabel Boss Encounter!").withStyle(tier.color, ChatFormatting.BOLD)
+        val title = Component.translatable(
+            "wildbosses.title.encounter",
+            BossMessageFormat.tierName(tier)
+        ).withStyle(tier.color, ChatFormatting.BOLD)
         val subtitle = Component.literal(entity.pokemon.species.name).withStyle(ChatFormatting.ITALIC)
 
         player.connection.send(ClientboundSetTitleTextPacket(title))

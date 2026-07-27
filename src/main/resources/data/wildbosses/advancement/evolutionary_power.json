@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:end_crystal"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.evolutionary_power.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.evolutionary_power.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "defeat_mega": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "mega_evolved": true
+      }
+    }
+  }
+}

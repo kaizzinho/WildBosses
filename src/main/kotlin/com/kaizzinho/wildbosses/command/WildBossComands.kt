@@ -22,27 +22,30 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 
 object WildBossCommands {
 
-    private val NOT_A_BOSS = SimpleCommandExceptionType(Component.literal("That entity is not a WildBosses boss."))
-    private val INVALID_TIER = SimpleCommandExceptionType(Component.literal("Invalid tier. Valid tiers: uncommon, rare, epic, legendary, mythic."))
-    private data class HelpEntry(val usage: String, val description: String)
+    private val NOT_A_BOSS = SimpleCommandExceptionType(Component.translatable("wildbosses.command.error.not_a_boss"))
+    private val INVALID_TIER = SimpleCommandExceptionType(Component.translatable("wildbosses.command.error.invalid_tier"))
+
+    // Command SYNTAX stays untranslated (command names are the same in every language);
+    // only the human-readable description is translated, via its lang key.
+    private data class HelpEntry(val usage: String, val descriptionKey: String)
 
     private val HELP_ENTRIES = listOf(
-        HelpEntry("/wb spawn <tier> [species] [respectCooldown]", "Force-spawns a boss. respectCooldown defaults to false (bypasses your cooldown for testing); set to true to test the real player-facing gate."),
-        HelpEntry("/wb list", "Lists every currently active boss with species, tier, position, and UUID."),
-        HelpEntry("/wb info <target>", "Shows a boss's tier, level, shiny status, and position."),
-        HelpEntry("/wb teleport <target>", "Teleports you to the given boss."),
-        HelpEntry("/wb despawn <target>", "Force-despawns a specific boss and cleans up its registry/glow."),
-        HelpEntry("/wb forcebattle <target>", "Immediately starts a battle with the given boss."),
-        HelpEntry("/wb loot <tier>", "Gives you the items from a tier's loot table directly, bypassing combat."),
-        HelpEntry("/wb setlevel <target> <level>", "Manually overrides a boss's level (1-200)."),
-        HelpEntry("/wb reload", "Reloads datapacks (e.g. after editing a loot table JSON)."),
-        HelpEntry("/wb glow <target>", "Re-applies tier glow/team color to a boss."),
-        HelpEntry("/wb tier <target> <tier>", "Changes an already-spawned boss's tier (updates tags, glow, and registry)."),
-        HelpEntry("/wb killall", "Despawns every active boss and clears the registry."),
-        HelpEntry("/wb version", "Shows the mod version."),
-        HelpEntry("/wb help", "Shows this list."),
-        HelpEntry("/wb cooldown", "Checks whether you're currently on boss-spawn cooldown."),
-        HelpEntry("/wb leaderboard [tier]", "Shows the top 10 boss hunters overall, or for a specific tier.")
+        HelpEntry("/wb spawn <tier> [species] [respectCooldown]", "wildbosses.help.spawn"),
+        HelpEntry("/wb list", "wildbosses.help.list"),
+        HelpEntry("/wb info <target>", "wildbosses.help.info"),
+        HelpEntry("/wb teleport <target>", "wildbosses.help.teleport"),
+        HelpEntry("/wb despawn <target>", "wildbosses.help.despawn"),
+        HelpEntry("/wb forcebattle <target>", "wildbosses.help.forcebattle"),
+        HelpEntry("/wb loot <tier>", "wildbosses.help.loot"),
+        HelpEntry("/wb setlevel <target> <level>", "wildbosses.help.setlevel"),
+        HelpEntry("/wb reload", "wildbosses.help.reload"),
+        HelpEntry("/wb glow <target>", "wildbosses.help.glow"),
+        HelpEntry("/wb tier <target> <tier>", "wildbosses.help.tier"),
+        HelpEntry("/wb killall", "wildbosses.help.killall"),
+        HelpEntry("/wb version", "wildbosses.help.version"),
+        HelpEntry("/wb help", "wildbosses.help.help"),
+        HelpEntry("/wb cooldown", "wildbosses.help.cooldown"),
+        HelpEntry("/wb leaderboard [tier]", "wildbosses.help.leaderboard")
     )
 
 
@@ -148,6 +151,14 @@ object WildBossCommands {
                     .then(Commands.literal("version")
                         .executes { ctx -> showVersion(ctx) }
                     )
+                    .then(Commands.literal("testmega")
+                        .requires { it.hasPermission(2) }
+                        .then(Commands.argument("target", EntityArgument.entity())
+                            .then(Commands.argument("stoneId", StringArgumentType.word())
+                                .executes { ctx -> testMegaStone(ctx) }
+                            )
+                        )
+                    )
             )
             dispatcher.register(
                 Commands.literal("wb").redirect(dispatcher.root.getChild("wildbosses"))
@@ -178,7 +189,31 @@ object WildBossCommands {
 
         BossSpawnListener.forcePromote(entity, tier, player, respectCooldown)
 
-        source.sendSuccess({ Component.literal("Spawned a ${tier.name} boss (${entity.pokemon.species.name}) at your location.") }, false)
+        source.sendSuccess({
+            Component.translatable("wildbosses.command.spawn.success", tier.name, entity.pokemon.species.name)
+        }, false)
+        return 1
+    }
+
+    // --- /wildbosses testmega <target> <stoneId> --- TEMPORARY, for verifying MegaShowdown integration
+    private fun testMegaStone(ctx: CommandContext<CommandSourceStack>): Int {
+        val entity = getBossEntity(ctx)
+        val stoneId = StringArgumentType.getString(ctx, "stoneId")
+
+        val itemLocation = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("mega_showdown", stoneId)
+        val item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemLocation)
+
+        if (item == net.minecraft.world.item.Items.AIR) {
+            ctx.source.sendFailure(Component.translatable("wildbosses.command.testmega.no_item", stoneId))
+            return 0
+        }
+
+        val stack = net.minecraft.world.item.ItemStack(item)
+        entity.pokemon.swapHeldItem(stack, false, false)
+
+        ctx.source.sendSuccess({
+            Component.translatable("wildbosses.command.testmega.success", entity.pokemon.species.name, stoneId)
+        }, false)
         return 1
     }
 
@@ -187,15 +222,25 @@ object WildBossCommands {
         val source = ctx.source
         val bosses = BossRegistry.allBosses()
         if (bosses.isEmpty()) {
-            source.sendSuccess({ Component.literal("No active bosses.") }, false)
+            source.sendSuccess({ Component.translatable("wildbosses.command.list.empty") }, false)
             return 0
         }
-        source.sendSuccess({ Component.literal("Active bosses (${bosses.size}):") }, false)
+        source.sendSuccess({ Component.translatable("wildbosses.command.list.header", bosses.size) }, false)
         for (instance in bosses) {
             val pos = instance.lastKnownPos
-            val posText = if (pos != null) "(${pos.x.toInt()}, ${pos.y.toInt()}, ${pos.z.toInt()})" else "(unknown pos)"
+            val posText = if (pos != null) {
+                "(${pos.x.toInt()}, ${pos.y.toInt()}, ${pos.z.toInt()})"
+            } else {
+                Component.translatable("wildbosses.command.list.unknown_pos").string
+            }
             source.sendSuccess({
-                Component.literal("- ${instance.speciesName ?: "?"} [${instance.tier.name}] $posText uuid=${instance.entityUuid}")
+                Component.translatable(
+                    "wildbosses.command.list.entry",
+                    instance.speciesName ?: "?",
+                    instance.tier.name,
+                    posText,
+                    instance.entityUuid.toString()
+                )
             }, false)
         }
         return bosses.size
@@ -206,22 +251,33 @@ object WildBossCommands {
         val entity = getBossEntity(ctx)
         val instance = BossRegistry.get(entity.uuid) ?: throw NOT_A_BOSS.create()
         ctx.source.sendSuccess({
-            Component.literal(
-                "${instance.speciesName ?: entity.pokemon.species.name} [${instance.tier.name}] " +
-                        "level=${entity.pokemon.level} (override=${instance.currentLevelOverride}) " +
-                        "shiny=${entity.pokemon.shiny} pos=${entity.blockPosition()} uuid=${entity.uuid}"
+            Component.translatable(
+                "wildbosses.command.info.line",
+                instance.speciesName ?: entity.pokemon.species.name,
+                instance.tier.name,
+                entity.pokemon.level,
+                instance.currentLevelOverride.toString(),
+                entity.pokemon.shiny.toString(),
+                entity.blockPosition().toString(),
+                entity.uuid.toString()
             )
         }, false)
         return 1
     }
+
     // --- /wildbosses help ---
     private fun showHelp(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
-        source.sendSuccess({ Component.literal("=== WildBosses Commands ===") }, false)
+        source.sendSuccess({ Component.translatable("wildbosses.command.help.header") }, false)
         for (entry in HELP_ENTRIES) {
             source.sendSuccess({
                 Component.literal(entry.usage).withStyle(net.minecraft.ChatFormatting.AQUA)
-                    .append(Component.literal(" - ${entry.description}"))
+                    .append(
+                        Component.translatable(
+                            "wildbosses.command.help.entry",
+                            Component.translatable(entry.descriptionKey)
+                        )
+                    )
             }, false)
         }
         return HELP_ENTRIES.size
@@ -232,7 +288,9 @@ object WildBossCommands {
         val entity = getBossEntity(ctx)
         val player = ctx.source.playerOrException
         player.teleportTo(entity.x, entity.y, entity.z)
-        ctx.source.sendSuccess({ Component.literal("Teleported to ${entity.pokemon.species.name}.") }, false)
+        ctx.source.sendSuccess({
+            Component.translatable("wildbosses.command.teleport.success", entity.pokemon.species.name)
+        }, false)
         return 1
     }
 
@@ -244,18 +302,24 @@ object WildBossCommands {
 
         if (tierName == null) {
             val top = data.topByTotal(10)
-            source.sendSuccess({ Component.literal("=== Top Boss Hunters (Total) ===") }, false)
+            source.sendSuccess({ Component.translatable("wildbosses.command.leaderboard.header_total") }, false)
             top.forEachIndexed { i, (record, count) ->
-                source.sendSuccess({ Component.literal("${i + 1}. ${record.playerName} - $count kill(s)") }, false)
+                source.sendSuccess({
+                    Component.translatable("wildbosses.command.leaderboard.entry", i + 1, record.playerName, count)
+                }, false)
             }
             return top.size
         }
 
         val tier = parseTier(tierName)
         val top = data.topByTier(tier, 10)
-        source.sendSuccess({ Component.literal("=== Top Boss Hunters (${tier.name}) ===") }, false)
+        source.sendSuccess({
+            Component.translatable("wildbosses.command.leaderboard.header_tier", tier.name)
+        }, false)
         top.forEachIndexed { i, (record, count) ->
-            source.sendSuccess({ Component.literal("${i + 1}. ${record.playerName} - $count kill(s)") }, false)
+            source.sendSuccess({
+                Component.translatable("wildbosses.command.leaderboard.entry", i + 1, record.playerName, count)
+            }, false)
         }
         return top.size
     }
@@ -267,7 +331,7 @@ object WildBossCommands {
         server.scoreboard.removePlayerFromTeam(entity.uuid.toString())
         BossRegistry.unregister(entity.uuid)
         entity.discard()
-        ctx.source.sendSuccess({ Component.literal("Despawned boss.") }, false)
+        ctx.source.sendSuccess({ Component.translatable("wildbosses.command.despawn.success") }, false)
         return 1
     }
 
@@ -276,7 +340,11 @@ object WildBossCommands {
         val entity = getBossEntity(ctx)
         val player = ctx.source.playerOrException
         val started = entity.forceBattle(player)
-        ctx.source.sendSuccess({ Component.literal(if (started) "Battle started." else "Failed to start battle.") }, false)
+        ctx.source.sendSuccess({
+            Component.translatable(
+                if (started) "wildbosses.command.forcebattle.started" else "wildbosses.command.forcebattle.failed"
+            )
+        }, false)
         return if (started) 1 else 0
     }
 
@@ -297,7 +365,9 @@ object WildBossCommands {
         val items = lootTable.getRandomItems(lootParams)
         items.forEach { stack -> player.inventory.add(stack) }
 
-        source.sendSuccess({ Component.literal("Gave ${items.size} item(s) from the ${tier.name} loot table.") }, false)
+        source.sendSuccess({
+            Component.translatable("wildbosses.command.loot.success", items.size, tier.name)
+        }, false)
         return items.size
     }
 
@@ -310,7 +380,9 @@ object WildBossCommands {
         entity.pokemon.level = level
         instance?.currentLevelOverride = level
 
-        ctx.source.sendSuccess({ Component.literal("Set ${entity.pokemon.species.name}'s level to $level.") }, false)
+        ctx.source.sendSuccess({
+            Component.translatable("wildbosses.command.setlevel.success", entity.pokemon.species.name, level)
+        }, false)
         return 1
     }
 
@@ -318,7 +390,7 @@ object WildBossCommands {
     private fun reloadDatapacks(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         source.server.reloadResources(source.server.worldData.dataConfiguration.dataPacks().enabled)
-        source.sendSuccess({ Component.literal("Reloading datapacks...") }, false)
+        source.sendSuccess({ Component.translatable("wildbosses.command.reload.success") }, false)
         return 1
     }
 
@@ -327,7 +399,9 @@ object WildBossCommands {
         val entity = getBossEntity(ctx)
         val instance = BossRegistry.get(entity.uuid) ?: throw NOT_A_BOSS.create()
         BossSpawnListener.applyTierGlow(entity, instance.tier)
-        ctx.source.sendSuccess({ Component.literal("Re-applied ${instance.tier.name} glow to ${entity.pokemon.species.name}.") }, false)
+        ctx.source.sendSuccess({
+            Component.translatable("wildbosses.command.glow.success", instance.tier.name, entity.pokemon.species.name)
+        }, false)
         return 1
     }
 
@@ -346,7 +420,9 @@ object WildBossCommands {
         BossRegistry.unregister(entity.uuid)
         BossRegistry.register(entity, newTier, oldInstance.spawnedAtTick)
 
-        ctx.source.sendSuccess({ Component.literal("Changed ${entity.pokemon.species.name}'s tier to ${newTier.name}.") }, false)
+        ctx.source.sendSuccess({
+            Component.translatable("wildbosses.command.tier.success", entity.pokemon.species.name, newTier.name)
+        }, false)
         return 1
     }
 
@@ -369,13 +445,13 @@ object WildBossCommands {
             BossRegistry.unregister(instance.entityUuid)
         }
 
-        ctx.source.sendSuccess({ Component.literal("Despawned $count boss(es) and cleared the registry.") }, false)
+        ctx.source.sendSuccess({ Component.translatable("wildbosses.command.killall.success", count) }, false)
         return count
     }
 
     // --- /wildbosses version ---
     private fun showVersion(ctx: CommandContext<CommandSourceStack>): Int {
-        ctx.source.sendSuccess({ Component.literal("WildBosses - see fabric.mod.json for version.") }, false)
+        ctx.source.sendSuccess({ Component.translatable("wildbosses.command.version") }, false)
         return 1
     }
 
@@ -390,7 +466,9 @@ object WildBossCommands {
         val onCooldown = cooldownData.isOnCooldown(player.uuid, currentTick)
 
         source.sendSuccess({
-            Component.literal(if (onCooldown) "You ARE on spawn cooldown." else "You are NOT on spawn cooldown.")
+            Component.translatable(
+                if (onCooldown) "wildbosses.command.cooldown.on" else "wildbosses.command.cooldown.off"
+            )
         }, false)
         return 1
     }

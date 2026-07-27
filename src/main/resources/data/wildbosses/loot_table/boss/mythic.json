@@ -223,11 +223,6 @@
           "type": "minecraft:item",
           "name": "cobblemon:park_ball",
           "weight": 1
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cobblemon:cherish_ball",
-          "weight": 1
         }
       ],
       "functions": [

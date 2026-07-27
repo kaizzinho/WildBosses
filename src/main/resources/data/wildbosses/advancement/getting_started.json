@@ -1,0 +1,25 @@
+{
+  "parent": "wildbosses:root",
+  "display": {
+    "icon": {
+      "id": "cobblemon:exp_candy_s"
+    },
+    "title": {
+      "translate": "advancements.wildbosses.getting_started.title"
+    },
+    "description": {
+      "translate": "advancements.wildbosses.getting_started.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "five_kills": {
+      "trigger": "wildbosses:boss_defeated",
+      "conditions": {
+        "min_kills": 5
+      }
+    }
+  }
+}
