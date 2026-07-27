@@ -1,11 +1,11 @@
 package com.kaizzinho.wildbosses.boss
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
 object BossLifecycleTicker {
 
-    private const val BOSS_LIFETIME_TICKS = 12000L // 10 minutos
     private const val CHECK_INTERVAL_TICKS = 20L
 
     private var tickCounter = 0L
@@ -17,7 +17,7 @@ object BossLifecycleTicker {
 
             val currentTick = server.overworld().gameTime
             val expired = BossRegistry.allBosses().filter { instance ->
-                currentTick - instance.spawnedAtTick >= BOSS_LIFETIME_TICKS
+                currentTick - instance.spawnedAtTick >= WildBossesConfig.data.bossLifetimeTicks
             }
 
             for (instance in expired) {
@@ -34,9 +34,6 @@ object BossLifecycleTicker {
                     found.discard()
                 }
 
-                // Remove the tier's glow-team membership. This works purely off the string
-                // UUID, so it's safe even in the "entity already gone" branch above - team
-                // membership isn't tied to a live entity reference.
                 server.scoreboard.removePlayerFromTeam(instance.entityUuid.toString())
 
                 BossRegistry.unregister(instance.entityUuid)

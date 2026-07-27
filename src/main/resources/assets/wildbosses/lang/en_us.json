@@ -48,8 +48,6 @@
   "wildbosses.command.error.not_a_boss": "That entity is not a WildBosses boss.",
   "wildbosses.command.error.invalid_tier": "Invalid tier. Valid tiers: uncommon, rare, epic, legendary, mythic.",
   "wildbosses.command.spawn.success": "Spawned a %s boss (%s) at your location.",
-  "wildbosses.command.testmega.no_item": "No item found for mega_showdown:%s",
-  "wildbosses.command.testmega.success": "Gave %s mega_showdown:%s - now force-battle it to test.",
   "wildbosses.command.list.empty": "No active bosses.",
   "wildbosses.command.list.header": "Active bosses (%s):",
   "wildbosses.command.list.entry": "- %s [%s] %s uuid=%s",
@@ -89,5 +87,7 @@
   "wildbosses.help.help": "Shows this list.",
   "wildbosses.help.cooldown": "Checks whether you're currently on boss-spawn cooldown.",
   "wildbosses.help.leaderboard": "Shows the top 10 boss hunters overall, or for a specific tier.",
-  "wildbosses.label.boss_full": "%s Boss %s Lv. ??"
+  "wildbosses.label.boss_full": "%s Boss %s Lv. ??",
+  "wildbosses.help.reloadconfig": "Re-reads config/wildbosses/wildbosses.json without restarting the server.",
+  "wildbosses.command.reloadconfig.success": "Config reloaded from disk."
 }

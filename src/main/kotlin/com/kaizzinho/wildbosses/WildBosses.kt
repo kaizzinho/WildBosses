@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory
 import com.kaizzinho.wildbosses.event.ModEvents
 import com.cobblemon.mod.common.Cobblemon
 import com.kaizzinho.wildbosses.advancement.WildBossCriteria
+import com.kaizzinho.wildbosses.boss.BossTier
 //import net.minecraft.core.registries.BuiltInRegistries
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 //import java.io.File
 import com.kaizzinho.wildbosses.boss.WildBossEntityData
-
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 
 
 object WildBosses : ModInitializer {
@@ -19,13 +20,8 @@ object WildBosses : ModInitializer {
 	override fun onInitialize() {
 		logger.info("[WildBosses] Initializing Boss System...")
 
-		// Force WildBossEntityData's defineId() calls to run now, before Cobblemon constructs
-		// its first PokemonEntity (the dummy Showdown warm-up battle). Kotlin objects only
-		// initialize on first reference - our mixin previously only touched these fields deep
-		// inside PokemonEntity's own defineSynchedData() chain, which was too late: the synced
-		// data array's capacity gets locked in before that point, causing an
-		// ArrayIndexOutOfBoundsException the first time our IDs tried to claim a slot.
 		WildBossEntityData.IS_BOSS
+		WildBossesConfig.data // force early load, ensures config/wildbosses/wildbosses.json exists at boot
 		WildBossCriteria.register()
 
 		ModEvents.register()

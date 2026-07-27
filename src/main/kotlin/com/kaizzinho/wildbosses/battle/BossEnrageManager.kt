@@ -5,14 +5,13 @@ import com.cobblemon.mod.common.battles.ShowdownInterpreter
 import com.cobblemon.mod.common.battles.actor.PokemonBattleActor
 import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossTier
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import java.util.UUID
 
 object BossEnrageManager {
-
-    private const val ENRAGE_INTERVAL = 8 // enrages at turn 8, 16, 24, 32... warns one turn before each
 
     private data class TrackedBattle(
         val battle: PokemonBattle,
@@ -31,10 +30,6 @@ object BossEnrageManager {
         trackedBattles.remove(bossEntityUuid)
     }
 
-    /**
-     * Whether this boss enraged at least once during the current battle. Must be read BEFORE
-     * stopTracking() is called, since that clears the tracking entry entirely.
-     */
     fun hasEnraged(bossEntityUuid: UUID): Boolean =
         trackedBattles[bossEntityUuid]?.hasEnragedAtLeastOnce == true
 
@@ -42,13 +37,15 @@ object BossEnrageManager {
         ServerTickEvents.END_SERVER_TICK.register {
             if (trackedBattles.isEmpty()) return@register
 
+            val interval = WildBossesConfig.data.enrageIntervalTurns
+
             for ((_, tracked) in trackedBattles) {
                 val currentTurn = tracked.battle.turn
                 if (currentTurn == tracked.lastProcessedTurn || currentTurn <= 0) continue
                 tracked.lastProcessedTurn = currentTurn
 
-                when (currentTurn % ENRAGE_INTERVAL) {
-                    ENRAGE_INTERVAL - 1 -> sendEnrageWarning(tracked)
+                when (currentTurn % interval) {
+                    interval - 1 -> sendEnrageWarning(tracked)
                     0 -> triggerEnrage(tracked, currentTurn)
                 }
             }
@@ -63,8 +60,6 @@ object BossEnrageManager {
         )
     }
 
-
-
     private fun triggerEnrage(tracked: TrackedBattle, currentTurn: Int) {
         val slot = "a"
         val pokemonUuid = tracked.wildActor.pokemon.effectedPokemon.uuid
@@ -72,25 +67,27 @@ object BossEnrageManager {
 
         val displayName = tracked.wildActor.pokemon.effectedPokemon.species.name
 
+        // Fixed: was incorrectly sending the "warning" key here instead of "trigger" - the
+        // actual enrage moment was announcing itself with the same text as the pre-warning.
         tracked.battle.broadcastChatMessage(
-            Component.translatable("wildbosses.enrage.warning", displayName)
-                .withStyle(tracked.tier.color, ChatFormatting.ITALIC)
+            Component.translatable("wildbosses.enrage.trigger", displayName)
+                .withStyle(tracked.tier.color, ChatFormatting.BOLD)
         )
+
+        val stages = WildBossesConfig.data.enrageStatStages
         val rawMessage = buildString {
             append("update\n")
-            append("|-boost|$identifier|atk|1\n")
-            append("|-boost|$identifier|def|1\n")
-            append("|-boost|$identifier|spa|1\n")
-            append("|-boost|$identifier|spd|1\n")
-            append("|-boost|$identifier|spe|1")
+            append("|-boost|$identifier|atk|$stages\n")
+            append("|-boost|$identifier|def|$stages\n")
+            append("|-boost|$identifier|spa|$stages\n")
+            append("|-boost|$identifier|spd|$stages\n")
+            append("|-boost|$identifier|spe|$stages")
         }
 
         try {
             ShowdownInterpreter.interpret(tracked.battle, rawMessage)
             tracked.hasEnragedAtLeastOnce = true
-            //WildBosses.logger.info("[WildBosses] Boss $displayName enraged at turn $currentTurn (identifier: $identifier)")
         } catch (_: Exception) {
-            //WildBosses.logger.error("[WildBosses] Failed to trigger enrage for $displayName at turn $currentTurn (identifier: $identifier)", e)
         }
     }
 }

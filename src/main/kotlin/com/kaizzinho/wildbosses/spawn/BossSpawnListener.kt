@@ -14,25 +14,17 @@ import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.kaizzinho.wildbosses.boss.BossEvolutionResolver
 import com.kaizzinho.wildbosses.boss.BossMessageFormat
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.minecraft.server.level.ServerLevel
 
 
 
 object BossSpawnListener {
-    private const val BOSS_SPAWN_CHANCE = 1.0/20
-    private const val SPAWN_COOLDOWN_TICKS = 6000L // 5 minutes - adjust as desired
-
-    private val EXCLUDED_SPECIES_LABELS = setOf("legendary", "mythical", "ultra_beast")
-    private val PERFECT_IV_TIERS = setOf(BossTier.EPIC, BossTier.LEGENDARY, BossTier.MYTHIC)
-    private val SHINY_CHANCE = mapOf(
-        BossTier.LEGENDARY to 0.25,
-        BossTier.MYTHIC to 0.45
-    )
 
     fun register() {
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
             val entity: PokemonEntity = event.entity
-            if (Random.nextDouble() < BOSS_SPAWN_CHANCE) {
+            if (Random.nextDouble() < WildBossesConfig.data.bossSpawnChance) {
                 promoteToBoss(entity)
             }
         }
@@ -49,13 +41,13 @@ object BossSpawnListener {
 
     private fun applyBossStats(entity: PokemonEntity, tier: BossTier) {
         val properties = PokemonProperties()
+        val tierConfig = WildBossesConfig.tier(tier.name)
 
-        if (tier in PERFECT_IV_TIERS) {
+        if (tierConfig.guaranteedPerfectIVs) {
             properties.minPerfectIVs = 6
         }
 
-        val shinyChance = SHINY_CHANCE[tier]
-        if (shinyChance != null && Random.nextDouble() < shinyChance) {
+        if (Random.nextDouble() < tierConfig.shinyChance) {
             properties.shiny = true
         }
 
@@ -78,7 +70,7 @@ object BossSpawnListener {
         if (entity.tags.contains("wildbosses:is_boss")) return
 
         val speciesLabels = entity.pokemon.species.labels
-        if (speciesLabels.any { it in EXCLUDED_SPECIES_LABELS }) return
+        if (speciesLabels.any { it in WildBossesConfig.data.excludedSpeciesLabels }) return
 
         val level = entity.level() as? ServerLevel ?: return
 
@@ -150,7 +142,7 @@ object BossSpawnListener {
         BossRegistry.register(entity, tier, currentTick)
         announceSpawn(entity, tier, targetPlayer)
 
-        cooldownData.startCooldown(targetPlayer.uuid, currentTick, SPAWN_COOLDOWN_TICKS)
+        cooldownData.startCooldown(targetPlayer.uuid, currentTick, WildBossesConfig.data.spawnCooldownTicks)
 
     }
 }

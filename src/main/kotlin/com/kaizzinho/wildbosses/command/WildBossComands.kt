@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossTier
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 import com.kaizzinho.wildbosses.spawn.BossSpawnListener
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -25,8 +26,6 @@ object WildBossCommands {
     private val NOT_A_BOSS = SimpleCommandExceptionType(Component.translatable("wildbosses.command.error.not_a_boss"))
     private val INVALID_TIER = SimpleCommandExceptionType(Component.translatable("wildbosses.command.error.invalid_tier"))
 
-    // Command SYNTAX stays untranslated (command names are the same in every language);
-    // only the human-readable description is translated, via its lang key.
     private data class HelpEntry(val usage: String, val descriptionKey: String)
 
     private val HELP_ENTRIES = listOf(
@@ -39,6 +38,7 @@ object WildBossCommands {
         HelpEntry("/wb loot <tier>", "wildbosses.help.loot"),
         HelpEntry("/wb setlevel <target> <level>", "wildbosses.help.setlevel"),
         HelpEntry("/wb reload", "wildbosses.help.reload"),
+        HelpEntry("/wb reloadconfig", "wildbosses.help.reloadconfig"),
         HelpEntry("/wb glow <target>", "wildbosses.help.glow"),
         HelpEntry("/wb tier <target> <tier>", "wildbosses.help.tier"),
         HelpEntry("/wb killall", "wildbosses.help.killall"),
@@ -130,6 +130,10 @@ object WildBossCommands {
                         .requires { it.hasPermission(2) }
                         .executes { ctx -> reloadDatapacks(ctx) }
                     )
+                    .then(Commands.literal("reloadconfig")
+                        .requires { it.hasPermission(2) }
+                        .executes { ctx -> reloadConfig(ctx) }
+                    )
                     .then(Commands.literal("glow")
                         .requires { it.hasPermission(2) }
                         .then(Commands.argument("target", EntityArgument.entity())
@@ -150,14 +154,6 @@ object WildBossCommands {
                     )
                     .then(Commands.literal("version")
                         .executes { ctx -> showVersion(ctx) }
-                    )
-                    .then(Commands.literal("testmega")
-                        .requires { it.hasPermission(2) }
-                        .then(Commands.argument("target", EntityArgument.entity())
-                            .then(Commands.argument("stoneId", StringArgumentType.word())
-                                .executes { ctx -> testMegaStone(ctx) }
-                            )
-                        )
                     )
             )
             dispatcher.register(
@@ -191,28 +187,6 @@ object WildBossCommands {
 
         source.sendSuccess({
             Component.translatable("wildbosses.command.spawn.success", tier.name, entity.pokemon.species.name)
-        }, false)
-        return 1
-    }
-
-    // --- /wildbosses testmega <target> <stoneId> --- TEMPORARY, for verifying MegaShowdown integration
-    private fun testMegaStone(ctx: CommandContext<CommandSourceStack>): Int {
-        val entity = getBossEntity(ctx)
-        val stoneId = StringArgumentType.getString(ctx, "stoneId")
-
-        val itemLocation = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("mega_showdown", stoneId)
-        val item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemLocation)
-
-        if (item == net.minecraft.world.item.Items.AIR) {
-            ctx.source.sendFailure(Component.translatable("wildbosses.command.testmega.no_item", stoneId))
-            return 0
-        }
-
-        val stack = net.minecraft.world.item.ItemStack(item)
-        entity.pokemon.swapHeldItem(stack, false, false)
-
-        ctx.source.sendSuccess({
-            Component.translatable("wildbosses.command.testmega.success", entity.pokemon.species.name, stoneId)
         }, false)
         return 1
     }
@@ -386,11 +360,18 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses reload --- (mirrors vanilla's own /reload command)
+    // --- /wildbosses reload --- (mirrors vanilla's own /reload command - datapacks/loot tables)
     private fun reloadDatapacks(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         source.server.reloadResources(source.server.worldData.dataConfiguration.dataPacks().enabled)
         source.sendSuccess({ Component.translatable("wildbosses.command.reload.success") }, false)
+        return 1
+    }
+
+    // --- /wildbosses reloadconfig --- (re-reads config/wildbosses/wildbosses.json without a restart)
+    private fun reloadConfig(ctx: CommandContext<CommandSourceStack>): Int {
+        WildBossesConfig.reload()
+        ctx.source.sendSuccess({ Component.translatable("wildbosses.command.reloadconfig.success") }, false)
         return 1
     }
 

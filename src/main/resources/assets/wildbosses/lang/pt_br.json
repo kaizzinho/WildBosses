@@ -48,8 +48,6 @@
   "wildbosses.command.error.not_a_boss": "Essa entidade não é um chefe do WildBosses.",
   "wildbosses.command.error.invalid_tier": "Tier inválido. Tiers válidos: uncommon, rare, epic, legendary, mythic.",
   "wildbosses.command.spawn.success": "Chefe %s (%s) invocado na sua localização.",
-  "wildbosses.command.testmega.no_item": "Nenhum item encontrado para mega_showdown:%s",
-  "wildbosses.command.testmega.success": "Deu %s mega_showdown:%s - agora force uma batalha para testar.",
   "wildbosses.command.list.empty": "Nenhum chefe ativo.",
   "wildbosses.command.list.header": "Chefes ativos (%s):",
   "wildbosses.command.list.entry": "- %s [%s] %s uuid=%s",
@@ -89,5 +87,7 @@
   "wildbosses.help.help": "Mostra esta lista.",
   "wildbosses.help.cooldown": "Verifica se você está em cooldown de spawn de chefes.",
   "wildbosses.help.leaderboard": "Mostra os 10 melhores caçadores de chefes no geral, ou de um tier específico.",
-  "wildbosses.label.boss_full": "Chefe %s %s Nv. ??"
+  "wildbosses.label.boss_full": "Chefe %s %s Nv. ??",
+  "wildbosses.help.reloadconfig": "Recarrega config/wildbosses/wildbosses.json sem reiniciar o servidor.",
+	"wildbosses.command.reloadconfig.success": "Configuração recarregada do disco."
 }

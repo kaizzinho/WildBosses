@@ -17,6 +17,7 @@ import com.kaizzinho.wildbosses.boss.BossInstance
 import com.kaizzinho.wildbosses.boss.BossMessageFormat
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossTier
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.minecraft.ChatFormatting
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -32,8 +33,6 @@ import net.minecraft.world.item.ItemStack
 
 
 object BattleTierScalingListener {
-
-    private const val MAX_LEVEL = 200
 
     private val battleAIField = AIBattleActor::class.java.getDeclaredField("battleAI").apply { isAccessible = true }
 
@@ -59,21 +58,17 @@ object BattleTierScalingListener {
     private val CONDITIONAL_FAIL_MOVES = setOf(
         "dreameater", "lastresort", "synchronoise", "focuspunch",
         "counter", "mirrorcoat", "metalburst", "bide",
-        "hiddenpower" // effective type depends on IVs, not fixed - our type-bucketing/STAB logic
-        // reads the raw template type, which would be wrong for this move specifically
+        "hiddenpower"
     )
 
     private val SELF_NERFING_MOVES = setOf(
-        // -2 stage self-debuff on use
         "dracometeor", "leafstorm", "overheat", "psychoboost", "fleurcannon",
-        // -1 stage self-debuff on use
         "superpower", "closecombat", "vcreate"
     )
 
     private val BLACKLISTED_MOVESET_SPECIES = setOf(
-        "ditto",   // Transform is its only real move - already caught by the empty-candidate
-        // guard below, blacklisted explicitly anyway for clarity/documentation
-        "smeargle" // same situation, Sketch is status-category and its only natural move
+        "ditto",
+        "smeargle"
     )
 
     fun register() {
@@ -111,7 +106,7 @@ object BattleTierScalingListener {
             }
 
             val tier = bossInstance.tier
-            val scaledLevel = (highestPlayerLevel + tier.levelBonus).coerceAtMost(MAX_LEVEL)
+            val scaledLevel = (highestPlayerLevel + tier.levelBonus).coerceAtMost(WildBossesConfig.data.maxScaledLevel)
 
             val bossPokemon = bossEntity.pokemon
             bossPokemon.level = scaledLevel
@@ -138,17 +133,11 @@ object BattleTierScalingListener {
                     )
             )
             player.sendSystemMessage(chatMessage)
-
-//            WildBosses.logger.info(
-//                "[WildBosses] Scaled ${tier.name} boss ${bossPokemon.species.name} to level $scaledLevel " +
-//                        "(player highest: $highestPlayerLevel, tier bonus: +${tier.levelBonus}, AI skill: ${tier.aiSkill})"
-//            )
         }
     }
 
     private fun applyDamagingMoveset(bossPokemon: Pokemon) {
         if (bossPokemon.species.showdownId() in BLACKLISTED_MOVESET_SPECIES) {
-            //WildBosses.logger.info("[WildBosses] Skipping moveset curation for ${bossPokemon.species.name} (blacklisted)")
             return
         }
         val favorsPhysical = Cobblemon.statProvider.getStatForPokemon(bossPokemon, Stats.ATTACK) >=
@@ -174,8 +163,6 @@ object BattleTierScalingListener {
             return
         }
 
-        // Hard filter to the boss's stronger attacking category - a real Alakazam/Jolteon
-        // will never see an off-category move like Double-Edge slip in anymore.
         val favoredCandidates = allCandidates.filter { it.damageCategory == favoredCategory }
 
         fun bestPerType(pool: List<com.cobblemon.mod.common.api.moves.MoveTemplate>) =
@@ -183,7 +170,6 @@ object BattleTierScalingListener {
 
         val selected = bestPerType(favoredCandidates).sortedByDescending { it.power }.take(4).toMutableList()
 
-        // Guarantee at least one STAB move within the favored category if the boss has one.
         val hasStab = selected.any { it.elementalType in bossTypes }
         if (!hasStab) {
             val bestStab = bestPerType(favoredCandidates).filter { it.elementalType in bossTypes }.maxByOrNull { it.power }
@@ -195,9 +181,6 @@ object BattleTierScalingListener {
             }
         }
 
-        // Backfill from the OTHER category only if the favored category genuinely didn't have
-        // enough distinct-type options to fill all 4 slots - rare, but avoids stranding a
-        // category-poor species with too few moves.
         if (selected.size < 4) {
             val usedTypes = selected.map { it.elementalType }.toSet()
             val backfill = bestPerType(allCandidates.filter { it.damageCategory != favoredCategory })
@@ -205,9 +188,6 @@ object BattleTierScalingListener {
                 .sortedByDescending { it.power }
                 .take(4 - selected.size)
             selected.addAll(backfill)
-            //if (backfill.isNotEmpty()) {
-            //WildBosses.logger.info("[WildBosses] ${bossPokemon.species.name} needed ${backfill.size} off-category backfill move(s) to reach 4")
-            // }
         }
 
         val finalMoves = selected.sortedByDescending { it.power }.map { it.name }
@@ -224,22 +204,17 @@ object BattleTierScalingListener {
     }
 
     private fun applyMegaEvolutionIfEligible(bossEntity: PokemonEntity, bossInstance: BossInstance) {
-        val chance = when (bossInstance.tier) {
-            BossTier.LEGENDARY -> 0.50
-            BossTier.MYTHIC -> 1.0
-            else -> return // only Legendary/Mythic eligible at all
-        }
+        val chance = WildBossesConfig.tier(bossInstance.tier.name).megaEvolutionChance
+        if (chance <= 0.0) return
 
         val bossPokemon = bossEntity.pokemon
         val eligibleEntries = MegaEvolutionManager.getEligibleEntries(bossPokemon.species.name)
-        //WildBosses.logger.info("[WildBosses] Mega eligibility check for ${bossPokemon.species.name}: ${eligibleEntries.size} entries found")
         if (eligibleEntries.isEmpty()) return
         if (kotlin.random.Random.nextDouble() >= chance) return
 
         val chosen = eligibleEntries.random()
         val item = BuiltInRegistries.ITEM.get(chosen.itemId)
         if (item == Items.AIR) {
-            //  WildBosses.logger.warn("[WildBosses] Mega stone item ${chosen.itemId} not found in registry - skipping mega evolution for ${bossPokemon.species.name}")
             return
         }
 
@@ -248,8 +223,6 @@ object BattleTierScalingListener {
         bossPokemon.heldItemVisible = false
         bossInstance.megaStoneItemId = chosen.itemId
         MegaEvolutionManager.markPendingMegaTrigger(bossEntity.uuid)
-
-        //WildBosses.logger.info("[WildBosses] Boss ${bossPokemon.species.name} given ${chosen.itemId}, queued to Mega Evolve turn 1 (${chosen.showdownId})")
     }
 
     private fun announceBattleEngage(entity: PokemonEntity, player: ServerPlayer, tier: BossTier) {
