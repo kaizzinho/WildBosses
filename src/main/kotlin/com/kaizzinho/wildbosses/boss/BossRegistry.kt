@@ -15,19 +15,21 @@ data class BossInstance(
     var lastKnownPos: Vec3? = null,
     var lastKnownLevel: ServerLevel? = null,
     var speciesName: String? = null,
-    var megaStoneItemId: ResourceLocation? = null // set if this boss Mega Evolved this fight
+    var megaStoneItemId: ResourceLocation? = null,
+    var defeated: Boolean = false
 )
 
 object BossRegistry {
-    private val activeBosses = mutableMapOf<UUID, BossInstance>()          // keyed by entity UUID
-    private val byPokemonUuid = mutableMapOf<UUID, BossInstance>()          // keyed by Pokémon's own internal UUID
+    private val activeBosses = mutableMapOf<UUID, BossInstance>()
+    private val byPokemonUuid = mutableMapOf<UUID, BossInstance>()
 
     fun register(entity: PokemonEntity, tier: BossTier, currentTick: Long) {
         val instance = BossInstance(
             entityUuid = entity.uuid,
             pokemonUuid = entity.pokemon.uuid,
             tier = tier,
-            spawnedAtTick = currentTick
+            spawnedAtTick = currentTick,
+            speciesName = entity.pokemon.species.name
         )
         activeBosses[entity.uuid] = instance
         byPokemonUuid[entity.pokemon.uuid] = instance

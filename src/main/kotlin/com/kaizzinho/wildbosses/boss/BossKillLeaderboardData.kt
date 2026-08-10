@@ -20,7 +20,7 @@ class BossKillLeaderboardData : SavedData() {
 
     fun recordKill(playerUuid: UUID, playerName: String, tier: BossTier) {
         val record = records.getOrPut(playerUuid) { KillRecord(playerName) }
-        record.playerName = playerName // keep it fresh in case the player changed their name
+        record.playerName = playerName
         record.killsByTier[tier.name] = (record.killsByTier[tier.name] ?: 0) + 1
         setDirty()
     }

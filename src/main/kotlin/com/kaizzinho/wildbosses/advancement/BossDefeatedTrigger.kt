@@ -9,11 +9,6 @@ import net.minecraft.advancements.critereon.SimpleCriterionTrigger
 import net.minecraft.server.level.ServerPlayer
 import java.util.Optional
 
-/**
- * Everything known about a boss defeat, gathered at the moment the player wins.
- * A single trigger carrying all of this lets one criterion power nearly every
- * WildBosses achievement - each advancement JSON just specifies which fields it cares about.
- */
 data class BossDefeatedContext(
     val tier: BossTier,
     val wasShiny: Boolean,
@@ -32,8 +27,6 @@ class BossDefeatedTrigger : SimpleCriterionTrigger<BossDefeatedTrigger.Instance>
     }
 
     data class Instance(
-        // NOT named "player" - Kotlin would generate a getPlayer() that clashes with the
-        // SimpleInstance interface's own player() method, causing an overload ambiguity.
         val playerPredicate: Optional<ContextAwarePredicate>,
         val tier: Optional<String>,
         val shiny: Optional<Boolean>,

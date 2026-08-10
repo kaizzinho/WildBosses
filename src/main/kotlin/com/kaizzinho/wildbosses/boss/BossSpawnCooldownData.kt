@@ -9,7 +9,6 @@ import java.util.UUID
 
 class BossSpawnCooldownData : SavedData() {
 
-    // player UUID -> game tick their cooldown expires at
     private val cooldowns = mutableMapOf<UUID, Long>()
 
     fun isOnCooldown(playerUuid: UUID, currentTick: Long): Boolean {
@@ -37,7 +36,7 @@ class BossSpawnCooldownData : SavedData() {
 
     companion object {
         private const val DATA_NAME = "wildbosses_spawn_cooldowns"
-        private const val COMPOUND_TAG_TYPE_ID = 10 // NBT type ID for CompoundTag - stable across all Minecraft versions
+        private const val COMPOUND_TAG_TYPE_ID = 10
 
         private val FACTORY = Factory(
             { BossSpawnCooldownData() },

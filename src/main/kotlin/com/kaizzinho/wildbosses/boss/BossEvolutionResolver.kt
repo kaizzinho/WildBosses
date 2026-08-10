@@ -9,13 +9,7 @@ object BossEvolutionResolver {
 
     data class ResolvedForm(val species: Species, val form: FormData)
 
-    /**
-     * Walks the evolution line to a random final form, respecting the STARTING
-     * form throughout (e.g. Alolan Rattata correctly walks to Alolan Raticate,
-     * not base Raticate). Branches (Eevee, Poliwhirl, etc.) resolve via flat
-     * random choice among all reachable next forms - no weighting.
-     * Returns the starting species/form unchanged if already final-stage.
-     */
+
     fun resolveFinalForm(startingSpecies: Species, startingForm: FormData): ResolvedForm {
         var currentSpecies = startingSpecies
         var currentForm = startingForm
@@ -43,7 +37,7 @@ object BossEvolutionResolver {
 
             val (nextSpecies, nextForm) = nextOptions.random()
             val key = "${nextSpecies.name}:${nextForm.name}"
-            if (key in visited) return ResolvedForm(currentSpecies, currentForm) // cycle guard
+            if (key in visited) return ResolvedForm(currentSpecies, currentForm)
             visited.add(key)
             currentSpecies = nextSpecies
             currentForm = nextForm

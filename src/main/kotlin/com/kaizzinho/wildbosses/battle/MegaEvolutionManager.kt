@@ -1,7 +1,6 @@
 package com.kaizzinho.wildbosses.battle
 
 import com.google.gson.JsonParser
-//import com.kaizzinho.wildbosses.WildBosses
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
@@ -10,7 +9,7 @@ import java.util.UUID
 
 data class MegaStoneEntry(
     val showdownId: String,
-    val featureValue: String, // "mega", "mega_x", "mega_y", etc.
+    val featureValue: String,
     val itemId: ResourceLocation
 )
 
@@ -18,9 +17,7 @@ object MegaEvolutionManager {
 
     private val megaStonesBySpecies: MutableMap<String, MutableList<MegaStoneEntry>> = mutableMapOf()
 
-    // Bosses queued to Mega Evolve on their first turn - set by BattleTierScalingListener
-    // right after giving the boss its held stone, consumed once by MegaTriggeringAI when it
-    // stamps the "mega" gimmick flag onto the AI's first chosen move.
+    // Mega rides the first queued move.
     private val pendingMegaTrigger = mutableSetOf<UUID>()
 
     fun register() {
@@ -40,7 +37,7 @@ object MegaEvolutionManager {
                     val speciesList = json.getAsJsonArray("pokemons").map { it.asString.lowercase() }
                     val aspectString = json.getAsJsonObject("aspect_conditions")
                         .getAsJsonObject("apply")
-                        .getAsJsonArray("aspects")[0].asString // e.g. "mega_evolution=mega_x"
+                        .getAsJsonArray("aspects")[0].asString
                     val featureValue = aspectString.substringAfter("=")
 
                     val fileName = location.path.substringAfterLast("/").removeSuffix(".json")
@@ -57,11 +54,9 @@ object MegaEvolutionManager {
                     }
                 }
             } catch (_: Exception) {
-               // WildBosses.logger.warn("[WildBosses] Failed to parse mega stone data at $location", e)
             }
         }
 
-        //WildBosses.logger.info("[WildBosses] Loaded mega evolution data for ${megaStonesBySpecies.size} species")
     }
 
     fun getEligibleEntries(speciesName: String): List<MegaStoneEntry> =

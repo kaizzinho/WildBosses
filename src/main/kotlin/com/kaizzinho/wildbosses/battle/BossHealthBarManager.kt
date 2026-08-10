@@ -11,25 +11,14 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.BossEvent
 import java.util.UUID
 
-/**
- * Manages a ServerBossEvent (the Ender Dragon/Wither-style bar) per active boss fight.
- * Scoped strictly to the single player actually engaged in that fight - never shown to
- * anyone else, and removed the instant that specific fight ends (win, loss, or flee).
- */
 object BossHealthBarManager {
 
-    // Disabled - Cobblemon's own battle GUI already shows HP as a percentage bar,
-    // making this redundant. Flip back to true to re-enable.
     private const val ENABLED = false
 
-    private const val UPDATE_INTERVAL_TICKS = 2L // once per second is plenty for an HP bar
+    private const val UPDATE_INTERVAL_TICKS = 2L
 
     private data class ActiveBar(val bar: ServerBossEvent, val bossEntityUuid: UUID)
 
-    // keyed by boss entity UUID - the one identifier that survives across BATTLE_STARTED_PRE,
-    // BATTLE_FLED, and both branches of BATTLE_VICTORY without needing a live entity reference
-    // to remove an entry (the boss entity may already be gone by the time we need to clean up,
-    // same issue we solved for loot awarding).
     private val activeBars = mutableMapOf<UUID, ActiveBar>()
     private var tickCounter = 0L
 
@@ -50,7 +39,6 @@ object BossHealthBarManager {
     fun start(bossEntity: PokemonEntity, player: ServerPlayer, tier: BossTier, level: Int) {
         if (!ENABLED) return
 
-        // Guard against double-starting if this somehow fires twice for the same fight.
         activeBars[bossEntity.uuid]?.let { end(bossEntity.uuid) }
 
         val bar = ServerBossEvent(

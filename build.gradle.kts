@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	id("java")
-	id("dev.architectury.loom") version("1.11-SNAPSHOT")
-	id("architectury-plugin") version("3.4-SNAPSHOT")
+	id("dev.architectury.loom") version("1.13.469")
+	id("architectury-plugin") version("3.4.164")
 	kotlin("jvm") version("2.2.20")
 }
 
@@ -29,6 +29,8 @@ loom {
 repositories {
 	mavenCentral()
 	maven("https://artefacts.cobblemon.com/releases/")
+	maven("https://maven.terraformersmc.com/releases/")
+	maven("https://maven.isxander.dev/releases/")
 	exclusiveContent {
 		forRepository {
 			maven("https://api.modrinth.com/maven") { name = "Modrinth" }
@@ -49,7 +51,9 @@ dependencies {
 	modImplementation(fabricApi.module("fabric-lifecycle-events-v1", "0.116.6+1.21.1"))
 	modImplementation("net.fabricmc:fabric-language-kotlin:1.13.6+kotlin.2.2.20")
 
-	// Configuração oficial do Cobblemon via Architectury
+	modCompileOnly("com.terraformersmc:modmenu:11.0.3")
+	modCompileOnly("dev.isxander:yet-another-config-lib:3.8.1+1.21.1-fabric")
+
 	modCompileOnly("com.cobblemon:mod:1.7.3+1.21.1") { isTransitive = false }
 	modCompileOnly("maven.modrinth:cobblemon-mega-showdown:1.9.2+1.7.3+1.21.1-hotfix")
 	modImplementation("com.cobblemon:fabric:1.7.3+1.21.1")

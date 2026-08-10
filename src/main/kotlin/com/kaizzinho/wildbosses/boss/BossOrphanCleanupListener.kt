@@ -13,19 +13,13 @@ object BossOrphanCleanupListener {
 
             val existing = BossRegistry.get(entity.uuid)
             if (existing != null) {
-                // Already tracked in-memory (e.g. "Save and Quit to Title" then reloading the
-                // same world WITHOUT a full game restart - BossRegistry is a JVM-singleton
-                // object and survives that, but this PokemonEntity is a brand-new object
-                // reconstructed from saved NBT, so its synced entity data still resets to
-                // defaults regardless). Just restore the visible fields, leave the existing
-                // registration/timer alone.
                 entity.entityData.set(WildBossEntityData.IS_BOSS, true)
                 entity.entityData.set(WildBossEntityData.TIER, existing.tier.name)
+                BossDespawnAwareDespawner.install(entity)
                 return@register
             }
 
-            // Not tracked at all - genuine full restart, BossRegistry itself was wiped.
-            // Recover the tier from the surviving vanilla tag instead.
+            // Restart? Rebuild from the saved tier tag.
             val tierTag = entity.tags.firstOrNull { it.startsWith("wildbosses:tier_") }
             val tier = tierTag?.removePrefix("wildbosses:tier_")?.let { name ->
                 BossTier.entries.firstOrNull { it.name == name }
@@ -46,11 +40,8 @@ object BossOrphanCleanupListener {
             entity.entityData.set(WildBossEntityData.TIER, tier.name)
 
             BossRegistry.register(entity, tier, world.gameTime)
+            BossDespawnAwareDespawner.install(entity)
 
-            //WildBosses.logger.info(
-             //   "[WildBosses] Recovered ${tier.name} boss ${entity.pokemon.species.name} (uuid=${entity.uuid}) " +
-             //           "after server restart - re-registered with a fresh lifetime timer"
-            //)
         }
     }
 }

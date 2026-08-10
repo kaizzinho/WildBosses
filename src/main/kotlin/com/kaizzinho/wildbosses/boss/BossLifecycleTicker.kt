@@ -17,7 +17,8 @@ object BossLifecycleTicker {
 
             val currentTick = server.overworld().gameTime
             val expired = BossRegistry.allBosses().filter { instance ->
-                currentTick - instance.spawnedAtTick >= WildBossesConfig.data.bossLifetimeTicks
+                !instance.defeated &&
+                    currentTick - instance.spawnedAtTick >= WildBossesConfig.data.bossLifetimeTicks
             }
 
             for (instance in expired) {
@@ -30,12 +31,18 @@ object BossLifecycleTicker {
                     }
                 }
 
-                if (found != null && !found.isRemoved) {
-                    found.discard()
+                if (found == null || found.isRemoved) {
+                    continue
                 }
 
-                server.scoreboard.removePlayerFromTeam(instance.entityUuid.toString())
+                BossDepartureMessages.announceLifetimeExpired(
+                    server,
+                    instance,
+                    found.pokemon.species.name
+                )
+                found.discard()
 
+                server.scoreboard.removePlayerFromTeam(instance.entityUuid.toString())
                 BossRegistry.unregister(instance.entityUuid)
             }
         }

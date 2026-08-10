@@ -8,8 +8,11 @@ import com.cobblemon.mod.common.battles.actor.PlayerBattleActor
 import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.advancement.BossDefeatedContext
 import com.kaizzinho.wildbosses.advancement.WildBossCriteria
+import com.kaizzinho.wildbosses.api.WildBossLootAwardEvent
+import com.kaizzinho.wildbosses.api.WildBossLootEvents
 import com.kaizzinho.wildbosses.boss.BossInstance
 import com.kaizzinho.wildbosses.boss.BossKillLeaderboardData
+import com.kaizzinho.wildbosses.boss.BossDepartureMessages
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.MegaStoneGrantData
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
@@ -54,12 +57,10 @@ object BossBattleResultListener {
                 BossHealthBarManager.end(bossEntity.uuid)
                 BossEnrageManager.stopTracking(bossEntity.uuid)
 
-                // "Narrow Escape" achievement - fled a boss battle and lived.
                 val fleeingPlayer = event.battle.actors
                     .firstOrNull { it.type == ActorType.PLAYER } as? PlayerBattleActor
                 fleeingPlayer?.entity?.let { WildBossCriteria.BOSS_FLED.trigger(it) }
 
-                //WildBosses.logger.info("[WildBosses] Boss ${bossEntity.pokemon.species.name} HP reset after player fled")
             }
         }
 
@@ -72,7 +73,6 @@ object BossBattleResultListener {
                     revertMegaEvolution(bossEntity)
                     BossHealthBarManager.end(bossEntity.uuid)
                     BossEnrageManager.stopTracking(bossEntity.uuid)
-                    //WildBosses.logger.info("[WildBosses] Boss ${bossEntity.pokemon.species.name} HP reset after defeating the player")
                 }
                 return@subscribe
             }
@@ -90,17 +90,15 @@ object BossBattleResultListener {
                 return@subscribe
             }
 
-            // Capture achievement-relevant state BEFORE anything clears it - hasEnraged() reads
-            // from BossEnrageManager's tracking entry, which stopTracking() removes below, and
-            // the shiny/held-item state is read before we strip the mega stone.
             val didEnrage = BossEnrageManager.hasEnraged(bossInstance.entityUuid)
             val wasShiny = wildLoser.pokemon.effectedPokemon.shiny
             val didMegaEvolve = bossInstance.megaStoneItemId != null
 
+            bossInstance.defeated = true
+            BossDepartureMessages.announceDefeated(bossInstance, player)
+
             wildLoser.pokemon.effectedPokemon.swapHeldItem(ItemStack.EMPTY, decrement = false, aiCanDrop = false)
 
-            // Record the kill for the leaderboard (Pillar 22) - also feeds the count-based
-            // and "Full Set" achievements, which read from this same data.
             val overworld = player.serverLevel().server.overworld()
             BossKillLeaderboardData.get(overworld)
                 .recordKill(player.uuid, player.name.string, bossInstance.tier)
@@ -125,7 +123,6 @@ object BossBattleResultListener {
                     didEnrage
                 )
             )
-            //WildBosses.logger.info("[WildBosses] Queued loot award for ${bossInstance.speciesName} (${bossInstance.tier.name}), ready at tick ${currentTick + LOOT_AWARD_DELAY_TICKS}")
         }
 
         ServerTickEvents.END_SERVER_TICK.register { server ->
@@ -152,7 +149,6 @@ object BossBattleResultListener {
         StringSpeciesFeature("mega_evolution", "none").apply(pokemon)
         pokemon.swapHeldItem(ItemStack.EMPTY, decrement = false, aiCanDrop = false)
         pokemon.heldItemVisible = true
-        //WildBosses.logger.info("[WildBosses] Reverted mega evolution for boss ${pokemon.species.name}")
     }
 
     private fun cleanupStrayLoot(bossInstance: BossInstance) {
@@ -202,32 +198,44 @@ object BossBattleResultListener {
             .create(LootContextParamSets.EMPTY)
 
         val items = lootTable.getRandomItems(lootParams)
-        //WildBosses.logger.info("[WildBosses] Loot table boss/$tierName resolved ${items.size} item(s)")
 
         val recipient = server.playerList.getPlayer(playerUuid)
 
-        var lootLine: Component = BossMessageFormat.plain("")
-        items.forEachIndexed { index, stack ->
-            if (index > 0) lootLine = lootLine.copy()
-                .append(BossMessageFormat.plainKey("wildbosses.message.loot_separator"))
-            lootLine = lootLine.copy().append(BossMessageFormat.lootItem(stack))
-        }
+        val lootEvent = WildBossLootAwardEvent(
+            entityUuid = bossInstance.entityUuid,
+            player = recipient,
+            level = level,
+            position = pos,
+            speciesName = bossInstance.speciesName ?: "?",
+            tierName = tierName,
+            stacks = items.toList()
+        )
+        WildBossLootEvents.fire(lootEvent)
 
-        items.forEach { stack ->
-            if (recipient != null) {
-                recipient.inventory.add(stack)
-            } else {
-                level.addFreshEntity(ItemEntity(level, pos.x, pos.y, pos.z, stack))
+        if (!lootEvent.claimed) {
+            var lootLine: Component = BossMessageFormat.plain("")
+            items.forEachIndexed { index, stack ->
+                if (index > 0) lootLine = lootLine.copy()
+                    .append(BossMessageFormat.plainKey("wildbosses.message.loot_separator"))
+                lootLine = lootLine.copy().append(BossMessageFormat.lootItem(stack))
             }
-        }
 
-        if (recipient != null && items.isNotEmpty()) {
-            val message = BossMessageFormat.build(
-                BossMessageFormat.bossName(bossInstance.tier, bossInstance.speciesName ?: "?")
-                    .append(BossMessageFormat.plainKey("wildbosses.message.defeated_received"))
-                    .append(lootLine)
-            )
-            recipient.sendSystemMessage(message)
+            items.forEach { stack ->
+                if (recipient != null) {
+                    recipient.inventory.add(stack)
+                } else {
+                    level.addFreshEntity(ItemEntity(level, pos.x, pos.y, pos.z, stack))
+                }
+            }
+
+            if (recipient != null && items.isNotEmpty()) {
+                val message = BossMessageFormat.build(
+                    BossMessageFormat.bossName(bossInstance.tier, bossInstance.speciesName ?: "?")
+                        .append(BossMessageFormat.plainKey("wildbosses.message.defeated_received"))
+                        .append(lootLine)
+                )
+                recipient.sendSystemMessage(message)
+            }
         }
 
         val megaStoneItemId = bossInstance.megaStoneItemId
@@ -248,7 +256,6 @@ object BossBattleResultListener {
             }
         }
 
-        // Fire the achievement trigger last, once the leaderboard reflects this kill.
         if (recipient != null) {
             val leaderboard = BossKillLeaderboardData.get(server.overworld())
             WildBossCriteria.BOSS_DEFEATED.trigger(

@@ -20,10 +20,22 @@ object BossEnrageManager {
         var lastProcessedTurn: Int = -1,
         var hasEnragedAtLeastOnce: Boolean = false
     )
+
     private val trackedBattles = mutableMapOf<UUID, TrackedBattle>()
 
     fun startTracking(bossEntityUuid: UUID, battle: PokemonBattle, wildActor: PokemonBattleActor, tier: BossTier) {
+        if (tier == BossTier.UNCOMMON) {
+            if (WildBossesConfig.data.bossAiDebugLogging) {
+                WildBosses.logger.info("[BossEnrage][DEBUG] Disabled for ${wildActor.pokemon.effectedPokemon.species.name} tier=UNCOMMON")
+            }
+            return
+        }
+
         trackedBattles[bossEntityUuid] = TrackedBattle(battle, wildActor, tier)
+        WildBosses.logger.info(
+            "[BossEnrage] Active for ${wildActor.pokemon.effectedPokemon.species.name} tier=${tier.name} " +
+                "interval=${WildBossesConfig.data.enrageIntervalTurns} stages=+${WildBossesConfig.data.enrageStatStages}"
+        )
     }
 
     fun stopTracking(bossEntityUuid: UUID) {
@@ -64,11 +76,8 @@ object BossEnrageManager {
         val slot = "a"
         val pokemonUuid = tracked.wildActor.pokemon.effectedPokemon.uuid
         val identifier = "${tracked.wildActor.showdownId}$slot: $pokemonUuid"
-
         val displayName = tracked.wildActor.pokemon.effectedPokemon.species.name
 
-        // Fixed: was incorrectly sending the "warning" key here instead of "trigger" - the
-        // actual enrage moment was announcing itself with the same text as the pre-warning.
         tracked.battle.broadcastChatMessage(
             Component.translatable("wildbosses.enrage.trigger", displayName)
                 .withStyle(tracked.tier.color, ChatFormatting.BOLD)
@@ -87,7 +96,11 @@ object BossEnrageManager {
         try {
             ShowdownInterpreter.interpret(tracked.battle, rawMessage)
             tracked.hasEnragedAtLeastOnce = true
-        } catch (_: Exception) {
+            WildBosses.logger.info(
+                "[BossEnrage] Triggered for $displayName tier=${tracked.tier.name} turn=$currentTurn stages=+$stages"
+            )
+        } catch (e: Exception) {
+            WildBosses.logger.warn("[BossEnrage] Failed to apply Enrage to $displayName", e)
         }
     }
 }

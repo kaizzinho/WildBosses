@@ -8,14 +8,6 @@ import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.phys.AABB
 import java.util.UUID
 
-/**
- * Watches a boss for the ENTIRE duration of a battle, discarding any stray ItemEntity that
- * appears near it the instant it spawns. Cobblemon appears to grant a fainted wild Pokémon's
- * species-level default loot the moment its HP hits 0 mid-battle - well before BATTLE_VICTORY
- * fires (that only happens after the full recall/fog animation completes) - so reacting at
- * battle-end left the item visible for the whole animation. Actively polling every tick
- * catches it essentially the instant it appears, regardless of exactly when mid-fight it happens.
- */
 object StrayLootWatcher {
 
     private const val CHECK_INTERVAL_TICKS = 1L

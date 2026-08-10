@@ -13,6 +13,7 @@ import com.kaizzinho.wildbosses.boss.WildBossEntityData
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.kaizzinho.wildbosses.boss.BossEvolutionResolver
+import com.kaizzinho.wildbosses.boss.BossDespawnAwareDespawner
 import com.kaizzinho.wildbosses.boss.BossMessageFormat
 import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.minecraft.server.level.ServerLevel
@@ -74,11 +75,8 @@ object BossSpawnListener {
 
         val level = entity.level() as? ServerLevel ?: return
 
-        // Determine the target player BEFORE deciding whether to promote at all - the
-        // cooldown gates whether a boss spawns targeting this specific player, not whether
-        // any boss can exist near them (a friend's boss can still be engaged freely).
         val nearestPlayer = level.players().minByOrNull { it.distanceToSqr(entity) }
-            ?: return // no player nearby at all, nothing to target
+            ?: return
 
         val server = entity.server ?: return
         val overworld = server.overworld()
@@ -86,19 +84,13 @@ object BossSpawnListener {
 
         val cooldownData = BossSpawnCooldownData.get(overworld)
         if (cooldownData.isOnCooldown(nearestPlayer.uuid, currentTick)) {
-            return // this player is on cooldown - skip promotion, stays an ordinary wild spawn
+            return
         }
 
         val tier = BossTier.rollRandomTier()
         applyBossPromotion(entity, tier, nearestPlayer, cooldownData, currentTick)
     }
 
-    /**
-     * Applies full boss-promotion logic (evolution, stats, tags, glow, registry, announcement,
-     * cooldown) to an entity for a GIVEN tier, targeting a GIVEN player, bypassing the random
-     * roll and species blacklist. Used by /wildbosses spawn for testing - note this still
-     * respects and starts the target player's cooldown like a natural spawn would.
-     */
     fun forcePromote(
         entity: PokemonEntity,
         tier: BossTier,
@@ -140,6 +132,7 @@ object BossSpawnListener {
         entity.entityData.set(WildBossEntityData.TIER, tier.name)
         applyTierGlow(entity, tier)
         BossRegistry.register(entity, tier, currentTick)
+        BossDespawnAwareDespawner.install(entity)
         announceSpawn(entity, tier, targetPlayer)
 
         cooldownData.startCooldown(targetPlayer.uuid, currentTick, WildBossesConfig.data.spawnCooldownTicks)

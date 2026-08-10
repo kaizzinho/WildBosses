@@ -2,6 +2,7 @@ package com.kaizzinho.wildbosses.command
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossTier
 import com.kaizzinho.wildbosses.config.WildBossesConfig
@@ -171,7 +172,6 @@ object WildBossCommands {
         return entity
     }
 
-    // --- /wildbosses spawn <tier> [species] ---
     private fun spawnBoss(ctx: CommandContext<CommandSourceStack>, speciesOverride: String?, respectCooldown: Boolean): Int {
         val source = ctx.source
         val player = source.playerOrException
@@ -191,7 +191,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses list ---
     private fun listBosses(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         val bosses = BossRegistry.allBosses()
@@ -220,7 +219,6 @@ object WildBossCommands {
         return bosses.size
     }
 
-    // --- /wildbosses info <target> ---
     private fun bossInfo(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val instance = BossRegistry.get(entity.uuid) ?: throw NOT_A_BOSS.create()
@@ -239,7 +237,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses help ---
     private fun showHelp(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         source.sendSuccess({ Component.translatable("wildbosses.command.help.header") }, false)
@@ -257,7 +254,6 @@ object WildBossCommands {
         return HELP_ENTRIES.size
     }
 
-    // --- /wildbosses teleport <target> ---
     private fun teleportToBoss(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val player = ctx.source.playerOrException
@@ -268,7 +264,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses leaderboard [tier] ---
     private fun showLeaderboard(ctx: CommandContext<CommandSourceStack>, tierName: String?): Int {
         val source = ctx.source
         val overworld = source.server.overworld()
@@ -298,7 +293,6 @@ object WildBossCommands {
         return top.size
     }
 
-    // --- /wildbosses despawn <target> ---
     private fun despawnBoss(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val server = ctx.source.server
@@ -309,7 +303,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses forcebattle <target> ---
     private fun forceBattle(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val player = ctx.source.playerOrException
@@ -322,7 +315,6 @@ object WildBossCommands {
         return if (started) 1 else 0
     }
 
-    // --- /wildbosses loot <tier> --- (gives directly to inventory, bypasses combat entirely)
     private fun giveLoot(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         val player = source.playerOrException
@@ -345,7 +337,6 @@ object WildBossCommands {
         return items.size
     }
 
-    // --- /wildbosses setlevel <target> <level> ---
     private fun setBossLevel(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val level = IntegerArgumentType.getInteger(ctx, "level")
@@ -360,7 +351,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses reload --- (mirrors vanilla's own /reload command - datapacks/loot tables)
     private fun reloadDatapacks(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         source.server.reloadResources(source.server.worldData.dataConfiguration.dataPacks().enabled)
@@ -368,14 +358,13 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses reloadconfig --- (re-reads config/wildbosses/wildbosses.json without a restart)
     private fun reloadConfig(ctx: CommandContext<CommandSourceStack>): Int {
         WildBossesConfig.reload()
+        WildBosses.ensureCobblemonLevelCap()
         ctx.source.sendSuccess({ Component.translatable("wildbosses.command.reloadconfig.success") }, false)
         return 1
     }
 
-    // --- /wildbosses glow <target> ---
     private fun reapplyGlow(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val instance = BossRegistry.get(entity.uuid) ?: throw NOT_A_BOSS.create()
@@ -386,7 +375,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses tier <target> <tier> ---
     private fun setBossTier(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val newTier = parseTier(StringArgumentType.getString(ctx, "tier"))
@@ -407,7 +395,6 @@ object WildBossCommands {
         return 1
     }
 
-    // --- /wildbosses killall ---
     private fun killAllBosses(ctx: CommandContext<CommandSourceStack>): Int {
         val server = ctx.source.server
         val bosses = BossRegistry.allBosses().toList()
@@ -430,13 +417,11 @@ object WildBossCommands {
         return count
     }
 
-    // --- /wildbosses version ---
     private fun showVersion(ctx: CommandContext<CommandSourceStack>): Int {
         ctx.source.sendSuccess({ Component.translatable("wildbosses.command.version") }, false)
         return 1
     }
 
-    // --- /wildbosses cooldown ---
     private fun checkCooldown(ctx: CommandContext<CommandSourceStack>): Int {
         val source = ctx.source
         val player = source.playerOrException
