@@ -6,6 +6,7 @@
 		"PokemonEntityMixin"
 	],
 	"client": [
+		"client.EntityGlowMixin",
 		"client.PokemonEntityLabelMixin",
 		"client.PokemonRendererMixin"
 	],

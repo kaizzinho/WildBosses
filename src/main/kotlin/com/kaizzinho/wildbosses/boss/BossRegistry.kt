@@ -45,4 +45,9 @@ object BossRegistry {
     }
 
     fun allBosses(): Collection<BossInstance> = activeBosses.values
+
+    fun clear() {
+        activeBosses.clear()
+        byPokemonUuid.clear()
+    }
 }

@@ -9,7 +9,7 @@ import com.cobblemon.mod.common.battles.ShowdownActionResponse
 import com.cobblemon.mod.common.battles.ShowdownMoveset
 import java.util.UUID
 
-// Pick first, tag Mega after.
+// pick the move first then slap mega on it
 
 class MegaTriggeringAI(
     private val delegate: BattleAI,

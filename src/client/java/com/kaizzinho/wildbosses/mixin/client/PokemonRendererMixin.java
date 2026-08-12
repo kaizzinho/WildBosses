@@ -17,10 +17,18 @@ public abstract class PokemonRendererMixin {
 
     @Inject(method = "resolveBaseLabel", at = @At("HEAD"), cancellable = true, remap = false)
     private void wildbosses$resolveBossLabel(PokemonEntity entity, CallbackInfoReturnable<MutableComponent> cir) {
-        if (!entity.getEntityData().get(WildBossEntityData.IS_BOSS)) {
+        String tierName = entity.getEntityData().get(WildBossEntityData.TIER);
+        boolean syncedBoss = entity.getEntityData().get(WildBossEntityData.IS_BOSS);
+        if ((!syncedBoss || tierName == null || tierName.isBlank()) && entity.getTeam() != null) {
+            String teamName = entity.getTeam().getName();
+            if (teamName.startsWith("wildbosses_")) {
+                tierName = teamName.substring("wildbosses_".length()).toUpperCase();
+            }
+        }
+        if (tierName == null || tierName.isBlank()) {
             return;
         }
-        String tierName = entity.getEntityData().get(WildBossEntityData.TIER);
+
         BossTier tier;
         try {
             tier = BossTier.valueOf(tierName);

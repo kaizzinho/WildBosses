@@ -13,7 +13,9 @@ public abstract class PokemonEntityLabelMixin {
     @Inject(method = "labelLevel", at = @At("HEAD"), cancellable = true, remap = false)
     private void wildbosses$hideLevelForBosses(CallbackInfoReturnable<Integer> cir) {
         PokemonEntity self = (PokemonEntity) (Object) this;
-        if (self.getEntityData().get(WildBossEntityData.IS_BOSS)) {
+        boolean syncedBoss = self.getEntityData().get(WildBossEntityData.IS_BOSS);
+        String teamName = self.getTeam() != null ? self.getTeam().getName() : "";
+        if (syncedBoss || teamName.startsWith("wildbosses_")) {
             cir.setReturnValue(-1);
         }
     }

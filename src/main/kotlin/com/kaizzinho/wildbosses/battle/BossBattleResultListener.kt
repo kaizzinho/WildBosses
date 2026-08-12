@@ -13,6 +13,7 @@ import com.kaizzinho.wildbosses.api.WildBossLootEvents
 import com.kaizzinho.wildbosses.boss.BossInstance
 import com.kaizzinho.wildbosses.boss.BossKillLeaderboardData
 import com.kaizzinho.wildbosses.boss.BossDepartureMessages
+import com.kaizzinho.wildbosses.boss.BossPersistence
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.MegaStoneGrantData
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
@@ -51,16 +52,19 @@ object BossBattleResultListener {
                 ?: return@subscribe
             val bossEntity = wildActor.entity ?: return@subscribe
 
-            if (BossRegistry.isBoss(bossEntity.uuid)) {
+            val bossInstance = BossRegistry.get(bossEntity.uuid)
+            if (bossInstance != null) {
                 resetBossHp(bossEntity)
                 revertMegaEvolution(bossEntity)
+                bossInstance.currentLevelOverride = null
                 BossHealthBarManager.end(bossEntity.uuid)
                 BossEnrageManager.stopTracking(bossEntity.uuid)
+                BossPersistence.restoreRuntimeState(bossEntity, bossInstance.tier, bossInstance.spawnedAtTick)
+                BossPersistence.requestCheckpoint(bossEntity)
 
                 val fleeingPlayer = event.battle.actors
                     .firstOrNull { it.type == ActorType.PLAYER } as? PlayerBattleActor
                 fleeingPlayer?.entity?.let { WildBossCriteria.BOSS_FLED.trigger(it) }
-
             }
         }
 
@@ -68,11 +72,15 @@ object BossBattleResultListener {
             val wildWinner = event.winners.firstOrNull { it.type == ActorType.WILD } as? PokemonBattleActor
             if (wildWinner != null) {
                 val bossEntity = wildWinner.entity ?: return@subscribe
-                if (BossRegistry.isBoss(bossEntity.uuid)) {
+                val bossInstance = BossRegistry.get(bossEntity.uuid)
+                if (bossInstance != null) {
                     resetBossHp(bossEntity)
                     revertMegaEvolution(bossEntity)
+                    bossInstance.currentLevelOverride = null
                     BossHealthBarManager.end(bossEntity.uuid)
                     BossEnrageManager.stopTracking(bossEntity.uuid)
+                    BossPersistence.restoreRuntimeState(bossEntity, bossInstance.tier, bossInstance.spawnedAtTick)
+                    BossPersistence.requestCheckpoint(bossEntity)
                 }
                 return@subscribe
             }
@@ -273,5 +281,6 @@ object BossBattleResultListener {
 
         server.scoreboard.removePlayerFromTeam(bossInstance.entityUuid.toString())
         BossRegistry.unregister(bossInstance.entityUuid)
+        BossPersistence.requestLevelCheckpoint(level)
     }
 }

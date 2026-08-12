@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossRegistry
+import com.kaizzinho.wildbosses.boss.BossPersistence
 import com.kaizzinho.wildbosses.boss.BossTier
 import com.kaizzinho.wildbosses.config.WildBossesConfig
 import com.kaizzinho.wildbosses.spawn.BossSpawnListener
@@ -13,6 +14,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.core.registries.Registries
@@ -30,7 +32,7 @@ object WildBossCommands {
     private data class HelpEntry(val usage: String, val descriptionKey: String)
 
     private val HELP_ENTRIES = listOf(
-        HelpEntry("/wb spawn <tier> [species] [respectCooldown]", "wildbosses.help.spawn"),
+        HelpEntry("/wb spawn <tier> [pokemon properties...] [respectCooldown=true]", "wildbosses.help.spawn"),
         HelpEntry("/wb list", "wildbosses.help.list"),
         HelpEntry("/wb info <target>", "wildbosses.help.info"),
         HelpEntry("/wb teleport <target>", "wildbosses.help.teleport"),
@@ -57,18 +59,9 @@ object WildBossCommands {
                     .then(Commands.literal("spawn")
                         .requires { it.hasPermission(2) }
                         .then(Commands.argument("tier", StringArgumentType.word())
-                            .executes { ctx -> spawnBoss(ctx, null, false) }
-                            .then(Commands.argument("species", StringArgumentType.word())
-                                .executes { ctx -> spawnBoss(ctx, StringArgumentType.getString(ctx, "species"), false) }
-                                .then(Commands.argument("respectCooldown", com.mojang.brigadier.arguments.BoolArgumentType.bool())
-                                    .executes { ctx ->
-                                        spawnBoss(
-                                            ctx,
-                                            StringArgumentType.getString(ctx, "species"),
-                                            com.mojang.brigadier.arguments.BoolArgumentType.getBool(ctx, "respectCooldown")
-                                        )
-                                    }
-                                )
+                            .executes { ctx -> spawnBoss(ctx, null) }
+                            .then(Commands.argument("properties", StringArgumentType.greedyString())
+                                .executes { ctx -> spawnBoss(ctx, StringArgumentType.getString(ctx, "properties")) }
                             )
                         )
                     )
@@ -80,6 +73,12 @@ object WildBossCommands {
                         .requires { it.hasPermission(2) }
                         .then(Commands.argument("target", EntityArgument.entity())
                             .executes { ctx -> bossInfo(ctx) }
+                        )
+                    )
+                    .then(Commands.literal("debugentity")
+                        .requires { it.hasPermission(2) }
+                        .then(Commands.argument("target", EntityArgument.entity())
+                            .executes { ctx -> debugEntity(ctx) }
                         )
                     )
                     .then(Commands.literal("teleport")
@@ -172,23 +171,67 @@ object WildBossCommands {
         return entity
     }
 
-    private fun spawnBoss(ctx: CommandContext<CommandSourceStack>, speciesOverride: String?, respectCooldown: Boolean): Int {
+    private data class SpawnInput(
+        val properties: PokemonProperties,
+        val respectCooldown: Boolean
+    )
+
+    private fun spawnBoss(ctx: CommandContext<CommandSourceStack>, rawProperties: String?): Int {
         val source = ctx.source
         val player = source.playerOrException
         val tier = parseTier(StringArgumentType.getString(ctx, "tier"))
+        val input = parseSpawnInput(rawProperties)
 
-        val speciesString = speciesOverride ?: "pikachu"
-        val properties = PokemonProperties.parse(speciesString)
-        val entity = properties.createEntity(source.level)
+        val entity = input.properties.createEntity(source.level)
         entity.moveTo(player.x, player.y, player.z, player.yRot, player.xRot)
         source.level.addFreshEntity(entity)
 
-        BossSpawnListener.forcePromote(entity, tier, player, respectCooldown)
+        BossSpawnListener.forcePromote(entity, tier, player, input.respectCooldown)
 
         source.sendSuccess({
             Component.translatable("wildbosses.command.spawn.success", tier.name, entity.pokemon.species.name)
         }, false)
         return 1
+    }
+
+    private fun parseSpawnInput(rawProperties: String?): SpawnInput {
+        if (rawProperties.isNullOrBlank()) {
+            return SpawnInput(PokemonProperties.parse("pikachu"), false)
+        }
+
+        val tokens = rawProperties.trim().split(Regex("\\s+")).toMutableList()
+        var respectCooldown = false
+        val propertiesTokens = mutableListOf<String>()
+
+        for (token in tokens) {
+            if (token.startsWith("respectCooldown=", ignoreCase = true)) {
+                val value = token.substringAfter('=').lowercase().toBooleanStrictOrNull()
+                    ?: throw SimpleCommandExceptionType(
+                        Component.translatable("wildbosses.command.error.invalid_respect_cooldown")
+                    ).create()
+                respectCooldown = value
+            } else {
+                propertiesTokens += token
+            }
+        }
+
+        if (propertiesTokens.size > 1) {
+            val legacyValue = propertiesTokens.last().lowercase().toBooleanStrictOrNull()
+            if (legacyValue != null) {
+                respectCooldown = legacyValue
+                propertiesTokens.removeLast()
+            }
+        }
+
+        val propertiesText = propertiesTokens.joinToString(" ").ifBlank { "pikachu" }
+        val properties = PokemonProperties.parse(propertiesText)
+        if (properties.species == null) {
+            throw SimpleCommandExceptionType(
+                Component.translatable("wildbosses.command.error.invalid_properties", propertiesText)
+            ).create()
+        }
+
+        return SpawnInput(properties, respectCooldown)
     }
 
     private fun listBosses(ctx: CommandContext<CommandSourceStack>): Int {
@@ -299,6 +342,7 @@ object WildBossCommands {
         server.scoreboard.removePlayerFromTeam(entity.uuid.toString())
         BossRegistry.unregister(entity.uuid)
         entity.discard()
+        (entity.level() as? ServerLevel)?.let { BossPersistence.requestLevelCheckpoint(it) }
         ctx.source.sendSuccess({ Component.translatable("wildbosses.command.despawn.success") }, false)
         return 1
     }
@@ -368,7 +412,8 @@ object WildBossCommands {
     private fun reapplyGlow(ctx: CommandContext<CommandSourceStack>): Int {
         val entity = getBossEntity(ctx)
         val instance = BossRegistry.get(entity.uuid) ?: throw NOT_A_BOSS.create()
-        BossSpawnListener.applyTierGlow(entity, instance.tier)
+        BossPersistence.restoreRuntimeState(entity, instance.tier, instance.spawnedAtTick)
+        BossPersistence.requestCheckpoint(entity)
         ctx.source.sendSuccess({
             Component.translatable("wildbosses.command.glow.success", instance.tier.name, entity.pokemon.species.name)
         }, false)
@@ -384,10 +429,11 @@ object WildBossCommands {
         entity.tags.add("wildbosses:tier_${newTier.name}")
 
         ctx.source.server.scoreboard.removePlayerFromTeam(entity.uuid.toString())
-        BossSpawnListener.applyTierGlow(entity, newTier)
 
         BossRegistry.unregister(entity.uuid)
         BossRegistry.register(entity, newTier, oldInstance.spawnedAtTick)
+        BossPersistence.restoreRuntimeState(entity, newTier, oldInstance.spawnedAtTick)
+        BossPersistence.requestCheckpoint(entity)
 
         ctx.source.sendSuccess({
             Component.translatable("wildbosses.command.tier.success", entity.pokemon.species.name, newTier.name)
@@ -405,6 +451,7 @@ object WildBossCommands {
                 val entity = level.getEntity(instance.entityUuid)
                 if (entity is PokemonEntity) {
                     entity.discard()
+                    BossPersistence.requestLevelCheckpoint(level)
                     count++
                     break
                 }
@@ -418,7 +465,40 @@ object WildBossCommands {
     }
 
     private fun showVersion(ctx: CommandContext<CommandSourceStack>): Int {
-        ctx.source.sendSuccess({ Component.translatable("wildbosses.command.version") }, false)
+        ctx.source.sendSuccess({
+            Component.literal("WildBosses | persistence build ${WildBosses.PERSISTENCE_PROBE_BUILD}")
+        }, false)
+        return 1
+    }
+
+    private fun debugEntity(ctx: CommandContext<CommandSourceStack>): Int {
+        val target = EntityArgument.getEntity(ctx, "target")
+        if (target !is PokemonEntity) {
+            ctx.source.sendFailure(Component.literal("Target is not a PokemonEntity"))
+            return 0
+        }
+
+        val registry = BossRegistry.get(target.uuid)
+        val syncedBoss = runCatching { target.entityData.get(com.kaizzinho.wildbosses.boss.WildBossEntityData.IS_BOSS) }.getOrNull()
+        val syncedTier = runCatching { target.entityData.get(com.kaizzinho.wildbosses.boss.WildBossEntityData.TIER) }.getOrNull()
+        val labelLevel = runCatching { target.entityData.get(PokemonEntity.LABEL_LEVEL) }.getOrNull()
+        val teamName = target.team?.name ?: "<none>"
+        val bossTag = target.tags.contains("wildbosses:is_boss")
+        val tierTags = target.tags.filter { it.startsWith("wildbosses:tier_") }.joinToString(",").ifBlank { "<none>" }
+        val spawnTags = target.tags.filter { it.startsWith("wildbosses:spawned_at_") }.joinToString(",").ifBlank { "<none>" }
+
+        val lines = listOf(
+            "build=${WildBosses.PERSISTENCE_PROBE_BUILD}",
+            "species=${target.pokemon.species.name} entityUuid=${target.uuid} pokemonUuid=${target.pokemon.uuid}",
+            "registry=${registry != null} registryTier=${registry?.tier?.name ?: "<none>"}",
+            "bossTag=$bossTag tierTags=$tierTags spawnTags=$spawnTags",
+            "syncedBoss=$syncedBoss syncedTier=$syncedTier labelLevel=$labelLevel pokemonLevel=${target.pokemon.level}",
+            "team=$teamName glowing=${target.isCurrentlyGlowing()} persistenceRequired=${target.isPersistenceRequired()} removed=${target.isRemoved}"
+        )
+        for (line in lines) {
+            ctx.source.sendSuccess({ Component.literal("[WB-DEBUG] $line") }, false)
+        }
+        BossPersistence.probeState("COMMAND_DEBUG_ENTITY", target)
         return 1
     }
 

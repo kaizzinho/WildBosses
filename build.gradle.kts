@@ -1,4 +1,8 @@
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.zip.ZipFile
 
 plugins {
 	id("java")
@@ -26,6 +30,7 @@ loom {
 		}
 	}
 }
+
 repositories {
 	mavenCentral()
 	maven("https://artefacts.cobblemon.com/releases/")
@@ -68,7 +73,6 @@ sourceSets {
 	}
 }
 
-
 tasks {
 	processResources {
 		inputs.property("version", project.version)
@@ -76,6 +80,7 @@ tasks {
 			expand(project.properties)
 		}
 	}
+
 	java {
 		toolchain {
 			languageVersion.set(JavaLanguageVersion.of(21))
@@ -84,12 +89,63 @@ tasks {
 		sourceCompatibility = JavaVersion.VERSION_21
 		targetCompatibility = JavaVersion.VERSION_21
 	}
+
 	compileJava {
 		options.release.set(21)
 	}
+
 	withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
 		compilerOptions {
 			jvmTarget.set(JvmTarget.JVM_21)
 		}
 	}
+}
+
+val devJar = tasks.named<Jar>("jar") {
+	archiveClassifier.set("dev")
+	destinationDirectory.set(layout.buildDirectory.dir("devlibs"))
+}
+
+val productionJar = tasks.named<AbstractArchiveTask>("remapJar") {
+	dependsOn(devJar)
+	archiveClassifier.set("")
+}
+
+val verifyProductionJar = tasks.register("verifyProductionJar") {
+	group = "verification"
+	description = "Verifies that the installable WildBosses JAR was remapped for production."
+	dependsOn(productionJar)
+
+	doLast {
+		val jarFile = productionJar.get().archiveFile.get().asFile
+		val mixinPath = "com/kaizzinho/wildbosses/mixin/PokemonEntityMixin.class"
+
+		ZipFile(jarFile).use { zip ->
+			val entry = zip.getEntry(mixinPath)
+				?: error("Missing $mixinPath in ${jarFile.name}")
+
+			val bytecode = zip.getInputStream(entry).readBytes().toString(Charsets.ISO_8859_1)
+
+			check("defineSynchedData" !in bytecode) {
+				"${jarFile.name} is not production-remapped: PokemonEntityMixin still targets defineSynchedData."
+			}
+			check("method_5693" in bytecode) {
+				"${jarFile.name} does not contain the expected Minecraft 1.21.1 intermediary target method_5693."
+			}
+		}
+
+		logger.lifecycle("Verified production-remapped JAR: ${jarFile.absolutePath}")
+	}
+}
+
+val releaseJar = tasks.register<Sync>("releaseJar") {
+	group = "build"
+	description = "Places the verified installable JAR in build/release."
+	dependsOn(verifyProductionJar)
+	from(productionJar.flatMap { it.archiveFile })
+	into(layout.buildDirectory.dir("release"))
+}
+
+tasks.named("build") {
+	dependsOn(releaseJar)
 }

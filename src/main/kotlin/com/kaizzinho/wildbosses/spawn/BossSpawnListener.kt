@@ -9,12 +9,11 @@ import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossSpawnCooldownData
 import com.kaizzinho.wildbosses.boss.BossTier
 import kotlin.random.Random
-import com.kaizzinho.wildbosses.boss.WildBossEntityData
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.kaizzinho.wildbosses.boss.BossEvolutionResolver
-import com.kaizzinho.wildbosses.boss.BossDespawnAwareDespawner
 import com.kaizzinho.wildbosses.boss.BossMessageFormat
+import com.kaizzinho.wildbosses.boss.BossPersistence
 import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.minecraft.server.level.ServerLevel
 
@@ -126,13 +125,9 @@ object BossSpawnListener {
         applyBossStats(entity, tier)
 
         UncatchableProperty.uncatchable().apply(entity.pokemon)
-        entity.tags.add("wildbosses:is_boss")
-        entity.tags.add("wildbosses:tier_${tier.name}")
-        entity.entityData.set(WildBossEntityData.IS_BOSS, true)
-        entity.entityData.set(WildBossEntityData.TIER, tier.name)
-        applyTierGlow(entity, tier)
+        BossPersistence.restoreRuntimeState(entity, tier, currentTick)
         BossRegistry.register(entity, tier, currentTick)
-        BossDespawnAwareDespawner.install(entity)
+        BossPersistence.requestCheckpoint(entity)
         announceSpawn(entity, tier, targetPlayer)
 
         cooldownData.startCooldown(targetPlayer.uuid, currentTick, WildBossesConfig.data.spawnCooldownTicks)

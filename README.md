@@ -9,164 +9,77 @@
 
 **[Modrinth](https://modrinth.com/mod/wildbosses) · [Source](https://github.com/kaizzinho/WildBosses) · [Issues](https://github.com/kaizzinho/WildBosses/issues)**
 
-*Read this in* *[English](#english)* *| Leia em* *[Português](#português)*
+*Read this in [English](#english) | Leia em [Português](#português)*
 
 ---
 
 ## English
 
-### What is it?
+### Overview
 
-**WildBosses** adds rare, roaming Boss Pokémon to [Cobblemon](https://cobblemon.com/).
+**WildBosses** adds rare roaming Boss Pokémon to [Cobblemon](https://cobblemon.com/).
 
-Instead of creating separate scripted encounters, WildBosses occasionally promotes an ordinary wild Pokémon into a **Boss** with its own tier, visual identity, difficulty, battle scaling, and reward pool.
+Instead of spawning separate scripted encounters, the mod can promote an ordinary wild Pokémon into a Boss with its own tier, glow, hidden overworld level, battle scaling, aggressive AI, progression, and reward pool.
 
-Bosses are designed as an endgame PvE activity. Their real level stays hidden until battle, they scale to the player who challenges them, and the strongest tiers can reach well beyond level 100.
+Bosses are designed as an endgame PvE activity. They remain part of Cobblemon's normal entity and battle systems rather than replacing or forking them.
 
-WildBosses works on top of Cobblemon rather than replacing or forking its core systems.
+### What it does
 
-### Screenshots
-
-The screenshots below are arranged in the same order a player would normally experience a Boss encounter.
-
-#### A Boss Has Appeared
-
-When a Boss spawns nearby, the player receives a chat message. It tells you that something rare has appeared — but you still have to find it.
-
-<!--
-SCREENSHOT 01 — Spawn alert
-Recommended shot: capture the WildBosses spawn message in chat before the Boss is visible.
-Keep the normal game HUD and surrounding environment visible so it feels like a natural encounter.
-
-File: docs/images/01-boss-spawn.png
-Uncomment after adding the image:
-![A Wild Boss has appeared nearby](docs/images/01-boss-spawn.png)
--->
-
-#### Something Is Nearby
-
-Every Boss glows in the color of its tier. The outline can be seen through walls and underwater, giving the player a clue when the Boss is close but not yet in sight.
-
-<!--
-SCREENSHOT 02 — Boss behind a wall
-Recommended shot: stand on the opposite side of terrain, a cave wall, building, or other obstruction while the Boss glow is clearly visible through it.
-A Legendary or Mythic glow will make this shot especially striking.
-
-File: docs/images/02-boss-through-wall.png
-Uncomment after adding the image:
-![A Wild Boss glowing through a wall](docs/images/02-boss-through-wall.png)
--->
-
-#### Finding the Boss
-
-Once you reach it, the Boss can be seen normally in the overworld — but its real level is still hidden as `Lv. ??` until someone accepts the fight.
-
-<!--
-SCREENSHOT 03 — First sight
-Recommended shot: the first clear view after following the glow.
-Keep some terrain in the frame so this feels like discovery rather than a staged showcase.
-Make sure the Boss nameplate and Lv. ?? are readable.
-
-File: docs/images/03-boss-found.png
-Uncomment after adding the image:
-![Finding a Wild Boss](docs/images/03-boss-found.png)
--->
-
-#### Legendary & Mythic Bosses
-
-The highest tiers are deliberately rare. Their stronger glow, improved stats, increased shiny odds, and access to the most dangerous mechanics make finding one feel very different from an ordinary wild encounter.
-
-<!--
-SCREENSHOT 04 — Main showcase
-Recommended shot: a clean Legendary or Mythic Boss in a good-looking overworld location.
-Show the full Pokémon model, tier-colored glow, nameplate, and Lv. ??.
-Avoid admin/debug messages in this one — this should be the polished hero screenshot for the mod.
-
-File: docs/images/04-mythic-overworld.png
-Uncomment after adding the image:
-![A Mythic Wild Boss in the overworld](docs/images/04-mythic-overworld.png)
--->
-
-#### Dynamic Level Scaling
-
-The real Boss level is calculated when battle begins. High-level players can therefore face encounters far beyond Cobblemon's normal level-100 progression.
-
-<!--
-SCREENSHOT 05 — Level 100+ battle
-Recommended shot: battle against an Epic, Legendary, or Mythic Boss at Lv. 101+.
-Try to show the Boss health bar, revealed level, your Pokémon, and the normal battle interface at the same time.
-
-File: docs/images/05-scaled-battle.png
-Uncomment after adding the image:
-![A dynamically scaled level 100+ Boss battle](docs/images/05-scaled-battle.png)
--->
-
-#### Enrage & Mega Evolution
-
-Boss fights become more dangerous when they drag on. Rare+ Bosses periodically gather power and **Enrage**, while eligible high-tier encounters can also **Mega Evolve** when compatible Mega Evolution data is available.
-
-<!--
-SCREENSHOT 06 — Enrage + Mega Evolution
-Recommended shot: a Mega-Evolved Legendary/Mythic Boss during an Enrage cycle.
-Best possible shot: Lv. 100+ Mega Boss + Boss health bar + the Enrage warning/trigger message visible together.
-If that becomes too visually crowded, split this into two screenshots.
-
-File: docs/images/06-mega-enrage.png
-Uncomment after adding the image:
-![A Mega-Evolved Boss during the Enrage mechanic](docs/images/06-mega-enrage.png)
--->
-
-#### Boss Rewards
-
-Each tier has its own reward table. With **Cobblemon Loot Menu** installed, regular WildBosses tier rewards can be combined with the Pokémon's normal species loot and resolved through a single server-authoritative selection screen.
-
-**Mega Stones are the exception.** When a player earns one from a Boss that actually Mega Evolved, the stone is granted **directly to that player** and is never sent through the Loot Menu. Mega Stones are rare, one-time progression rewards rather than normal selectable loot.
-
-<!--
-SCREENSHOT 07 — Loot Menu integration
-Recommended shot: the selection menu after defeating a Legendary or Mythic Boss.
-Use a reward roll with several visually distinct items so the difference between a normal wild drop and a Boss reward is obvious.
-
-File: docs/images/07-loot-menu.png
-Uncomment after adding the image:
-![WildBosses rewards inside Cobblemon Loot Menu](docs/images/07-loot-menu.png)
--->
-
-#### Progression
-
-WildBosses also includes its own advancement tree for defeating tiers, surviving special encounters, hunting multiple Bosses, finding shiny Bosses, and interacting with the Mega Evolution system.
-
-<!--
-SCREENSHOT 08 — Advancements
-Recommended shot: open the WildBosses advancement tab after unlocking several connected advancements.
-A partially completed tree usually looks better than either a completely empty or completely finished one.
-
-File: docs/images/08-advancements.png
-Uncomment after adding the image:
-![WildBosses advancement progression](docs/images/08-advancements.png)
--->
-
-### How does an encounter work?
+A normal encounter can become a Boss like this:
 
 ```text
-a normal wild Pokémon spawns
-    -> WildBosses rolls the Boss chance
-    -> a Boss tier is selected
-    -> the Pokémon becomes a roaming Boss
-    -> its real level stays hidden as Lv. ??
-    -> a player finds and challenges it
-    -> its level is scaled for that player
-    -> the encounter is forced into 1v1
-    -> Rare+ Bosses can trigger Enrage in longer fights
-    -> eligible high-tier Bosses may Mega Evolve
-    -> victory rolls the tier reward table
+a wild Pokémon spawns
+    ↓
+WildBosses rolls the Boss chance
+    ↓
+a tier is selected
+    ↓
+the Pokémon becomes a roaming Boss
+    ↓
+its overworld level is hidden as Lv. ??
+    ↓
+a player challenges it
+    ↓
+its battle level and moveset are rebuilt for that player
+    ↓
+the battle is forced into 1v1
+    ↓
+Enrage and Mega Evolution may activate
+    ↓
+victory resolves Boss rewards and progression
 ```
 
-The Boss is not permanently assigned to the player who caused it to appear. Other players may find and challenge an existing Boss too.
+The Boss is not permanently tied to the player who caused it to appear. Another player can find and challenge the same roaming Boss.
+
+### Key Features
+
+- [x] Five Boss tiers from **Uncommon** to **Mythic**.
+- [x] Configurable promotion chance for normal wild spawns.
+- [x] Tier-colored glow visible through walls and underwater.
+- [x] Hidden overworld level shown as `Lv. ??`.
+- [x] Dynamic battle scaling from the challenger's strongest party Pokémon.
+- [x] Configurable Boss level cap with a default of **200**.
+- [x] Forced **1v1** Boss encounters.
+- [x] Aggressive Boss AI focused on KOs, STAB, type effectiveness, coverage, accuracy, priority, and useful multi-hit damage.
+- [x] Danger coverage against important **4× weaknesses** when a good legal move exists.
+- [x] Awareness of telegraphed **2× and 4×** incoming threats.
+- [x] Proper delayed-damage handling for **Future Sight** and **Doom Desire**.
+- [x] Limited aggressive setup and emergency recovery for stronger tiers.
+- [x] Configurable **Enrage** for Rare+ Bosses.
+- [x] Optional Mega Evolution support for eligible high-tier Bosses.
+- [x] One-time Mega Stone progression rewards per species and player.
+- [x] Epic+ final-evolution enforcement and perfect IVs by default.
+- [x] Increased shiny odds for Legendary and Mythic Bosses.
+- [x] Persistent per-player spawn cooldowns.
+- [x] Boss-state recovery across chunk and world reloads.
+- [x] Persistent Boss kill leaderboard.
+- [x] WildBosses advancement tree.
+- [x] Datapack-friendly vanilla loot tables.
+- [x] Admin and testing command suite under `/wildbosses` and `/wb`.
+- [x] Public metadata and loot-award APIs for optional integrations.
+- [x] Soft integration with **Cobblemon Battle Slider**, **CobbleTunes**, and **Cobblemon Loot Menu**.
 
 ### Boss tiers
-
-There are five tiers:
 
 | Tier | Default weight | Level bonus | AI skill | Shiny chance | Perfect IVs | Mega chance* |
 |---|---:|---:|---:|---:|---|---:|
@@ -176,88 +89,118 @@ There are five tiers:
 | **Legendary** | 5 | +20 | 5 | 25% | Yes | 50% |
 | **Mythic** | 1 | +25 | 5 | 45% | Yes | 100% |
 
-The default weights add up to 100, so they can be read directly as the tier distribution **after a wild spawn has already been selected to become a Boss**. They are not the chance for an arbitrary Pokémon to become a Boss.
+The weights describe the tier distribution **after a spawn has already passed the Boss promotion roll**. They are not the global chance for a random Pokémon to become a Boss.
 
-\* Mega Evolution only applies when the Boss is eligible and compatible Mega Evolution data is available.
+\* Mega Evolution still requires a compatible Mega form and compatible Mega Evolution data.
 
 Every value in the table is configurable.
 
-### Features
+### Showcase
 
-- five Boss tiers from **Uncommon** to **Mythic**;
-- configurable chance for ordinary wild spawns to become Bosses;
-- chat notification when a Boss appears nearby;
-- hidden overworld level displayed as `Lv. ??`;
-- dynamic battle scaling based on the challenger's strongest party Pokémon;
-- configurable maximum Boss level, defaulting to **200**;
-- forced **1v1** encounters;
-- aggression-focused Boss AI that prioritizes KOs, STAB, type effectiveness, coverage, accuracy, and priority moves;
-- delayed-move awareness for attacks such as **Future Sight** and **Doom Desire**, so the AI does not waste back-to-back turns on pending damage;
-- Epic+ Bosses are forced into their final evolutionary form;
-- Epic+ Bosses receive perfect IVs by default;
-- Legendary and Mythic Bosses receive increased shiny odds by default;
-- tier-colored glow visible through walls and underwater;
-- configurable **Enrage** mechanic for Rare+ Bosses in long battles;
-- optional Mega Evolution behavior for eligible high-tier Bosses;
-- five vanilla Minecraft JSON loot tables, one for each tier;
-- persistent per-player spawn cooldowns;
-- Boss-state recovery after server and world reloads;
-- persistent Boss kill leaderboard;
-- WildBosses advancement tree;
-- admin and testing command suite under `/wildbosses` and `/wb`;
-- public Boss metadata API for optional client/server integrations;
-- soft integration with **Cobblemon Battle Slider** and **CobbleTunes** when those mods are installed;
-- public loot-award event for integrations with other server-side mods.
+#### Boss spawn alert
+
+![boss alert](docs/images/chatalert.png)
+
+#### Finding a Boss
+
+![boss far away](docs/images/bossfar.png)
+![boss close](docs/images/bossclose.png)
+
+#### Mythic Boss
+
+![bossmythic](docs/images/bossmythic.png)
+![encounter](docs/images/encounter.png)
+
+#### Enrage and Mega Evolution
+
+![boss gather](docs/images/gather.png)
+![boss enrage](docs/images/enrage.png)
+![boss mega evo](docs/images/bossmega.png)
+
+#### Battle Slider integration
+
+![Battle Slider](docs/images/battleslidercompat.png)
+
+#### Loot Menu Integration
+
+![Loot Menu Integration](docs/images/lootmenu.png)
+
+#### Advancements
+
+![Advancement](docs/images/advancements.png)
+
+### Requirements
+
+#### Required
+
+- Minecraft `1.21.1`
+- Java `21`
+- Fabric Loader `0.17.2+`
+- Fabric API and Cobblemon's required Fabric dependencies
+- Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
+- Cobblemon `1.7.3+`
+
+#### Optional integrations
+
+- **Mod Menu `11.0.3+` + YACL `3.8.1+`** — in-game WildBosses configuration screen.
+- **Cobblemon Battle Slider** — dedicated Boss VS presentation.
+- **CobbleTunes** — region-aware Boss battle music.
+- **Cobblemon Loot Menu** — combines regular Boss rewards with the defeated species' normal loot.
+- **Compatible Mega Evolution data such as MegaShowdown** — enables supported Boss Mega Evolutions and Mega Stone progression.
+
+WildBosses remains functional when these optional mods are absent.
 
 ### Dynamic level scaling
 
-A Boss does not have one permanent battle level.
+A Boss does not keep one permanent battle level.
 
-When a player starts the encounter, WildBosses checks the strongest Pokémon in that player's party and adds the bonus configured for the Boss tier.
+When a player starts the encounter, WildBosses reads the strongest Pokémon in that player's party and adds the configured tier bonus.
 
-For example, with the default configuration:
+For example:
 
 ```text
-strongest party Pokémon: Lv. 72
-Epic tier bonus:         +15
---------------------------------
-Boss battle level:       Lv. 87
+strongest party Pokémon  Lv. 72
+Epic tier bonus          +15
+-----------------------------
+Boss battle level        Lv. 87
 ```
 
 Before battle, the overworld label still shows `Lv. ??`.
 
-Levels above 100 use Cobblemon's normal stat formulas for the full stat line — **HP, Attack, Defense, Sp. Atk, Sp. Def, and Speed** all continue scaling from the Boss's effective level. WildBosses does not apply a second hidden stat multiplier on top.
-
-If another player later challenges the same Boss, its battle level is calculated again from that player's own party. This lets the encounter stay relevant across very different stages of server progression.
+If another player challenges the Boss later, the level is calculated again from that player's party. Levels above 100 continue through Cobblemon's normal stat formulas for HP, Attack, Defense, Sp. Atk, Sp. Def, and Speed.
 
 ### Battle rules
 
 Boss encounters are forced into **1v1**.
 
-If the player wins, the Boss is defeated and its tier reward table is rolled.
+If the player wins, the Boss is defeated and the reward flow begins.
 
-If the player loses or flees, the Boss is restored to full HP and remains available for another attempt. A later challenger receives a fresh level calculation based on their own party.
+If the player loses or flees, the Boss returns to full HP and remains available for another attempt. The next challenger receives a fresh level calculation.
 
 Bosses cannot be captured.
 
 ### Aggressive Boss AI
 
-WildBosses keeps Bosses intentionally different from competitive trainers. They do not play like long-term tacticians: they behave like dangerous wild creatures trying to end the fight.
+WildBosses intentionally makes Bosses behave differently from competitive trainers. They focus on ending the fight rather than building a long stall plan.
 
-The Boss AI scores usable attacks from the current matchup and heavily favors immediate KOs. It also considers STAB, type effectiveness, physical/special stats, accuracy, priority, multi-hit damage, and common type-immunity abilities. Risky self-nerfing attacks such as Close Combat or Draco Meteor are allowed when the payoff is worth it instead of being permanently blacklisted.
+The AI scores usable attacks from the current matchup and strongly favors immediate KOs. It also considers:
 
-Higher `aiSkill` values make the Boss more consistent:
+- STAB;
+- type effectiveness;
+- physical and special offensive stats;
+- accuracy;
+- priority;
+- useful multi-hit damage;
+- common type-immunity abilities;
+- the value of risky self-nerfing attacks when the payoff is worth it.
 
-- lower tiers can occasionally pick a merely good attack instead of the optimal one;
-- Epic+ Bosses can receive one aggressive setup move when their species has a suitable option;
-- Legendary/Mythic Bosses may use a single recovery option when badly hurt and no immediate KO is available;
-- setup is limited and recovery is deliberately desperate, so Bosses stay aggressive instead of turning into stall trainers.
+Higher `aiSkill` values make decisions more consistent. Epic+ Bosses can receive one aggressive setup option, while Legendary and Mythic Bosses may keep one emergency recovery move when badly hurt and no immediate KO is available.
 
-The moveset is rebuilt when the battle starts. Higher-skill Bosses accept slightly riskier accuracy in exchange for stronger attacks and can keep a useful priority move for finishing weakened targets.
+#### Danger coverage
 
-All Boss tiers also have **danger coverage**. If a species has a 4× defensive weakness, WildBosses looks through its legal attacks for a good move that can punish Pokémon of that threatening type. This is not a species hardcode: Omastar can prefer Ice coverage into Grass, Swampert can do the same, Gyarados can value Ground coverage into Electric, and the same logic works for other typings. Weak or badly matched coverage is still rejected instead of forcing junk moves into the set.
+If a species has a 4× defensive weakness, WildBosses searches its legal attacks for a useful move that can punish Pokémon of that threatening type.
 
-The caution level scales by tier:
+This is type-driven rather than species-hardcoded. Weak or badly matched coverage is rejected instead of being forced into the moveset.
 
 | Tier | 4× weakness coverage | Telegraph reaction |
 |---|---|---|
@@ -267,91 +210,87 @@ The caution level scales by tier:
 | **Legendary** | Guaranteed when a good move exists | Perfect awareness |
 | **Mythic** | Guaranteed when a good move exists | Perfect awareness |
 
-The battle AI can also read a damaging two-turn move that was visibly prepared on the previous turn. A 2× incoming hit makes an aware Boss avoid greedy setup and lean harder toward its best attack. A 4× hit is treated as a real danger state: setup/recovery are skipped and the Boss uses its best immediate non-delayed attack. Legendary and Mythic Bosses always respect telegraphed threats; lower tiers can still make the occasional bad call.
+The AI can also react to a damaging two-turn move that was visibly prepared on the previous turn. A 2× incoming hit discourages greedy setup. A 4× incoming hit becomes a danger state that skips setup and recovery in favor of the best immediate non-delayed attack.
 
-Delayed attacks are handled as delayed damage instead of fake instant nukes. **Future Sight** and **Doom Desire** get a lower moveset/scoring priority, cannot steal the normal immediate-KO bonus, and are blocked while a previous delayed hit is still pending. The Boss can still use them when they make sense — it just will not spam them on back-to-back turns.
+**Future Sight** and **Doom Desire** are handled as delayed damage. They cannot steal the normal instant-KO bonus and are blocked while a previous delayed hit is still pending.
 
-For testing, enable `bossAiDebugLogging` in the config or **Boss AI Debug Logging** in Mod Menu. Starting a Boss battle is enough to see the AI activation and generated moveset in the console; with debug logging enabled, every turn also prints candidate scores, estimated damage, type multiplier, KO-on-hit checks, setup/recovery choices, and the selected move.
+Enable `bossAiDebugLogging` to print moveset and turn-scoring diagnostics to the console.
 
 ### Enrage
 
-Boss battles are not meant to be stalled forever.
+By default, Rare, Epic, Legendary, and Mythic Bosses Enrage every **8 turns**. Uncommon Bosses do not use Enrage.
 
-By default, **Rare, Epic, Legendary, and Mythic** Bosses Enrage every **8 turns**. Uncommon Bosses do not use Enrage. One turn before the next Enrage, the player receives a warning that the Boss is gathering power.
+One turn before the next Enrage, the player receives a warning. When it triggers, the Boss gains the configured number of stages in Attack, Defense, Sp. Atk, Sp. Def, and Speed.
 
-When the Enrage triggers, the Boss gains the configured number of stages in Attack, Defense, Sp. Atk, Sp. Def, and Speed. The default is **+1 stage** per Enrage, with the normal battle-stage ceiling still applying.
-
-The interval and strength are configurable.
+The default is **+1 stage** per Enrage, still respecting the normal battle-stage ceiling.
 
 ### Mega Evolution
 
-The current build contains optional support for Mega-Evolved Boss encounters through compatible Mega Evolution data such as **MegaShowdown**.
+Eligible high-tier Bosses can use compatible Mega Evolution data.
 
-By default:
+Default chances:
 
-- Uncommon, Rare, and Epic Bosses do not attempt to Mega Evolve;
-- Legendary Bosses have a `50%` configured Mega Evolution chance;
-- Mythic Bosses have a `100%` configured Mega Evolution chance.
+- Uncommon: `0%`
+- Rare: `0%`
+- Epic: `0%`
+- Legendary: `50%`
+- Mythic: `100%`
 
-The Boss must still be eligible for a compatible Mega Evolution. The chance alone does not give a species a Mega form that does not exist.
+The Boss must still have a compatible Mega form. A configured chance does not create a form that does not exist.
 
 #### Mega Stone rewards
 
-Mega Stones are tied to Bosses that **actually Mega Evolve during the battle**. Defeating an eligible Boss that never Mega Evolves does not grant its Mega Stone.
+Mega Stones are only awarded when the defeated Boss **actually Mega Evolved during that battle**.
 
-When earned, the Mega Stone is granted **directly to the player**. It does not enter the normal Boss loot pool and is not passed to **Cobblemon Loot Menu**.
+The stone is granted directly to the player and never enters the normal tier loot pool or Cobblemon Loot Menu session.
 
-Each Mega Stone is also a **one-time reward per species, per player**. Once a player has received the Mega Stone associated with that species, defeating more Mega-Evolved Bosses of the same species will not award another copy.
-
-For example:
+Each Mega Stone is a **one-time reward per species per player**:
 
 ```text
-1st Mega Pidgeot defeated -> Pidgeotite awarded
-2nd Mega Pidgeot defeated -> no Pidgeotite
-3rd Mega Pidgeot defeated -> no Pidgeotite
-...
-Mega Charizard defeated   -> its Mega Stone can still be awarded
+first Mega Pidgeot defeated   Pidgeotite awarded
+later Mega Pidgeot defeats    no extra Pidgeotite
+Mega Charizard defeated       its own stone can still be awarded
 ```
 
-This makes Mega Stones progression rewards for discovering and defeating different Mega-capable Boss species, rather than a repeatable farming source.
-
-WildBosses also contains progression related to defeating Mega-Evolved Bosses and receiving Mega Stones.
+This makes Mega Stones progression rewards instead of repeatable farm loot.
 
 ### Spawn and lifecycle
 
-The default Boss promotion chance is:
+Default global values:
 
 ```text
-1 / 512
+Boss spawn chance       1 / 512
+Spawn cooldown          15 minutes
+Boss lifetime           10 minutes
+Maximum scaled level    200
+Enrage interval         8 turns
+Enrage strength         +1 stage
+Boss AI debug logging   off
 ```
 
-After a player causes a Boss to spawn, that player enters a persistent spawn cooldown. The default cooldown is:
+The spawn cooldown belongs to the player who caused the Boss promotion. It does not stop that player from fighting an already-existing Boss.
 
-```text
-15 minutes
-```
+An untouched Boss normally roams for about 10 minutes before leaving.
 
-This cooldown only prevents that player from causing another Boss spawn. It does not stop them from fighting a Boss that already exists nearby or one that appeared for somebody else.
+#### Persistence and recovery
 
-An unchallenged Boss normally roams for approximately:
+Active Bosses are marked as persistent entities and keep redundant Boss identity data for recovery.
 
-```text
-10 minutes
-```
+WildBosses restores the tracked tier, Boss metadata, hidden level presentation, scoreboard team, tier color, glow, and lifetime timestamp when a Boss entity is loaded again.
 
-before automatically despawning.
+Checkpoint requests are used around important lifecycle changes so active Bosses and completed removals do not depend only on Minecraft's later autosave cycle.
 
-Active Boss state is recovered after world reloads, including its tracked tier and glow state. Player spawn cooldowns also survive server restarts.
+The in-memory Boss registry is also cleared when the server stops so integrated-server sessions do not retain stale entries.
 
 ### Species restrictions
 
 Legendary, Mythical, and Ultra Beast species are excluded from becoming WildBosses by default.
 
-WildBosses reads Cobblemon species labels instead of maintaining a separate hardcoded Pokémon list. The excluded labels can be changed in the configuration.
+WildBosses reads Cobblemon species labels instead of maintaining a separate hardcoded Pokémon list. The blocked labels can be changed in configuration.
 
-### Loot
+### Rewards
 
-Each tier uses a standard Minecraft loot table:
+Each tier uses a normal Minecraft loot table:
 
 ```text
 data/wildbosses/loot_table/boss/uncommon.json
@@ -361,182 +300,110 @@ data/wildbosses/loot_table/boss/legendary.json
 data/wildbosses/loot_table/boss/mythic.json
 ```
 
-The reward pools scale in quantity and quality and can include items such as:
+Reward pools can include type gems, evolution items, held items, healing items, relic coins, and higher-tier rare rewards.
 
-- type gems;
-- evolution items;
-- held items;
-- healing items;
-- relic coins;
-- rare high-tier rewards.
+Because these are normal loot tables, modpack and server authors can override them through datapacks without rebuilding WildBosses.
 
-Because the rewards use normal Minecraft loot tables, server and modpack authors can replace or modify them through datapacks without changing WildBosses code.
+#### Datapack override
 
-#### Customizing Boss loot with a datapack
-
-You do not need to modify the WildBosses JAR to rebalance Boss rewards. A datapack can override any of the five built-in loot tables.
-
-For Minecraft `1.21.1`, create a datapack inside your world's `datapacks` folder:
+Use the same namespace and path as the built-in table you want to replace:
 
 ```text
-<world>/
-└─ datapacks/
-   └─ my_wildbosses_loot/
-      ├─ pack.mcmeta
-      └─ data/
-         └─ wildbosses/
-            └─ loot_table/
-               └─ boss/
-                  ├─ uncommon.json
-                  ├─ rare.json
-                  ├─ epic.json
-                  ├─ legendary.json
-                  └─ mythic.json
+<world>/datapacks/my_wildbosses_loot/
+└─ data/
+   └─ wildbosses/
+      └─ loot_table/
+         └─ boss/
+            └─ mythic.json
 ```
 
-The namespace and paths matter. To replace a WildBosses table, keep the namespace as `wildbosses` and use the same path as the table bundled with the mod.
+For Minecraft `1.21.1`, a minimal `pack.mcmeta` uses data pack format `48`.
 
-You only need to include the tiers you actually want to change. For example, a datapack that only overrides Mythic rewards can contain just:
+After editing the datapack, run:
 
 ```text
-data/wildbosses/loot_table/boss/mythic.json
+/reload
 ```
 
-A minimal `pack.mcmeta` for Minecraft `1.21.1` uses data pack format `48`:
+or use:
 
-```json
-{
-  "pack": {
-    "pack_format": 48,
-    "description": "Custom WildBosses loot"
-  }
-}
+```text
+/wb reload
 ```
 
-The easiest workflow is:
+Then test a tier directly with:
 
-1. open the WildBosses JAR with an archive tool such as 7-Zip;
-2. copy the tier file you want from `data/wildbosses/loot_table/boss/`;
-3. place it at the matching path inside your datapack;
-4. edit its pools, entries, weights, rolls, counts, conditions, or item IDs;
-5. run `/reload` after adding or changing the datapack;
-6. use `/wb loot <tier>` to quickly test the resulting reward pool.
+```text
+/wb loot mythic
+```
 
-Because the datapack overrides the same resource location, you can rebalance one tier without touching the others or rebuilding the mod.
+Mega Stones are not part of these tier loot tables.
 
-For the full datapack and loot-table formats, see the [Minecraft Wiki guide to creating a data pack](https://minecraft.wiki/w/Tutorials/Creating_a_data_pack) and the [Minecraft Wiki loot table reference](https://minecraft.wiki/w/Loot_table).
+### Cobblemon Loot Menu integration
 
-> **Note:** Mega Stones are not part of these tier loot tables. Their reward is handled separately by WildBosses when an eligible Boss actually Mega Evolves, and each species can award its stone only once per player.
+WildBosses exposes `WildBossLootAwardEvent` so another server-side mod can take responsibility for a generated Boss reward before WildBosses gives it normally.
 
-### Advancements
+Cobblemon Loot Menu uses this to combine:
 
-WildBosses ships with its own advancement tree.
+```text
+WildBosses tier reward
+        +
+normal Cobblemon species loot
+        ↓
+one server authoritative reward selection
+```
 
-Current progression includes achievements for:
+If the integration claims the event, WildBosses does not award the same stacks again.
 
-- defeating your first Boss;
-- defeating an Uncommon, Rare, Epic, Legendary, and Mythic Boss;
+Mega Stones intentionally bypass this flow and go directly to the eligible player.
+
+### Progression
+
+WildBosses includes a persistent kill leaderboard and its own advancement tree.
+
+Current advancement goals include:
+
+- defeating the first Boss;
+- defeating each individual tier;
 - defeating 5 Bosses;
 - defeating 25 Bosses;
 - defeating at least one Boss of every tier;
-- witnessing and overcoming Enrage;
+- surviving and overcoming Enrage;
 - defeating a shiny Boss;
 - successfully fleeing from a Boss encounter;
 - defeating a Boss that Mega Evolved;
-- receiving your first Mega Stone from a Boss.
+- receiving the first Mega Stone from a Boss.
 
-### Leaderboard
-
-Boss victories are tracked persistently.
-
-The leaderboard can show the top Boss hunters overall or filter the ranking by tier:
+Leaderboard commands:
 
 ```text
 /wb leaderboard
 /wb leaderboard mythic
 ```
 
-### Cobblemon Loot Menu integration
-
-WildBosses exposes a public reward event that allows another server-side mod to take responsibility for a generated Boss reward before WildBosses awards it normally.
-
-**Cobblemon Loot Menu** uses this integration to combine the regular Boss reward with the Pokémon's normal species loot:
-
-```text
-WildBosses tier rewards
-        +
-the Pokémon's normal Cobblemon species loot
-        ↓
-one server-authoritative loot selection
-```
-
-**Mega Stones intentionally bypass this integration.** If the defeated Boss actually Mega Evolved and the player is eligible for that species' one-time Mega Stone reward, the stone is granted **directly to the player**. It is never added to the Loot Menu session.
-
-```text
-normal Boss loot  -> Cobblemon Loot Menu
-Mega Stone        -> player directly
-```
-
-This keeps Mega Stones separate from ordinary selectable loot because they are rare, unique progression rewards that can only be earned once per species, per player.
-
-When the integration successfully takes responsibility for the regular reward, it calls `claim()` on the event and WildBosses does not award the same stacks a second time.
-
-The current event also exposes the Boss entity UUID so integrations can reliably associate rewards with the Pokémon that produced them.
-
 ### Optional cross-mod integrations
-
-WildBosses can expose Boss battle metadata to other mods without making them hard dependencies. The current integration API can report whether a Pokémon is a Boss, its tier, and its current scaled battle level.
 
 #### Cobblemon Battle Slider
 
-With **Cobblemon Battle Slider** installed, WildBoss encounters get a dedicated VS intro instead of looking like a normal wild fight.
+When Battle Slider is installed, WildBoss encounters can use a dedicated VS introduction.
 
-- the Boss side uses the tier color;
-- the label reads like `Mythic Boss Garchomp`;
-- the scaled level is shown as `Scaled Level = Lv.125`;
-- the real Pokémon model is rendered in 3D and auto-fitted to the portrait slot;
-- tiny and huge species share the same slot without a per-species scale table;
-- the normal overworld Boss nameplate is hidden while the VS intro is on screen;
-- the player/trainer side can use controlled 3D upper-body portraits with a 2D skin fallback;
-- WildBosses skips its own encounter title/subtitle while Battle Slider is loaded, preventing the old `Boss Encounter!` screen from flashing before the VS intro. The Boss cry and normal battle setup are kept.
+The integration can show:
 
-The integration is soft. WildBosses still runs normally if Battle Slider is missing, including its original encounter title/subtitle.
+- tier-colored Boss side;
+- a label such as `Mythic Boss Garchomp`;
+- authoritative scaled level such as `Scaled Level = Lv.125`;
+- the real Pokémon rendered as the Boss portrait;
+- temporary overworld Boss name-tag suppression while the intro is active.
+
+WildBosses suppresses its own normal encounter title while Battle Slider is loaded so the two presentations do not overlap.
+
+The integration is soft and WildBosses keeps its original encounter presentation when Battle Slider is absent.
 
 #### CobbleTunes
 
-With **CobbleTunes** installed, Boss battles can receive a region-aware theme based on the Boss species.
+When CobbleTunes is installed, Boss battles can receive region-aware music based on the Boss species.
 
-CobbleTunes builds a safe regional pool instead of blindly using every legendary song:
-
-1. regional rival/PvP theme — highest priority;
-2. generic regional legendary theme — medium priority when one exists;
-3. Black/White World Tournament regional remix — lower priority;
-4. species-specific legendary encounter themes — excluded.
-
-The exact mix changes by Boss tier, and CobbleTunes rerolls once when it would immediately repeat the same Boss track for that region. The music integration is also soft; no extra soundtrack files are bundled by WildBosses.
-
-### Requirements
-
-- Minecraft `1.21.1`
-- Java `21`
-- Fabric Loader `0.17.2+`
-- Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
-- Cobblemon `1.7.3+`
-
-Optional integrations:
-
-- Mod Menu `11.0.3+` + YetAnotherConfigLib (YACL) `3.8.1+` for the config screen;
-- Cobblemon Battle Slider for the Boss VS presentation;
-- CobbleTunes for regional Boss music.
-
-WildBosses is built for Fabric. Cobblemon's own required dependencies still apply. Mod Menu and YACL are only needed for the in-game configuration screen.
-
-### Installation
-
-1. Install Fabric Loader, Fabric Language Kotlin, Cobblemon, and Cobblemon's required dependencies.
-2. Put the WildBosses JAR in the `mods` folder.
-3. Start the game or server once to generate the configuration.
-4. Adjust the generated settings if desired.
+The music integration is soft and WildBosses does not bundle extra soundtrack files.
 
 ### Configuration
 
@@ -546,64 +413,47 @@ The first launch creates:
 config/wildbosses/wildbosses.json
 ```
 
-With **Mod Menu + YACL** installed on the client, the same settings can also be edited from:
+With Mod Menu and YACL installed on the client, the same settings are available through:
 
 ```text
-Mods -> WildBosses -> Configure
+Mods
+→ WildBosses
+→ Configure
 ```
 
-The screen edits the same `wildbosses.json` model; it does not create a second config. In singleplayer the integrated server uses those values directly. On dedicated servers, gameplay remains controlled by the server's own config, so changing a local client's copy does not override server rules.
-
-The generated file contains comments explaining the available values and controls:
+The configuration controls:
 
 - global Boss spawn chance;
-- player spawn cooldown;
-- excluded Cobblemon species labels;
+- per-player spawn cooldown;
+- blocked Cobblemon species labels;
 - maximum scaled Boss level;
 - Enrage interval and strength;
 - Boss lifetime;
 - tier weights;
-- tier level bonuses;
-- battle AI skill;
-- Boss AI debug logging;
+- level bonuses;
+- AI skill;
+- AI debug logging;
 - shiny chance;
 - guaranteed perfect IVs;
 - Mega Evolution chance.
 
-Default global values:
-
-```text
-Boss spawn chance:       1/512
-Spawn cooldown:          15 minutes
-Boss lifetime:           10 minutes
-Maximum scaled level:    200
-Enrage interval:         8 turns
-Enrage strength:         +1 stage
-Boss AI debug logging:   off
-```
-
-The configuration can be reloaded without restarting the server:
+Reload gameplay configuration without restarting the server:
 
 ```text
 /wb reloadconfig
 ```
 
-Loot tables can be reloaded separately:
-
-```text
-/wb reload
-```
-
-### Admin commands
+### Admin and testing commands
 
 `/wildbosses` and `/wb` point to the same command tree.
 
 ```text
 /wb help
 
-/wb spawn <tier> [species] [respectCooldown]
+/wb spawn <tier> [pokemon properties...] [respectCooldown=true]
 /wb list
 /wb info <target>
+/wb debugentity <target>
 /wb teleport <target>
 /wb despawn <target>
 /wb forcebattle <target>
@@ -622,13 +472,19 @@ Loot tables can be reloaded separately:
 /wb version
 ```
 
-The suite is intended for administration, debugging, balance testing, and verifying Boss behavior without waiting for a natural spawn.
+`/wb spawn` accepts Cobblemon `PokemonProperties`, including forms and aspects. For example:
 
-For `/wb spawn`, `respectCooldown` defaults to `false` so administrators can bypass the normal player cooldown while testing. Set it to `true` when testing the real player-facing spawn gate.
+```text
+/wb spawn epic exeggutor alolan
+```
+
+`respectCooldown` defaults to `false` for admin testing.
+
+`/wb debugentity` prints raw persistence and synchronized Boss state for the selected Pokémon and is intended for lifecycle troubleshooting.
 
 ### Public API
 
-`WildBossIntegrationApi` exposes lightweight Boss metadata for optional integrations:
+`WildBossIntegrationApi` exposes lightweight Boss metadata:
 
 ```text
 isBoss(PokemonEntity)
@@ -637,222 +493,141 @@ getTierNameByPokemonUuid(UUID)
 getScaledLevel(PokemonEntity / UUID)
 ```
 
-This is the bridge currently used by Battle Slider and CobbleTunes. Integrations should still treat WildBosses as optional and only call the API when the mod is present.
+Optional integrations should still check that WildBosses is loaded before calling the API.
 
-Other server-side mods can intercept generated Boss rewards through `WildBossLootAwardEvent`.
-
-The event exposes:
-
-```text
-entityUuid
-player
-level
-position
-speciesName
-tierName
-stacks
-claimed
-```
-
-A Kotlin integration can subscribe to the event and claim responsibility for the reward:
-
-```kotlin
-WildBossLootEvents.subscribe { event ->
-    val bossUuid = event.entityUuid
-    val player = event.player
-    val rewards = event.stacks
-
-    // Queue, transform, or otherwise resolve the reward here.
-
-    event.claim()
-}
-```
+Server-side reward integrations can subscribe to `WildBossLootAwardEvent`, which exposes the Boss entity UUID, player, level, position, species name, tier name, generated stacks, and claimed state.
 
 `claim()` should only be called after the integration has actually taken responsibility for resolving the reward.
 
-### Building
+### Installation
 
-Java 21 is required. From the project root:
+1. Install Fabric Loader for Minecraft `1.21.1`.
+2. Install Fabric API, Fabric Language Kotlin, Cobblemon, and Cobblemon's required dependencies.
+3. Place the WildBosses JAR in the `mods` folder.
+4. Start the game or server once to generate the configuration.
+5. Add optional integrations as desired.
+
+For multiplayer, use the same WildBosses build on the server and clients that need its client-side Boss presentation behavior.
+
+### Building from source
+
+Java `21` is required.
+
+#### Windows
 
 ```powershell
+.\gradlew clean build
+```
+
+#### Linux or macOS
+
+```bash
 ./gradlew clean build
 ```
 
-The JAR will be generated in:
+The compiled JAR is generated by the project's Gradle build output.
 
-```text
-build/libs/
-```
+### Known limitations
+
+- The current target is Minecraft `1.21.1` with Cobblemon `1.7.3+`.
+- Mega Evolution depends on compatible external Mega data for the species being fought.
+- Cross-mod integrations can require updates when another mod changes its internal API or resource format.
+- A process killed before an in-progress world save finishes can still lose the newest unsaved state.
+- Dedicated-server behavior should be validated in the exact modpack before a public release.
 
 ### Roadmap
 
-WildBosses is still in development. Current areas planned for continued work include:
+Current planned areas include:
 
-- further MegaShowdown compatibility and testing;
-- possible **Myths and Legends** integration for legendary/mythical rewards;
-- additional balancing and compatibility testing;
-- a Cobblemon `1.8` port after the `1.7.3` release is stabilized.
+- continued Mega compatibility testing;
+- possible **Myths and Legends** integration for Legendary and Mythical rewards;
+- additional balance and compatibility testing;
+- a Cobblemon `1.8` port after the `1.7.3` build is stabilized.
+
+### Credits
+
+- Created by **Kaizzinho**.
+- Built for [Cobblemon](https://cobblemon.com/).
+- Optional integration with Cobblemon Battle Slider.
+- Optional integration with CobbleTunes.
+- Optional integration with Cobblemon Loot Menu.
+- Optional compatible Mega Evolution data support.
 
 ### License
 
-Available under the MIT license.
+WildBosses is available under the **MIT License**.
+
+Pokémon, Pokémon names, and related intellectual property belong to their respective rights holders.
 
 ---
 
 ## Português
 
-### O que é?
+### Visão geral
 
 **WildBosses** adiciona Pokémon Boss raros que vagam naturalmente pelo mundo do [Cobblemon](https://cobblemon.com/).
 
-Em vez de criar encontros separados ou roteirizados, o WildBosses ocasionalmente promove um Pokémon selvagem comum a **Boss**, dando a ele seu próprio tier, identidade visual, dificuldade, escalonamento de batalha e conjunto de recompensas.
+Em vez de criar encontros separados ou roteirizados, o mod pode promover um Pokémon selvagem comum a Boss com tier próprio, brilho, nível escondido no overworld, escalonamento de batalha, IA agressiva, progressão e pool de recompensas.
 
-Os Bosses foram pensados como uma atividade PvE de endgame. O nível real fica escondido até a batalha, a dificuldade escala de acordo com o jogador que os desafia e os tiers mais fortes podem ultrapassar com folga o nível 100.
+Os Bosses foram pensados como uma atividade PvE de endgame. Eles continuam usando as entidades e o sistema de batalha normal do Cobblemon em vez de substituir ou criar um fork desses sistemas.
 
-O WildBosses funciona por cima do Cobblemon, sem substituir ou criar um fork de seus sistemas principais.
+### Como funciona
 
-### Capturas de tela
-
-As capturas abaixo seguem a mesma ordem em que um jogador normalmente descobriria e enfrentaria um Boss.
-
-#### Um Boss apareceu
-
-Quando um Boss spawna por perto, o jogador recebe uma mensagem no chat. Você sabe que algo raro apareceu — mas ainda precisa encontrá-lo.
-
-<!--
-SCREENSHOT 01 — Aviso de spawn
-Imagem recomendada: capture a mensagem do WildBosses no chat antes do Boss ficar visível.
-Mantenha HUD e ambiente normal do jogo para o encontro parecer natural.
-
-Arquivo: docs/images/01-boss-spawn.png
-Descomente após adicionar a imagem:
-![Um Wild Boss apareceu por perto](docs/images/01-boss-spawn.png)
--->
-
-#### Tem algo por perto
-
-Todo Boss brilha na cor de seu tier. O contorno pode ser visto através de paredes e debaixo d'água, servindo como pista quando o Boss está próximo, mas ainda fora de vista.
-
-<!--
-SCREENSHOT 02 — Boss atrás da parede
-Imagem recomendada: fique do outro lado de uma parede, relevo, caverna ou construção enquanto o brilho do Boss aparece claramente através dela.
-Um Legendary ou Mythic deixará essa imagem especialmente marcante.
-
-Arquivo: docs/images/02-boss-through-wall.png
-Descomente após adicionar a imagem:
-![Wild Boss brilhando através de uma parede](docs/images/02-boss-through-wall.png)
--->
-
-#### Encontrando o Boss
-
-Ao chegar até ele, o Boss pode ser visto normalmente no overworld — mas seu nível real continua escondido como `Lv. ??` até alguém aceitar a luta.
-
-<!--
-SCREENSHOT 03 — Primeiro encontro
-Imagem recomendada: a primeira visão clara depois de seguir o brilho.
-Mantenha parte do terreno no enquadramento para parecer uma descoberta, não uma imagem montada.
-Garanta que o nome do Boss e Lv. ?? estejam legíveis.
-
-Arquivo: docs/images/03-boss-found.png
-Descomente após adicionar a imagem:
-![Encontrando um Wild Boss](docs/images/03-boss-found.png)
--->
-
-#### Bosses Legendary & Mythic
-
-Os tiers mais altos são propositalmente raros. O brilho mais marcante, os atributos melhores, a chance maior de shiny e o acesso às mecânicas mais perigosas fazem esses encontros se destacarem de um spawn selvagem normal.
-
-<!--
-SCREENSHOT 04 — Showcase principal
-Imagem recomendada: um Boss Legendary ou Mythic em um local bonito do overworld.
-Mostre o modelo completo, brilho do tier, nome e Lv. ??.
-Evite mensagens de admin/debug nessa imagem — ela deve ser o screenshot principal e mais polido do mod.
-
-Arquivo: docs/images/04-mythic-overworld.png
-Descomente após adicionar a imagem:
-![Um Wild Boss Mythic no overworld](docs/images/04-mythic-overworld.png)
--->
-
-#### Escalonamento dinâmico
-
-O nível real do Boss é calculado quando a batalha começa. Jogadores avançados podem enfrentar Bosses muito acima da progressão normal de nível 100 do Cobblemon.
-
-<!--
-SCREENSHOT 05 — Batalha nível 100+
-Imagem recomendada: batalha contra um Boss Epic, Legendary ou Mythic no Lv. 101+.
-Tente mostrar ao mesmo tempo a barra de vida do Boss, nível revelado, seu Pokémon e a interface normal da batalha.
-
-Arquivo: docs/images/05-scaled-battle.png
-Descomente após adicionar a imagem:
-![Batalha dinamicamente escalonada acima do nível 100](docs/images/05-scaled-battle.png)
--->
-
-#### Enrage & Mega Evolução
-
-As batalhas ficam mais perigosas quando se prolongam. Bosses Rare+ acumulam poder e entram em **Enrage** periodicamente, enquanto encontros elegíveis de tiers altos também podem **Mega Evoluir** quando há dados compatíveis de Mega Evolução disponíveis.
-
-<!--
-SCREENSHOT 06 — Enrage + Mega Evolução
-Imagem recomendada: Boss Legendary/Mythic Mega Evoluído durante um ciclo de Enrage.
-Melhor cenário: Boss Mega Lv. 100+ + barra de vida + mensagem de Enrage visível na mesma imagem.
-Se ficar visualmente carregado demais, divida em duas screenshots.
-
-Arquivo: docs/images/06-mega-enrage.png
-Descomente após adicionar a imagem:
-![Boss Mega Evoluído durante a mecânica de Enrage](docs/images/06-mega-enrage.png)
--->
-
-#### Recompensas do Boss
-
-Cada tier possui sua própria tabela de recompensas. Com o **Cobblemon Loot Menu** instalado, o loot normal dos tiers do WildBosses pode ser combinado ao loot normal da espécie e resolvido em uma única seleção controlada pelo servidor.
-
-**Mega Stones são a exceção.** Quando o jogador recebe uma por derrotar um Boss que realmente Mega Evoluiu, a pedra é entregue **diretamente ao jogador** e nunca passa pelo Loot Menu. Mega Stones são recompensas raras e únicas de progressão, não loot comum para seleção.
-
-<!--
-SCREENSHOT 07 — Integração com Loot Menu
-Imagem recomendada: tela de seleção depois de derrotar um Boss Legendary ou Mythic.
-Use um roll com vários itens visualmente diferentes para deixar clara a diferença entre loot selvagem normal e recompensa de Boss.
-
-Arquivo: docs/images/07-loot-menu.png
-Descomente após adicionar a imagem:
-![Recompensas do WildBosses no Cobblemon Loot Menu](docs/images/07-loot-menu.png)
--->
-
-#### Progressão
-
-O WildBosses também possui sua própria árvore de advancements por derrotar tiers, sobreviver a encontros especiais, caçar vários Bosses, encontrar Bosses shiny e interagir com o sistema de Mega Evolução.
-
-<!--
-SCREENSHOT 08 — Advancements
-Imagem recomendada: abra a aba do WildBosses depois de desbloquear vários advancements conectados.
-Uma árvore parcialmente concluída costuma ficar mais interessante do que uma completamente vazia ou 100% concluída.
-
-Arquivo: docs/images/08-advancements.png
-Descomente após adicionar a imagem:
-![Progressão de advancements do WildBosses](docs/images/08-advancements.png)
--->
-
-### Como funciona um encontro?
+Um encontro normal pode virar Boss assim:
 
 ```text
-um Pokémon selvagem comum spawna
-    -> WildBosses rola a chance de Boss
-    -> um tier é selecionado
-    -> o Pokémon se torna um Boss
-    -> seu nível real fica escondido como Lv. ??
-    -> um jogador encontra e desafia o Boss
-    -> o nível é escalonado para aquele jogador
-    -> o encontro é forçado para 1v1
-    -> Bosses Rare+ podem ativar Enrage em batalhas longas
-    -> Bosses elegíveis de tier alto podem Mega Evoluir
-    -> a vitória rola a recompensa do tier
+um Pokémon selvagem spawna
+    ↓
+WildBosses rola a chance de Boss
+    ↓
+um tier é escolhido
+    ↓
+o Pokémon vira um Boss que vaga pelo mundo
+    ↓
+o nível no overworld fica escondido como Lv. ??
+    ↓
+um jogador desafia o Boss
+    ↓
+o nível e o moveset são refeitos para esse jogador
+    ↓
+a batalha é forçada para 1v1
+    ↓
+Enrage e Mega Evolução podem ativar
+    ↓
+a vitória resolve recompensas e progressão
 ```
 
-O Boss não fica permanentemente vinculado ao jogador que causou seu spawn. Outros jogadores também podem encontrá-lo e enfrentar o mesmo Boss.
+O Boss não fica preso ao jogador que causou seu spawn. Outro jogador pode encontrar e desafiar o mesmo Boss.
+
+### Funcionalidades principais
+
+- [x] Cinco tiers de Boss entre **Uncommon** e **Mythic**.
+- [x] Chance configurável de um spawn selvagem normal virar Boss.
+- [x] Brilho colorido por tier visível através de paredes e debaixo d'água.
+- [x] Nível escondido no overworld como `Lv. ??`.
+- [x] Escalonamento dinâmico baseado no Pokémon mais forte da party do desafiante.
+- [x] Nível máximo configurável com padrão de **200**.
+- [x] Encontros Boss forçados para **1v1**.
+- [x] IA agressiva focada em KOs, STAB, efetividade de tipo, cobertura, precisão, prioridade e multi-hit útil.
+- [x] Cobertura contra fraquezas importantes de **4×** quando existe um golpe legal bom.
+- [x] Consciência de ameaças anunciadas de **2× e 4×**.
+- [x] Tratamento correto de dano atrasado para **Future Sight** e **Doom Desire**.
+- [x] Setup agressivo limitado e recuperação de emergência nos tiers mais fortes.
+- [x] **Enrage** configurável para Bosses Rare+.
+- [x] Suporte opcional a Mega Evolução para Bosses elegíveis de tier alto.
+- [x] Mega Stones únicas por espécie e por jogador como progressão.
+- [x] Bosses Epic+ forçados para a evolução final e IVs perfeitos por padrão.
+- [x] Chance maior de shiny em Legendary e Mythic.
+- [x] Cooldown de spawn persistente por jogador.
+- [x] Recuperação do estado do Boss após unload de chunk e reload do mundo.
+- [x] Leaderboard persistente de Bosses derrotados.
+- [x] Árvore própria de advancements.
+- [x] Loot tables vanilla fáceis de sobrescrever com datapacks.
+- [x] Comandos administrativos e de teste em `/wildbosses` e `/wb`.
+- [x] APIs públicas para metadados e recompensas.
+- [x] Integração leve com **Cobblemon Battle Slider**, **CobbleTunes** e **Cobblemon Loot Menu**.
 
 ### Tiers de Boss
-
-Existem cinco tiers:
 
 | Tier | Peso padrão | Bônus de nível | IA | Chance shiny | IVs perfeitos | Chance Mega* |
 |---|---:|---:|---:|---:|---|---:|
@@ -862,88 +637,118 @@ Existem cinco tiers:
 | **Legendary** | 5 | +20 | 5 | 25% | Sim | 50% |
 | **Mythic** | 1 | +25 | 5 | 45% | Sim | 100% |
 
-Os pesos padrão somam 100 e, por isso, podem ser lidos diretamente como a distribuição dos tiers **depois que um spawn selvagem já foi escolhido para virar Boss**. Eles não representam a chance de qualquer Pokémon do mundo virar um Boss.
+Os pesos representam a distribuição dos tiers **depois que um spawn já passou no roll para virar Boss**. Eles não são a chance global de qualquer Pokémon virar Boss.
 
-\* A Mega Evolução só se aplica quando o Boss é elegível e existem dados compatíveis de Mega Evolução disponíveis.
+\* A Mega Evolução ainda exige uma forma compatível e dados compatíveis de Mega Evolução.
 
 Todos os valores da tabela podem ser configurados.
 
-### Recursos
+### Showcase
 
-- cinco tiers de **Uncommon** até **Mythic**;
-- chance configurável de spawns selvagens comuns virarem Bosses;
-- aviso no chat quando um Boss aparece por perto;
-- nível oculto no overworld como `Lv. ??`;
-- escalonamento dinâmico baseado no Pokémon mais forte da party do desafiante;
-- nível máximo configurável, com padrão de **200**;
-- encontros **1v1** forçados;
-- IA de Boss focada em agressividade, priorizando KOs, STAB, efetividade de tipo, cobertura, precisão e golpes de prioridade;
-- IA ciente de golpes atrasados como **Future Sight** e **Doom Desire**, evitando gastar turnos seguidos em dano que ainda está pendente;
-- Bosses Epic+ são forçados para sua forma evolutiva final;
-- Bosses Epic+ recebem IVs perfeitos por padrão;
-- Legendary e Mythic recebem chance aumentada de shiny por padrão;
-- brilho colorido por tier, visível através de paredes e debaixo d'água;
-- mecânica configurável de **Enrage** para Bosses Rare+ em batalhas longas;
-- comportamento opcional de Mega Evolução para Bosses elegíveis de tier alto;
-- cinco loot tables JSON padrão do Minecraft, uma para cada tier;
-- cooldown de spawn persistente por jogador;
-- recuperação do estado dos Bosses após reinicializações de servidor ou mundo;
-- leaderboard persistente de Bosses derrotados;
-- árvore própria de advancements;
-- comandos administrativos e de teste em `/wildbosses` e `/wb`;
-- API pública de metadados do Boss para integrações opcionais;
-- integração leve com **Cobblemon Battle Slider** e **CobbleTunes** quando instalados;
-- evento público de recompensa para integração com outros mods server-side.
+#### Alerta de Spawn
+
+![boss alert](docs/images/chatalert.png)
+
+#### Encontrando um Boss
+
+![boss far away](docs/images/bossfar.png)
+![boss close](docs/images/bossclose.png)
+
+#### Boss Mítico
+
+![bossmythic](docs/images/bossmythic.png)
+![encounter](docs/images/encounter.png)
+
+#### Mecânica de Enrage e Mega Evolução
+
+![boss gather](docs/images/gather.png)
+![boss enrage](docs/images/enrage.png)
+![boss mega evo](docs/images/bossmega.png)
+
+#### Integração com o Cobblemon Battle Slider
+
+![Battle Slider](docs/images/battleslidercompat.png)
+
+#### Integração com Cobblemon Loot Menu
+
+![Loot Menu Integration](docs/images/lootmenu.png)
+
+#### Conquistas
+
+![Advancement](docs/images/advancements.png)
+
+### Requisitos
+
+#### Obrigatórios
+
+- Minecraft `1.21.1`
+- Java `21`
+- Fabric Loader `0.17.2+`
+- Fabric API e dependências Fabric exigidas pelo Cobblemon
+- Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
+- Cobblemon `1.7.3+`
+
+#### Integrações opcionais
+
+- **Mod Menu `11.0.3+` + YACL `3.8.1+`** — tela de configuração dentro do jogo.
+- **Cobblemon Battle Slider** — apresentação VS dedicada para Bosses.
+- **CobbleTunes** — música de batalha regional para Bosses.
+- **Cobblemon Loot Menu** — combina a recompensa normal do Boss com o loot normal da espécie derrotada.
+- **Dados compatíveis de Mega Evolução como MegaShowdown** — habilitam Mega Evoluções suportadas e a progressão de Mega Stones.
+
+O WildBosses continua funcionando sem essas integrações opcionais.
 
 ### Escalonamento dinâmico de nível
 
-Um Boss não possui um único nível permanente de batalha.
+Um Boss não mantém um único nível permanente de batalha.
 
-Quando o jogador inicia o encontro, o WildBosses verifica o Pokémon mais forte da party e adiciona o bônus configurado para o tier do Boss.
+Quando um jogador inicia o encontro, o WildBosses lê o Pokémon mais forte da party e adiciona o bônus configurado para o tier.
 
-Por exemplo, usando a configuração padrão:
+Exemplo:
 
 ```text
-Pokémon mais forte:      Lv. 72
-Bônus do tier Epic:      +15
---------------------------------
-Nível do Boss:           Lv. 87
+Pokémon mais forte       Lv. 72
+Bônus do tier Epic       +15
+-----------------------------
+Nível do Boss            Lv. 87
 ```
 
-Antes da batalha, o nome no overworld continua mostrando `Lv. ??`.
+Antes da batalha, o overworld continua mostrando `Lv. ??`.
 
-Acima do nível 100, o Cobblemon continua usando as fórmulas normais para a linha completa de stats — **HP, Attack, Defense, Sp. Atk, Sp. Def e Speed** escalam com o nível efetivo do Boss. O WildBosses não aplica um segundo multiplicador escondido por cima disso.
-
-Se outro jogador desafiar o mesmo Boss mais tarde, o nível é calculado novamente a partir da party desse novo desafiante. Assim, o mesmo encontro continua relevante para jogadores em pontos diferentes da progressão do servidor.
+Se outro jogador desafiar o mesmo Boss depois, o nível é calculado novamente a partir da party dele. Acima do nível 100, HP, Attack, Defense, Sp. Atk, Sp. Def e Speed continuam usando as fórmulas normais do Cobblemon.
 
 ### Regras de batalha
 
-Encontros contra Boss são forçados para **1v1**.
+Encontros Boss são forçados para **1v1**.
 
-Se o jogador vencer, o Boss é derrotado e a recompensa do tier é rolada.
+Se o jogador vencer, o Boss é derrotado e o fluxo de recompensa começa.
 
-Se o jogador perder ou fugir, o Boss volta ao HP máximo e permanece disponível para outra tentativa. Um desafiante posterior recebe um novo cálculo de nível baseado na própria party.
+Se o jogador perder ou fugir, o Boss volta ao HP máximo e continua disponível. O próximo desafiante recebe um novo cálculo de nível.
 
 Bosses não podem ser capturados.
 
 ### IA agressiva dos Bosses
 
-O WildBosses mantém os Bosses propositalmente diferentes de treinadores competitivos. Eles não jogam pensando em estratégia de longo prazo: se comportam como criaturas selvagens perigosas tentando encerrar a luta.
+A IA foi feita para agir diferente de um treinador competitivo. O foco é encerrar a luta em vez de montar um plano longo de stall.
 
-A IA pontua os ataques disponíveis de acordo com o confronto atual e dá um peso enorme para KOs imediatos. Ela também considera STAB, efetividade de tipo, stats físicos/especiais, precisão, prioridade, golpes multi-hit e imunidades de tipo comuns por habilidade. Golpes arriscados que reduzem os próprios stats, como Close Combat ou Draco Meteor, podem ser usados quando o ganho compensa em vez de ficarem permanentemente bloqueados.
+Os golpes são pontuados de acordo com o confronto atual e KOs imediatos recebem grande prioridade. A IA também considera:
 
-Valores maiores de `aiSkill` deixam o Boss mais consistente:
+- STAB;
+- efetividade de tipo;
+- stats físicos e especiais;
+- precisão;
+- prioridade;
+- dano útil de multi-hit;
+- imunidades comuns por habilidade;
+- valor de golpes arriscados que reduzem os próprios stats quando o ganho compensa.
 
-- tiers menores ainda podem escolher um golpe bom em vez do golpe perfeito;
-- Bosses Epic+ podem receber um único golpe de setup agressivo quando a espécie possui uma opção adequada;
-- Legendary/Mythic podem usar uma única recuperação quando estiverem muito feridos e não houver KO imediato;
-- setup é limitado e recuperação é propositalmente desesperada, então o Boss continua agressivo em vez de virar um treinador de stall.
+Valores maiores de `aiSkill` deixam as escolhas mais consistentes. Bosses Epic+ podem receber um setup agressivo, enquanto Legendary e Mythic podem manter uma recuperação de emergência quando estão muito feridos e não existe KO imediato.
 
-O moveset é reconstruído no início da batalha. Bosses com skill maior aceitam um pouco mais de risco de precisão em troca de golpes fortes e podem manter um golpe de prioridade útil para finalizar alvos enfraquecidos.
+#### Cobertura contra perigo
 
-Todos os tiers também têm **cobertura contra perigo**. Se a espécie possui uma fraqueza defensiva de 4×, o WildBosses procura entre seus golpes legais uma opção boa para punir Pokémon daquele tipo ameaçador. Não existe hardcode por espécie: Omastar pode priorizar cobertura Ice contra Grass, Swampert pode fazer o mesmo, Gyarados pode valorizar Ground contra Electric e a mesma lógica vale para outras tipagens. Cobertura fraca ou incompatível com os stats ofensivos ainda é descartada em vez de enfiar golpe ruim no set.
+Se uma espécie possui uma fraqueza defensiva de 4×, o WildBosses procura entre seus golpes legais uma opção boa para punir Pokémon daquele tipo ameaçador.
 
-O nível de cautela escala por tier:
+A lógica é baseada em tipagem e não em hardcode por espécie. Cobertura ruim ou incompatível com os stats ainda é descartada.
 
 | Tier | Cobertura contra fraqueza 4× | Reação a golpe anunciado |
 |---|---|---|
@@ -953,91 +758,87 @@ O nível de cautela escala por tier:
 | **Legendary** | Garantida quando existe um golpe bom | Consciência perfeita |
 | **Mythic** | Garantida quando existe um golpe bom | Consciência perfeita |
 
-A IA também consegue ler um golpe ofensivo de dois turnos que foi claramente preparado no turno anterior. Um golpe recebido em 2× faz um Boss atento evitar setup ganancioso e puxar mais para seu melhor ataque. Um golpe em 4× vira perigo real: setup/recuperação são ignorados e o Boss usa seu melhor ataque imediato que não seja atrasado. Legendary e Mythic sempre respeitam ameaças anunciadas; tiers menores ainda podem dar uma vacilada de vez em quando.
+A IA também pode reagir a um golpe ofensivo de dois turnos preparado no turno anterior. Uma ameaça de 2× reduz setup ganancioso. Uma ameaça de 4× vira estado de perigo e força uma resposta ofensiva imediata sem setup ou recuperação.
 
-Golpes atrasados são tratados como dano atrasado de verdade. **Future Sight** e **Doom Desire** recebem menos prioridade no moveset e no score, não ganham o bônus normal de KO imediato e ficam bloqueados enquanto o golpe anterior ainda está pendente. O Boss ainda pode usá-los quando fizer sentido — só não vai torrar dois turnos seguidos à toa.
+**Future Sight** e **Doom Desire** são tratados como dano atrasado. Eles não recebem o bônus normal de KO imediato e ficam bloqueados enquanto outro dano atrasado ainda está pendente.
 
-Para testar, ative `bossAiDebugLogging` no config ou **Logs de Debug da IA dos Bosses** no Mod Menu. Só iniciar uma batalha já mostra no console que a IA foi aplicada e qual moveset foi gerado; com o debug ligado, cada turno também mostra os scores, dano estimado, multiplicador de tipo, checagem de KO ao acertar, decisões de setup/recuperação e o golpe escolhido.
+Ative `bossAiDebugLogging` para imprimir moveset e diagnósticos de score no console.
 
 ### Enrage
 
-Batalhas contra Boss não foram feitas para serem prolongadas indefinidamente.
+Por padrão, Bosses Rare, Epic, Legendary e Mythic entram em Enrage a cada **8 turnos**. Uncommon não usa Enrage.
 
-Por padrão, Bosses **Rare, Epic, Legendary e Mythic** entram em Enrage a cada **8 turnos**. Bosses Uncommon não usam Enrage. Um turno antes do próximo Enrage, o jogador recebe um aviso de que o Boss está acumulando poder.
+Um turno antes, o jogador recebe um aviso. Quando ativa, o Boss ganha a quantidade configurada de estágios em Attack, Defense, Sp. Atk, Sp. Def e Speed.
 
-Quando o Enrage ativa, o Boss recebe a quantidade configurada de estágios em Attack, Defense, Sp. Atk, Sp. Def e Speed. O padrão é **+1 estágio** por Enrage, mantendo o limite normal de estágios da batalha.
-
-Tanto o intervalo quanto a força do Enrage podem ser configurados.
+O padrão é **+1 estágio**, respeitando o limite normal da batalha.
 
 ### Mega Evolução
 
-A build atual contém suporte opcional para encontros com Bosses Mega Evoluídos através de dados compatíveis de Mega Evolução, como os fornecidos pelo **MegaShowdown**.
+Bosses elegíveis de tier alto podem usar dados compatíveis de Mega Evolução.
 
-Por padrão:
+Chances padrão:
 
-- Uncommon, Rare e Epic não tentam Mega Evoluir;
-- Legendary possui `50%` de chance configurada de Mega Evolução;
-- Mythic possui `100%` de chance configurada de Mega Evolução.
+- Uncommon: `0%`
+- Rare: `0%`
+- Epic: `0%`
+- Legendary: `50%`
+- Mythic: `100%`
 
-O Boss ainda precisa ser elegível para uma Mega Evolução compatível. A porcentagem por si só não cria uma Mega forma para uma espécie que não possui uma.
+O Boss ainda precisa ter uma forma Mega compatível. A chance configurada não cria uma forma que não existe.
 
 #### Recompensas de Mega Stone
 
-As Mega Stones estão vinculadas a Bosses que **realmente Mega Evoluem durante a batalha**. Derrotar um Boss elegível que não chegou a Mega Evoluir não concede sua Mega Stone.
+Mega Stones só são recebidas quando o Boss derrotado **realmente Mega Evoluiu naquela batalha**.
 
-Quando recebida, a Mega Stone é entregue **diretamente ao jogador**. Ela não entra no pool normal de loot do Boss e não é enviada para o **Cobblemon Loot Menu**.
+A pedra vai direto para o jogador e nunca entra no loot normal do tier nem na sessão do Cobblemon Loot Menu.
 
-Cada Mega Stone também é uma **recompensa única por espécie, por jogador**. Depois que um jogador recebe a Mega Stone associada àquela espécie, derrotar outros Bosses Mega Evoluídos da mesma espécie não entrega outra cópia.
-
-Por exemplo:
+Cada Mega Stone é uma **recompensa única por espécie e por jogador**:
 
 ```text
-1º Mega Pidgeot derrotado -> Pidgeotite recebida
-2º Mega Pidgeot derrotado -> sem Pidgeotite
-3º Mega Pidgeot derrotado -> sem Pidgeotite
-...
-Mega Charizard derrotado  -> sua Mega Stone ainda pode ser recebida
+primeiro Mega Pidgeot derrotado   recebe Pidgeotite
+outros Mega Pidgeot               sem Pidgeotite extra
+Mega Charizard derrotado          sua própria pedra ainda pode cair
 ```
 
-Isso transforma as Mega Stones em recompensas de progressão por encontrar e derrotar diferentes espécies de Bosses capazes de Mega Evoluir, em vez de uma fonte de farm repetível.
-
-O WildBosses também possui progressão relacionada a derrotar Bosses Mega Evoluídos e receber Mega Stones.
+Assim as Mega Stones funcionam como progressão e não como farm repetível.
 
 ### Spawn e ciclo de vida
 
-A chance padrão de promoção para Boss é:
+Valores globais padrão:
 
 ```text
-1 / 512
+Chance de Boss            1 / 512
+Cooldown de spawn         15 minutos
+Tempo de vida             10 minutos
+Nível máximo              200
+Intervalo do Enrage       8 turnos
+Força do Enrage           +1 estágio
+Debug da IA               desligado
 ```
 
-Depois que um jogador causa o spawn de um Boss, ele entra em um cooldown persistente. O padrão é:
+O cooldown pertence ao jogador que causou a promoção para Boss. Ele não impede esse jogador de enfrentar um Boss que já existe.
 
-```text
-15 minutos
-```
+Um Boss intocado normalmente vaga por cerca de 10 minutos antes de ir embora.
 
-Esse cooldown apenas impede aquele jogador de causar outro spawn. Ele ainda pode enfrentar normalmente um Boss que já existe por perto ou que apareceu para outro jogador.
+#### Persistência e recuperação
 
-Um Boss que nunca foi enfrentado normalmente permanece no mundo por aproximadamente:
+Bosses ativos são marcados como entidades persistentes e mantêm informações redundantes de identidade para recuperação.
 
-```text
-10 minutos
-```
+Quando a entidade é carregada novamente, o WildBosses restaura tier, metadados de Boss, nível escondido, scoreboard team, cor do tier, brilho e timestamp de vida.
 
-antes de desaparecer automaticamente.
+Checkpoints são solicitados em mudanças importantes do ciclo de vida para que Bosses ativos e remoções concluídas não dependam apenas de um autosave futuro do Minecraft.
 
-O estado dos Bosses ativos é recuperado após reloads do mundo, incluindo o tier rastreado e o brilho. Os cooldowns de spawn também sobrevivem a reinicializações do servidor.
+O registro em memória também é limpo quando o servidor para para evitar entradas antigas entre sessões de servidor integrado.
 
 ### Restrições de espécies
 
 Lendários, Míticos e Ultra Beasts são excluídos de virar WildBosses por padrão.
 
-O WildBosses lê as labels das espécies fornecidas pelo próprio Cobblemon em vez de manter uma lista separada e hardcoded de Pokémon. As labels excluídas podem ser alteradas na configuração.
+O mod lê as labels de species do Cobblemon em vez de manter uma lista hardcoded separada. As labels bloqueadas podem ser alteradas na configuração.
 
-### Loot
+### Recompensas
 
-Cada tier utiliza uma loot table padrão do Minecraft:
+Cada tier usa uma loot table normal do Minecraft:
 
 ```text
 data/wildbosses/loot_table/boss/uncommon.json
@@ -1047,249 +848,160 @@ data/wildbosses/loot_table/boss/legendary.json
 data/wildbosses/loot_table/boss/mythic.json
 ```
 
-Os pools de recompensa escalam em quantidade e qualidade e podem incluir itens como:
+Os pools podem incluir gemas de tipo, itens de evolução, held items, itens de cura, relic coins e recompensas raras de tiers altos.
 
-- gemas de tipo;
-- itens de evolução;
-- itens equipáveis;
-- itens de cura;
-- relic coins;
-- recompensas raras de tier alto.
+Como são loot tables normais, autores de modpack e administradores podem sobrescrevê-las por datapack sem recompilar o WildBosses.
 
-Como as recompensas usam loot tables normais do Minecraft, administradores de servidor e autores de modpacks podem substituí-las ou modificá-las através de datapacks sem alterar o código do WildBosses.
+#### Override com datapack
 
-#### Personalizando o loot dos Bosses com datapack
-
-Não é necessário modificar o JAR do WildBosses para rebalancear as recompensas. Um datapack pode sobrescrever qualquer uma das cinco loot tables incluídas no mod.
-
-No Minecraft `1.21.1`, crie um datapack dentro da pasta `datapacks` do mundo:
+Use o mesmo namespace e caminho da tabela original que deseja trocar:
 
 ```text
-<mundo>/
-└─ datapacks/
-   └─ meu_loot_wildbosses/
-      ├─ pack.mcmeta
-      └─ data/
-         └─ wildbosses/
-            └─ loot_table/
-               └─ boss/
-                  ├─ uncommon.json
-                  ├─ rare.json
-                  ├─ epic.json
-                  ├─ legendary.json
-                  └─ mythic.json
+<mundo>/datapacks/meu_loot_wildbosses/
+└─ data/
+   └─ wildbosses/
+      └─ loot_table/
+         └─ boss/
+            └─ mythic.json
 ```
 
-O namespace e os caminhos precisam ser mantidos. Para substituir uma tabela do WildBosses, use o namespace `wildbosses` e o mesmo caminho da tabela original incluída no mod.
+No Minecraft `1.21.1`, um `pack.mcmeta` mínimo usa formato de datapack `48`.
 
-Você só precisa incluir os tiers que deseja alterar. Por exemplo, um datapack que muda apenas o loot Mythic pode conter somente:
+Depois de alterar o datapack, rode:
 
 ```text
-data/wildbosses/loot_table/boss/mythic.json
+/reload
 ```
 
-Um `pack.mcmeta` mínimo para Minecraft `1.21.1` usa o formato de datapack `48`:
+ou:
 
-```json
-{
-  "pack": {
-    "pack_format": 48,
-    "description": "Loot customizado do WildBosses"
-  }
-}
+```text
+/wb reload
 ```
 
-O fluxo mais simples é:
+Teste um tier diretamente com:
 
-1. abra o JAR do WildBosses com um programa como 7-Zip;
-2. copie o arquivo do tier desejado em `data/wildbosses/loot_table/boss/`;
-3. coloque-o no mesmo caminho dentro do datapack;
-4. altere pools, entries, weights, rolls, quantidades, conditions ou IDs dos itens;
-5. execute `/reload` depois de adicionar ou alterar o datapack;
-6. use `/wb loot <tier>` para testar rapidamente o pool resultante.
+```text
+/wb loot mythic
+```
 
-Como o datapack sobrescreve a mesma resource location, é possível rebalancear apenas um tier sem mexer nos outros ou recompilar o mod.
+Mega Stones não fazem parte dessas loot tables.
 
-Para consultar o formato completo, veja o [guia de criação de datapacks da Minecraft Wiki](https://minecraft.wiki/w/Tutorials/Creating_a_data_pack) e a [referência de loot tables da Minecraft Wiki](https://minecraft.wiki/w/Loot_table).
+### Integração com Cobblemon Loot Menu
 
-> **Nota:** Mega Stones não fazem parte dessas loot tables de tier. Essa recompensa é tratada separadamente pelo WildBosses quando um Boss elegível realmente Mega Evolui, e cada espécie pode conceder sua pedra apenas uma vez por jogador.
+O WildBosses expõe `WildBossLootAwardEvent` para outro mod server-side assumir a responsabilidade por uma recompensa antes da entrega normal.
 
-### Advancements
+Cobblemon Loot Menu usa isso para combinar:
 
-O WildBosses inclui sua própria árvore de advancements.
+```text
+recompensa do tier WildBosses
+        +
+loot normal da espécie do Cobblemon
+        ↓
+uma seleção de recompensa controlada pelo servidor
+```
+
+Quando a integração chama `claim()`, o WildBosses não entrega os mesmos stacks de novo.
+
+Mega Stones ignoram esse fluxo de propósito e vão diretamente para o jogador elegível.
+
+### Progressão
+
+O WildBosses possui leaderboard persistente e sua própria árvore de advancements.
 
 A progressão atual inclui objetivos por:
 
-- derrotar seu primeiro Boss;
-- derrotar um Boss Uncommon, Rare, Epic, Legendary e Mythic;
+- derrotar o primeiro Boss;
+- derrotar cada tier individual;
 - derrotar 5 Bosses;
 - derrotar 25 Bosses;
 - derrotar pelo menos um Boss de cada tier;
-- presenciar e superar um Enrage;
+- sobreviver e superar um Enrage;
 - derrotar um Boss shiny;
-- fugir com sucesso de um encontro contra Boss;
+- fugir com sucesso de um encontro Boss;
 - derrotar um Boss que Mega Evoluiu;
-- receber sua primeira Mega Stone de um Boss.
+- receber a primeira Mega Stone de um Boss.
 
-### Leaderboard
-
-As vitórias contra Bosses são registradas persistentemente.
-
-O leaderboard pode mostrar os maiores caçadores de Bosses no total ou filtrar o ranking por tier:
+Comandos do leaderboard:
 
 ```text
 /wb leaderboard
 /wb leaderboard mythic
 ```
 
-### Integração com Cobblemon Loot Menu
-
-O WildBosses expõe um evento público que permite que outro mod server-side assuma a responsabilidade por uma recompensa de Boss gerada antes que o próprio WildBosses a entregue normalmente.
-
-O **Cobblemon Loot Menu** utiliza essa integração para combinar a recompensa normal do Boss com o loot normal da espécie:
-
-```text
-recompensas do tier WildBosses
-        +
-loot normal da espécie do Cobblemon
-        ↓
-uma única seleção de loot controlada pelo servidor
-```
-
-**Mega Stones ignoram essa integração de propósito.** Se o Boss derrotado realmente Mega Evoluiu e o jogador ainda pode receber a recompensa única daquela espécie, a pedra é entregue **diretamente ao jogador**. Ela nunca é adicionada à sessão do Loot Menu.
-
-```text
-loot normal do Boss -> Cobblemon Loot Menu
-Mega Stone          -> jogador diretamente
-```
-
-Isso mantém as Mega Stones separadas do loot comum selecionável, já que são recompensas raras e únicas de progressão, recebidas apenas uma vez por espécie, por jogador.
-
-Quando a integração assume a responsabilidade pelo loot normal, ela chama `claim()` no evento e o WildBosses não entrega os mesmos stacks uma segunda vez.
-
-O evento atual também fornece o UUID da entidade Boss, permitindo que integrações associem com segurança a recompensa ao Pokémon que a gerou.
-
 ### Integrações opcionais entre mods
-
-O WildBosses pode expor dados da batalha para outros mods sem transformá-los em dependências obrigatórias. A API atual informa se o Pokémon é um Boss, seu tier e o nível escalado atual da batalha.
 
 #### Cobblemon Battle Slider
 
-Com o **Cobblemon Battle Slider** instalado, encontros contra Boss recebem uma intro VS própria em vez de parecerem uma batalha selvagem comum.
+Com Battle Slider instalado, encontros WildBoss podem receber uma intro VS dedicada.
 
-- o lado do Boss usa a cor do tier;
-- o nome aparece como `Mythic Boss Garchomp`;
-- o nível aparece como `Scaled Level = Lv.125`;
-- o modelo real do Pokémon é renderizado em 3D e ajustado automaticamente ao espaço;
-- espécies minúsculas e gigantes usam o mesmo slot sem tabela manual por espécie;
-- a name tag normal do Boss no mundo fica escondida durante a intro;
-- jogador e treinadores podem usar bustos 3D controlados, com a skin 2D antiga como fallback;
-- o WildBosses pula seu próprio título/subtítulo de encontro enquanto o Battle Slider estiver carregado, evitando que a tela antiga de `Boss Encounter!` apareça por alguns ticks antes da intro VS. O cry do Boss e a inicialização normal da batalha continuam intactos.
+A integração pode mostrar:
 
-A integração é leve. O WildBosses continua funcionando normalmente sem o Battle Slider, incluindo seu título/subtítulo de encontro original.
+- lado do Boss na cor do tier;
+- nome como `Mythic Boss Garchomp`;
+- nível escalado autoritativo como `Scaled Level = Lv.125`;
+- o Pokémon real como retrato do Boss;
+- ocultação temporária da name tag do Boss no overworld durante a intro.
+
+O WildBosses pula seu próprio título normal quando Battle Slider está carregado para evitar sobreposição das duas apresentações.
+
+A integração é leve e o WildBosses mantém sua apresentação original quando Battle Slider não está instalado.
 
 #### CobbleTunes
 
-Com o **CobbleTunes** instalado, a batalha do Boss pode receber um tema baseado na região de origem da espécie.
+Com CobbleTunes instalado, batalhas Boss podem receber música baseada na região da espécie.
 
-O CobbleTunes monta um pool regional mais seguro em vez de jogar qualquer tema lendário na roleta:
-
-1. tema de rival/PvP da região — maior prioridade;
-2. tema lendário genérico da região — prioridade média quando existir;
-3. remix regional do World Tournament de Black/White — prioridade menor;
-4. temas de encontros lendários específicos — excluídos.
-
-O peso muda conforme o tier, e o CobbleTunes faz um reroll quando cair exatamente na mesma faixa usada no último Boss daquela região e houver outra opção. A integração também é opcional; o WildBosses não inclui áudio extra.
-
-### Requisitos
-
-- Minecraft `1.21.1`
-- Java `21`
-- Fabric Loader `0.17.2+`
-- Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
-- Cobblemon `1.7.3+`
-
-Integrações opcionais:
-
-- Mod Menu `11.0.3+` + YetAnotherConfigLib (YACL) `3.8.1+` para a tela de config;
-- Cobblemon Battle Slider para a intro VS dos Bosses;
-- CobbleTunes para música regional de Boss.
-
-O WildBosses é desenvolvido para Fabric. As dependências exigidas pelo próprio Cobblemon continuam sendo necessárias. Mod Menu e YACL só são necessários para a tela de configuração dentro do jogo.
-
-### Instalação
-
-1. Instale Fabric Loader, Fabric Language Kotlin, Cobblemon e as dependências exigidas pelo Cobblemon.
-2. Coloque o JAR do WildBosses na pasta `mods`.
-3. Inicie o jogo ou servidor uma vez para gerar a configuração.
-4. Ajuste as opções geradas, caso deseje.
+A integração é opcional e o WildBosses não inclui arquivos extras de trilha sonora.
 
 ### Configuração
 
-Na primeira inicialização, o mod cria:
+Na primeira inicialização o mod cria:
 
 ```text
 config/wildbosses/wildbosses.json
 ```
 
-Com **Mod Menu + YACL** instalados no cliente, as mesmas opções também podem ser alteradas em:
+Com Mod Menu e YACL instalados no cliente, as mesmas opções aparecem em:
 
 ```text
-Mods -> WildBosses -> Configure
+Mods
+→ WildBosses
+→ Configure
 ```
 
-A tela edita o mesmo modelo de `wildbosses.json`; não existe uma segunda configuração separada. No singleplayer, o servidor integrado usa esses valores diretamente. Em servidores dedicados, as regras continuam sendo controladas pelo arquivo do servidor, então alterar o JSON local do cliente não sobrescreve a configuração do servidor.
-
-O arquivo gerado contém comentários explicando as opções disponíveis e controla:
+A configuração controla:
 
 - chance global de Boss;
-- cooldown de spawn por jogador;
-- labels de espécies excluídas;
+- cooldown por jogador;
+- labels de species bloqueadas;
 - nível máximo escalonado;
 - intervalo e força do Enrage;
-- tempo de vida do Boss;
-- peso dos tiers;
+- tempo de vida;
+- pesos dos tiers;
 - bônus de nível;
-- habilidade da IA de batalha;
-- logs de debug da IA dos Bosses;
+- habilidade da IA;
+- logs de debug da IA;
 - chance de shiny;
 - IVs perfeitos garantidos;
 - chance de Mega Evolução.
 
-Valores globais padrão:
-
-```text
-Chance de Boss:          1/512
-Cooldown de spawn:       15 minutos
-Tempo de vida:           10 minutos
-Nível máximo:            200
-Intervalo de Enrage:     8 turnos
-Força do Enrage:         +1 estágio
-Debug da IA dos Bosses:  desligado
-```
-
-A configuração pode ser recarregada sem reiniciar o servidor:
+Recarregue a configuração sem reiniciar o servidor:
 
 ```text
 /wb reloadconfig
 ```
 
-As loot tables podem ser recarregadas separadamente:
-
-```text
-/wb reload
-```
-
-### Comandos administrativos
+### Comandos administrativos e de teste
 
 `/wildbosses` e `/wb` apontam para a mesma árvore de comandos.
 
 ```text
 /wb help
 
-/wb spawn <tier> [species] [respectCooldown]
+/wb spawn <tier> [pokemon properties...] [respectCooldown=true]
 /wb list
 /wb info <target>
+/wb debugentity <target>
 /wb teleport <target>
 /wb despawn <target>
 /wb forcebattle <target>
@@ -1308,13 +1020,19 @@ As loot tables podem ser recarregadas separadamente:
 /wb version
 ```
 
-Os comandos são voltados para administração, debugging, testes de balanceamento e verificação do comportamento dos Bosses sem precisar esperar por um spawn natural.
+`/wb spawn` aceita `PokemonProperties` do Cobblemon incluindo forms e aspects. Exemplo:
 
-No `/wb spawn`, `respectCooldown` é `false` por padrão para que administradores possam ignorar o cooldown normal durante testes. Use `true` para testar o mesmo bloqueio de spawn visto por jogadores comuns.
+```text
+/wb spawn epic exeggutor alolan
+```
+
+`respectCooldown` usa `false` por padrão nos testes de admin.
+
+`/wb debugentity` mostra o estado bruto de persistência e sincronização do Pokémon selecionado e serve para investigar problemas no ciclo de vida.
 
 ### API pública
 
-`WildBossIntegrationApi` expõe metadados leves do Boss para integrações opcionais:
+`WildBossIntegrationApi` expõe metadados simples do Boss:
 
 ```text
 isBoss(PokemonEntity)
@@ -1323,62 +1041,59 @@ getTierNameByPokemonUuid(UUID)
 getScaledLevel(PokemonEntity / UUID)
 ```
 
-Essa é a ponte usada atualmente pelo Battle Slider e pelo CobbleTunes. A integração deve continuar tratando o WildBosses como opcional e só chamar a API quando o mod estiver presente.
+Integrações opcionais ainda devem verificar se o WildBosses está carregado antes de chamar a API.
 
-Outros mods server-side podem interceptar recompensas geradas por Boss através do `WildBossLootAwardEvent`.
+Mods server-side também podem assinar `WildBossLootAwardEvent`, que fornece UUID da entidade Boss, jogador, nível, posição, espécie, tier, stacks gerados e estado de `claimed`.
 
-O evento disponibiliza:
+`claim()` só deve ser chamado depois que a integração realmente assumir a responsabilidade pela recompensa.
 
-```text
-entityUuid
-player
-level
-position
-speciesName
-tierName
-stacks
-claimed
-```
+### Instalação
 
-Uma integração Kotlin pode assinar o evento e assumir a responsabilidade pela recompensa:
+1. Instale Fabric Loader para Minecraft `1.21.1`.
+2. Instale Fabric API, Fabric Language Kotlin, Cobblemon e as dependências exigidas pelo Cobblemon.
+3. Coloque o JAR do WildBosses na pasta `mods`.
+4. Inicie o jogo ou servidor uma vez para gerar a configuração.
+5. Adicione integrações opcionais se desejar.
 
-```kotlin
-WildBossLootEvents.subscribe { event ->
-    val bossUuid = event.entityUuid
-    val player = event.player
-    val rewards = event.stacks
+Em multiplayer, use a mesma build do WildBosses no servidor e nos clientes que precisam do comportamento visual client-side de Boss.
 
-    // Enfileire, transforme ou resolva a recompensa aqui.
+### Compilando o projeto
 
-    event.claim()
-}
-```
+Java `21` é necessário.
 
-`claim()` só deve ser chamado depois que a integração realmente assumir a responsabilidade por resolver aquela recompensa.
-
-### Compilação
-
-É necessário utilizar Java 21. Na raiz do projeto:
+#### Windows
 
 ```powershell
+.\gradlew clean build
+```
+
+#### Linux ou macOS
+
+```bash
 ./gradlew clean build
 ```
 
-O JAR será gerado em:
+O JAR compilado é gerado pela saída configurada no projeto Gradle.
 
-```text
-build/libs/
-```
+### Limitações conhecidas
 
-### Roadmap
+- O alvo atual é Minecraft `1.21.1` com Cobblemon `1.7.3+`.
+- Mega Evolução depende de dados externos compatíveis para a espécie enfrentada.
+- Integrações entre mods podem precisar de atualização quando outro mod muda sua API interna ou formato de resources.
+- Encerrar o processo antes de um save em andamento terminar ainda pode perder o estado mais recente não gravado.
+- O comportamento em servidor dedicado deve ser validado no modpack exato antes de um release público.
 
-O WildBosses ainda está em desenvolvimento. As áreas planejadas atualmente incluem:
+### Créditos
 
-- continuação dos testes e da compatibilidade com MegaShowdown;
-- possível integração com **Myths and Legends** para recompensas lendárias/míticas;
-- mais testes de balanceamento e compatibilidade;
-- port para Cobblemon `1.8` depois que a versão para `1.7.3` estiver estabilizada.
+- Criado por **Kaizzinho**.
+- Feito para [Cobblemon](https://cobblemon.com/).
+- Integração opcional com Cobblemon Battle Slider.
+- Integração opcional com CobbleTunes.
+- Integração opcional com Cobblemon Loot Menu.
+- Suporte opcional a dados compatíveis de Mega Evolução.
 
 ### Licença
 
-Disponível sob a licença MIT.
+WildBosses está disponível sob a **MIT License**.
+
+Pokémon, nomes de Pokémon e propriedades intelectuais relacionadas pertencem aos respectivos detentores de direitos.

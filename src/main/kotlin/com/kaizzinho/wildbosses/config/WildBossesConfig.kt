@@ -44,34 +44,34 @@ object WildBossesConfig {
 
     private val TEMPLATE_EN = """
         {
-          // Config version. Leave it.
+          // config version leave it
           "configVersion": 2,
 
-          // Boss roll. Default: 1/512.
+          // boss roll default one in five hundred twelve
           "bossSpawnChance": 0.001953125,
 
-          // Cooldown in ticks. 20 ticks = 1s.
+          // cooldown uses game ticks
           "spawnCooldownTicks": 18000,
 
-          // Cobblemon labels blocked from Boss rolls.
+          // cobblemon labels blocked from boss rolls
           "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
 
-          // Max scaled Boss level.
+          // max scaled boss level
           "maxScaledLevel": 200,
 
-          // Rare+ Enrage interval. Warns 1 turn early.
+          // rare plus enrage warns one turn early
           "enrageIntervalTurns": 8,
 
-          // Stages per Enrage. Battle cap is +6.
+          // stages per enrage battle cap is six
           "enrageStatStages": 1,
 
-          // AI scores/choices in console. Pretty noisy.
+          // ai scores and picks in console
           "bossAiDebugLogging": false,
 
-          // Untouched Boss lifetime. 12000 ticks = 10 min.
+          // untouched boss lasts ten mins
           "bossLifetimeTicks": 12000,
 
-          // Tier odds after a spawn becomes a Boss.
+          // tier odds after the boss roll
           "tiers": {
             "UNCOMMON": {
               "weight": 54,
@@ -119,34 +119,34 @@ object WildBossesConfig {
 
     private val TEMPLATE_PT_BR = """
         {
-          // Versão da config. Deixa quieta.
+          // versão da config deixa quieta
           "configVersion": 2,
 
-          // Roll de Boss. Padrão: 1/512.
+          // roll de boss padrão um em quinhentos e doze
           "bossSpawnChance": 0.001953125,
 
-          // Cooldown em ticks. 20 ticks = 1s.
+          // cooldown usa ticks do jogo
           "spawnCooldownTicks": 18000,
 
-          // Labels do Cobblemon bloqueadas no roll.
+          // labels do cobblemon bloqueadas no roll
           "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
 
-          // Nível máximo do Boss escalado.
+          // nível máximo do boss escalado
           "maxScaledLevel": 200,
 
-          // Intervalo do Enrage em Rare+. Avisa 1 turno antes.
+          // enrage rare plus avisa um turno antes
           "enrageIntervalTurns": 8,
 
-          // Estágios por Enrage. O cap da batalha é +6.
+          // estágios por enrage cap da batalha é seis
           "enrageStatStages": 1,
 
-          // Scores/escolhas da IA no console. Bem barulhento.
+          // scores e escolhas da ia no console
           "bossAiDebugLogging": false,
 
-          // Vida de Boss intocado. 12000 ticks = 10 min.
+          // boss intocado dura dez min
           "bossLifetimeTicks": 12000,
 
-          // Odds do tier depois que o spawn vira Boss.
+          // odds do tier depois do roll de boss
           "tiers": {
             "UNCOMMON": {
               "weight": 54,
@@ -251,7 +251,6 @@ object WildBossesConfig {
         return raw
     }
 
-    // Old configs can skip Kotlin defaults. Fix them once here.
     private fun sanitize(raw: WildBossesConfigData): WildBossesConfigData {
         val defaults = WildBossesConfigData()
 

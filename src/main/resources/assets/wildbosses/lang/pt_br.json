@@ -38,7 +38,6 @@
   "wildbosses.message.boss_name": "Chefe %s %s",
   "wildbosses.message.spawned_near": " apareceu perto de %s!",
   "wildbosses.message.defeated_by": " foi derrotado por %s!",
-  "wildbosses.message.wandered_away": " foi embora!",
   "wildbosses.message.lifetime_expired": " desapareceu após permanecer por tempo demais!",
   "wildbosses.message.scaled_to_level": " escalado para o nível ",
   "wildbosses.message.scaling_detail": " (Seu Pokémon mais forte Nv.%s + Bônus de Tier)",
@@ -74,7 +73,7 @@
   "wildbosses.command.version": "WildBosses - veja a versão em fabric.mod.json.",
   "wildbosses.command.cooldown.on": "Você ESTÁ em cooldown de spawn.",
   "wildbosses.command.cooldown.off": "Você NÃO está em cooldown de spawn.",
-  "wildbosses.help.spawn": "Invoca um chefe à força. respectCooldown é falso por padrão (ignora seu cooldown para testes); use true para testar o comportamento real.",
+  "wildbosses.help.spawn": "Invoca um chefe usando as propriedades de Pokémon do Cobblemon. Exemplo: /wb spawn epic exeggutor alolan. respectCooldown é falso por padrão; adicione respectCooldown=true para testar o cooldown real.",
   "wildbosses.help.list": "Lista todos os chefes ativos com espécie, tier, posição e UUID.",
   "wildbosses.help.info": "Mostra o tier, nível, status shiny e posição de um chefe.",
   "wildbosses.help.teleport": "Teleporta você até o chefe indicado.",
@@ -140,5 +139,7 @@
   "wildbosses.config.missing_yacl.title": "Configuração do WildBosses",
   "wildbosses.config.missing_yacl.body": "Instale YetAnotherConfigLib (YACL) 3.8.1+ para abrir a tela de configuração do WildBosses.",
   "wildbosses.config.option.boss_ai_debug": "Logs de Debug da IA dos Bosses",
-  "wildbosses.config.option.boss_ai_debug.desc": "Mostra no console os scores dos golpes, dano estimado, checagem de KO, decisões de setup/recuperação e o golpe final escolhido a cada turno. Deixe desligado no uso normal."
+  "wildbosses.config.option.boss_ai_debug.desc": "Mostra no console os scores dos golpes, dano estimado, checagem de KO, decisões de setup/recuperação e o golpe final escolhido a cada turno. Deixe desligado no uso normal.",
+  "wildbosses.command.error.invalid_properties": "Propriedades de Pokémon inválidas: %s",
+  "wildbosses.command.error.invalid_respect_cooldown": "respectCooldown deve ser true ou false."
 }

@@ -13,7 +13,7 @@ object PlayerLevelCapListener {
             }
         }
 
-        // Weird hop, but candy XP can leave overflow without it.
+        // candy xp can leave junk overflow so bounce the level
         CobblemonEvents.EXPERIENCE_GAINED_EVENT_POST.subscribe { event ->
             if (event.pokemon.getOwnerPlayer() != null && event.currentLevel >= PLAYER_MAX_LEVEL) {
                 event.pokemon.level = PLAYER_MAX_LEVEL - 1

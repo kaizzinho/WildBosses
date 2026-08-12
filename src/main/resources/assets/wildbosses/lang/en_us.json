@@ -38,7 +38,6 @@
   "wildbosses.message.boss_name": "%s Boss %s",
   "wildbosses.message.spawned_near": " spawned near %s!",
   "wildbosses.message.defeated_by": " was defeated by %s!",
-  "wildbosses.message.wandered_away": " wandered away!",
   "wildbosses.message.lifetime_expired": " disappeared after lingering for too long!",
   "wildbosses.message.scaled_to_level": " scaled to level ",
   "wildbosses.message.scaling_detail": " (Your strongest Pokémon Lv.%s + Tier Bonus)",
@@ -74,7 +73,7 @@
   "wildbosses.command.version": "WildBosses - see fabric.mod.json for version.",
   "wildbosses.command.cooldown.on": "You ARE on spawn cooldown.",
   "wildbosses.command.cooldown.off": "You are NOT on spawn cooldown.",
-  "wildbosses.help.spawn": "Force-spawns a boss. respectCooldown defaults to false (bypasses your cooldown for testing); set to true to test the real player-facing gate.",
+  "wildbosses.help.spawn": "Force-spawns a boss using Cobblemon Pokémon properties. Example: /wb spawn epic exeggutor alolan. respectCooldown defaults to false; append respectCooldown=true to test the real cooldown gate.",
   "wildbosses.help.list": "Lists every currently active boss with species, tier, position, and UUID.",
   "wildbosses.help.info": "Shows a boss's tier, level, shiny status, and position.",
   "wildbosses.help.teleport": "Teleports you to the given boss.",
@@ -140,5 +139,7 @@
   "wildbosses.config.missing_yacl.title": "WildBosses Config UI",
   "wildbosses.config.missing_yacl.body": "Install YetAnotherConfigLib (YACL) 3.8.1+ to open the WildBosses configuration screen.",
   "wildbosses.config.option.boss_ai_debug": "Boss AI Debug Logging",
-  "wildbosses.config.option.boss_ai_debug.desc": "Logs move scores, estimated damage, KO checks, setup/recovery decisions, and the final Boss move every turn. Leave this off for normal play."
+  "wildbosses.config.option.boss_ai_debug.desc": "Logs move scores, estimated damage, KO checks, setup/recovery decisions, and the final Boss move every turn. Leave this off for normal play.",
+  "wildbosses.command.error.invalid_properties": "Invalid Pokémon properties: %s",
+  "wildbosses.command.error.invalid_respect_cooldown": "respectCooldown must be true or false."
 }

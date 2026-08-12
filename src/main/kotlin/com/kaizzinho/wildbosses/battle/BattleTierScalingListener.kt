@@ -11,6 +11,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossInstance
 import com.kaizzinho.wildbosses.boss.BossMessageFormat
+import com.kaizzinho.wildbosses.boss.BossPersistence
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossTier
 import com.kaizzinho.wildbosses.config.WildBossesConfig
@@ -97,6 +98,7 @@ object BattleTierScalingListener {
 
             BossHealthBarManager.start(bossEntity, player, tier, scaledLevel)
             BossEnrageManager.startTracking(bossEntity.uuid, battle, wildActor, tier)
+            BossPersistence.requestCheckpoint(bossEntity)
             announceBattleEngage(bossEntity, player, tier)
 
             val chatMessage = BossMessageFormat.build(

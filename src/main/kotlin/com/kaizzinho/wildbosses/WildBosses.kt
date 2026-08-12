@@ -13,10 +13,12 @@ import com.kaizzinho.wildbosses.config.WildBossesConfig
 
 object WildBosses : ModInitializer {
 	const val MOD_ID = "wildbosses"
+	const val PERSISTENCE_PROBE_BUILD = "20260811-persist-probe-2"
 	val logger = LoggerFactory.getLogger(MOD_ID)!!
 
 	override fun onInitialize() {
 		logger.info("[WildBosses] Initializing Boss System...")
+		logger.warn("[WildBosses-PERSISTENCE-PROBE] build=$PERSISTENCE_PROBE_BUILD loaded")
 
 		WildBossEntityData.IS_BOSS
 		WildBossesConfig.data

@@ -17,7 +17,7 @@ object MegaEvolutionManager {
 
     private val megaStonesBySpecies: MutableMap<String, MutableList<MegaStoneEntry>> = mutableMapOf()
 
-    // Mega rides the first queued move.
+    // mega piggybacks the first queued move
     private val pendingMegaTrigger = mutableSetOf<UUID>()
 
     fun register() {
