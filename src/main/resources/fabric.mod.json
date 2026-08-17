@@ -46,9 +46,8 @@
   ],
   "suggests": {
     "modmenu": ">=11.0.3",
-    "yet_another_config_lib_v3": ">=3.8.1",
     "cobbletunes": "*",
-    "kaizzinhobattleslider": "*"
+    "cobblemonbattleintroduction": "*"
   },
   "custom": {
     "modmenu": {

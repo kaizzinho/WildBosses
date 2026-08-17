@@ -32,9 +32,12 @@ import net.minecraft.world.item.ItemStack
 
 object BattleTierScalingListener {
 
-    private const val BATTLE_SLIDER_MOD_ID = "kaizzinhobattleslider"
-    private val battleSliderLoaded by lazy {
-        FabricLoader.getInstance().isModLoaded(BATTLE_SLIDER_MOD_ID)
+    private const val BATTLE_INTRODUCTION_MOD_ID = "cobblemonbattleintroduction"
+    private const val LEGACY_BATTLE_SLIDER_MOD_ID = "kaizzinhobattleslider"
+    private val battleIntroductionLoaded by lazy {
+        val loader = FabricLoader.getInstance()
+        loader.isModLoaded(BATTLE_INTRODUCTION_MOD_ID) ||
+            loader.isModLoaded(LEGACY_BATTLE_SLIDER_MOD_ID)
     }
 
     private val battleAIField = AIBattleActor::class.java.getDeclaredField("battleAI").apply { isAccessible = true }
@@ -140,7 +143,7 @@ object BattleTierScalingListener {
     }
 
     private fun announceBattleEngage(entity: PokemonEntity, player: ServerPlayer, tier: BossTier) {
-        if (!battleSliderLoaded) {
+        if (!battleIntroductionLoaded) {
             val title = Component.translatable(
                 "wildbosses.title.encounter",
                 BossMessageFormat.tierName(tier)
