@@ -415,6 +415,19 @@ class WildBossesConfigScreen private constructor(
         }
     }
 
+    override fun renderBackground(
+        graphics: GuiGraphics,
+        mouseX: Int,
+        mouseY: Int,
+        partialTick: Float
+    ) {
+// no blur so old screens never bleed through
+    }
+
+    override fun applyBlur(partialTick: Float) {
+// blur stays off for this screen
+    }
+
     private fun renderFieldLabels(graphics: GuiGraphics) {
         val keys = when (page) {
             Page.GENERAL -> listOf(
