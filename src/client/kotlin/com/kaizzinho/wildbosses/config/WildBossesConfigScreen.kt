@@ -424,7 +424,7 @@ class WildBossesConfigScreen private constructor(
 // no blur so old screens never bleed through
     }
 
-    override fun applyBlur(partialTick: Float) {
+    override fun renderBlurredBackground(partialTick: Float) {
 // blur stays off for this screen
     }
 

@@ -18,6 +18,7 @@ import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.MegaStoneGrantData
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.kaizzinho.wildbosses.boss.BossMessageFormat
+import com.kaizzinho.wildbosses.compat.simplehats.SimpleHatsCompat
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -206,6 +207,7 @@ object BossBattleResultListener {
             .create(LootContextParamSets.EMPTY)
 
         val items = lootTable.getRandomItems(lootParams)
+        SimpleHatsCompat.rollHat(bossInstance.tier, level.random)?.let(items::add)
 
         val recipient = server.playerList.getPlayer(playerUuid)
 

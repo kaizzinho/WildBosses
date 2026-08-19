@@ -77,7 +77,7 @@ The Boss is not permanently tied to the player who caused it to appear. Another 
 - [x] Datapack-friendly vanilla loot tables.
 - [x] Admin and testing command suite under `/wildbosses` and `/wb`.
 - [x] Public metadata and loot-award APIs for optional integrations.
-- [x] Soft integration with **Cobblemon Battle Slider**, **CobbleTunes**, and **Cobblemon Loot Menu**.
+- [x] Soft integration with **Cobblemon Battle Slider**, **CobbleTunes**, **Cobblemon Loot Menu**, and **Simple Hats**.
 
 ### Boss tiers
 
@@ -146,6 +146,7 @@ Every value in the table is configurable.
 - **Cobblemon Battle Slider** — dedicated Boss VS presentation.
 - **CobbleTunes** — region-aware Boss battle music.
 - **Cobblemon Loot Menu** — combines regular Boss rewards with the defeated species' normal loot.
+- **Simple Hats** — adds one guaranteed eligible hat to every Boss reward, with rarer Boss tiers strongly favoring rarer hats.
 - **Compatible Mega Evolution data such as MegaShowdown** — enables supported Boss Mega Evolutions and Mega Stone progression.
 
 WildBosses remains functional when these optional mods are absent.
@@ -405,6 +406,26 @@ When CobbleTunes is installed, Boss battles can receive region-aware music based
 
 The music integration is soft and WildBosses does not bundle extra soundtrack files.
 
+#### Simple Hats
+
+When **Simple Hats** is installed, every defeated WildBoss adds **one guaranteed eligible hat** to its normal reward pool.
+
+WildBosses does not use Common hats for Boss rewards. Only Simple Hats entries marked **Uncommon**, **Rare**, or **Epic** are eligible, and the Boss tier changes the rarity distribution:
+
+| Boss tier | Uncommon hat | Rare hat | Epic hat |
+|---|---:|---:|---:|
+| **Uncommon** | 85% | 14% | 1% |
+| **Rare** | 70% | 26% | 4% |
+| **Epic** | 50% | 40% | 10% |
+| **Legendary** | 25% | 55% | 20% |
+| **Mythic** | 10% | 45% | 45% |
+
+After the rarity is selected, WildBosses respects Simple Hats' own per-hat weight when choosing the specific reward. Hats with zero weight and seasonal hats are excluded from the normal Boss pool.
+
+The hat is added before `WildBossLootAwardEvent` is fired. This means **Cobblemon Loot Menu** can include the hat in the same Boss reward session instead of WildBosses granting it separately.
+
+The integration is a soft dependency. If Simple Hats is not installed, Boss rewards continue normally with no hat integration.
+
 ### Configuration
 
 The first launch creates:
@@ -551,6 +572,7 @@ Current planned areas include:
 - Optional integration with Cobblemon Battle Slider.
 - Optional integration with CobbleTunes.
 - Optional integration with Cobblemon Loot Menu.
+- Optional integration with Simple Hats.
 - Optional compatible Mega Evolution data support.
 
 ### License
@@ -625,7 +647,7 @@ O Boss não fica preso ao jogador que causou seu spawn. Outro jogador pode encon
 - [x] Loot tables vanilla fáceis de sobrescrever com datapacks.
 - [x] Comandos administrativos e de teste em `/wildbosses` e `/wb`.
 - [x] APIs públicas para metadados e recompensas.
-- [x] Integração leve com **Cobblemon Battle Slider**, **CobbleTunes** e **Cobblemon Loot Menu**.
+- [x] Integração leve com **Cobblemon Battle Slider**, **CobbleTunes**, **Cobblemon Loot Menu** e **Simple Hats**.
 
 ### Tiers de Boss
 
@@ -694,6 +716,7 @@ Todos os valores da tabela podem ser configurados.
 - **Cobblemon Battle Slider** — apresentação VS dedicada para Bosses.
 - **CobbleTunes** — música de batalha regional para Bosses.
 - **Cobblemon Loot Menu** — combina a recompensa normal do Boss com o loot normal da espécie derrotada.
+- **Simple Hats** — adiciona um chapéu elegível garantido à recompensa de cada Boss, com tiers maiores favorecendo chapéus mais raros.
 - **Dados compatíveis de Mega Evolução como MegaShowdown** — habilitam Mega Evoluções suportadas e a progressão de Mega Stones.
 
 O WildBosses continua funcionando sem essas integrações opcionais.
@@ -953,6 +976,26 @@ Com CobbleTunes instalado, batalhas Boss podem receber música baseada na regiã
 
 A integração é opcional e o WildBosses não inclui arquivos extras de trilha sonora.
 
+#### Simple Hats
+
+Com **Simple Hats** instalado, todo WildBoss derrotado adiciona **um chapéu elegível garantido** ao pool normal de recompensas.
+
+O WildBosses não usa chapéus Common nas recompensas de Boss. Apenas itens do Simple Hats marcados como **Uncommon**, **Rare** ou **Epic** podem ser escolhidos, e o tier do Boss altera a distribuição de raridade:
+
+| Tier do Boss | Chapéu Uncommon | Chapéu Rare | Chapéu Epic |
+|---|---:|---:|---:|
+| **Uncommon** | 85% | 14% | 1% |
+| **Rare** | 70% | 26% | 4% |
+| **Epic** | 50% | 40% | 10% |
+| **Legendary** | 25% | 55% | 20% |
+| **Mythic** | 10% | 45% | 45% |
+
+Depois de escolher a raridade, o WildBosses respeita o peso individual definido pelo próprio Simple Hats para selecionar o chapéu específico. Chapéus com peso zero e chapéus sazonais ficam fora do pool normal de Bosses.
+
+O chapéu é adicionado antes do `WildBossLootAwardEvent`. Assim, o **Cobblemon Loot Menu** pode mostrar o chapéu na mesma sessão de recompensa do Boss em vez de ele ser entregue separadamente.
+
+A integração é uma soft dependency. Sem Simple Hats instalado, as recompensas de Boss continuam funcionando normalmente sem a integração de chapéus.
+
 ### Configuração
 
 Na primeira inicialização o mod cria:
@@ -1090,6 +1133,7 @@ O JAR compilado é gerado pela saída configurada no projeto Gradle.
 - Integração opcional com Cobblemon Battle Slider.
 - Integração opcional com CobbleTunes.
 - Integração opcional com Cobblemon Loot Menu.
+- Integração opcional com Simple Hats.
 - Suporte opcional a dados compatíveis de Mega Evolução.
 
 ### Licença

@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.battles.model.actor.ActorType
 import com.cobblemon.mod.common.api.battles.model.actor.AIBattleActor
 import com.cobblemon.mod.common.api.events.CobblemonEvents
+import com.cobblemon.mod.common.battles.BattleRegistry
 import com.cobblemon.mod.common.battles.actor.PlayerBattleActor
 import com.cobblemon.mod.common.battles.actor.PokemonBattleActor
 import com.cobblemon.mod.common.battles.ai.StrongBattleAI
@@ -15,6 +16,7 @@ import com.kaizzinho.wildbosses.boss.BossPersistence
 import com.kaizzinho.wildbosses.boss.BossRegistry
 import com.kaizzinho.wildbosses.boss.BossTier
 import com.kaizzinho.wildbosses.config.WildBossesConfig
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.ChatFormatting
 import net.minecraft.core.registries.BuiltInRegistries
@@ -28,6 +30,8 @@ import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.ItemStack
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 
 object BattleTierScalingListener {
@@ -41,8 +45,24 @@ object BattleTierScalingListener {
     }
 
     private val battleAIField = AIBattleActor::class.java.getDeclaredField("battleAI").apply { isAccessible = true }
+    private val pendingBattleMessages = ConcurrentHashMap<UUID, Component>()
 
     fun register() {
+        CobblemonEvents.POKEMON_SENT_POST.subscribe { event ->
+            val battleId = event.pokemonEntity.battleId ?: return@subscribe
+            flushPendingBattleMessage(battleId)
+        }
+
+        ServerTickEvents.END_SERVER_TICK.register {
+            pendingBattleMessages.keys.toList().forEach { battleId ->
+                val battle = BattleRegistry.getBattle(battleId)
+                when {
+                    battle == null -> pendingBattleMessages.remove(battleId)
+                    battle.started -> flushPendingBattleMessage(battleId)
+                }
+            }
+        }
+
         CobblemonEvents.BATTLE_STARTED_PRE.subscribe { event ->
             val battle = event.battle
 
@@ -104,7 +124,7 @@ object BattleTierScalingListener {
             BossPersistence.requestCheckpoint(bossEntity)
             announceBattleEngage(bossEntity, player, tier)
 
-            val chatMessage = BossMessageFormat.build(
+            val battleMessage = BossMessageFormat.build(
                 BossMessageFormat.bossName(tier, bossPokemon.species.name)
                     .append(BossMessageFormat.plainKey("wildbosses.message.scaled_to_level"))
                     .append(BossMessageFormat.levelValue(tier, scaledLevel))
@@ -116,8 +136,17 @@ object BattleTierScalingListener {
                         ).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                     )
             )
-            player.sendSystemMessage(chatMessage)
+            pendingBattleMessages[battle.battleId] = battleMessage
+            battle.onEndHandlers.add { endedBattle ->
+                pendingBattleMessages.remove(endedBattle.battleId)
+            }
         }
+    }
+
+    private fun flushPendingBattleMessage(battleId: UUID) {
+        val battle = BattleRegistry.getBattle(battleId) ?: return
+        val message = pendingBattleMessages.remove(battleId) ?: return
+        battle.broadcastChatMessage(message)
     }
 
     private fun applyMegaEvolutionIfEligible(bossEntity: PokemonEntity, bossInstance: BossInstance) {

@@ -47,7 +47,8 @@
   "suggests": {
     "modmenu": ">=11.0.3",
     "cobbletunes": "*",
-    "cobblemonbattleintroduction": "*"
+    "cobblemonbattleintroduction": "*",
+    "simplehats": "*"
   },
   "custom": {
     "modmenu": {
