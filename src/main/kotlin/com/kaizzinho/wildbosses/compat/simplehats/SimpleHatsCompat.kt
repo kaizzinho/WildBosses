@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.RandomSource
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 object SimpleHatsCompat {
@@ -31,7 +32,7 @@ object SimpleHatsCompat {
     private data class Bridge(
         val registry: Any,
         val getHatList: Method,
-        val getHatEntry: Method,
+        val hatEntryField: Field,
         val getHatRarity: Method,
         val getHatWeight: Method,
         val getHatSeason: Method
@@ -87,18 +88,23 @@ object SimpleHatsCompat {
             val getHatList = registry.javaClass.getMethod("getHatList")
             val hatList = getHatList.invoke(registry) as? List<*> ?: return null
             val firstHat = hatList.firstOrNull() ?: return null
-            val getHatEntry = firstHat.javaClass.getMethod("getHatEntry")
-            val firstEntry = getHatEntry.invoke(firstHat) ?: return null
+            val hatEntryField = findField(firstHat.javaClass, "hatEntry")?.apply {
+                isAccessible = true
+            } ?: return null
+            val firstEntry = hatEntryField.get(firstHat) ?: return null
             val entryClass = firstEntry.javaClass
 
             Bridge(
                 registry = registry,
                 getHatList = getHatList,
-                getHatEntry = getHatEntry,
+                hatEntryField = hatEntryField,
                 getHatRarity = entryClass.getMethod("getHatRarity"),
                 getHatWeight = entryClass.getMethod("getHatWeight"),
                 getHatSeason = entryClass.getMethod("getHatSeason")
             )
+        } catch (e: LinkageError) {
+            WildBosses.logger.warn("[WildBosses] Simple Hats integration disabled due to incompatible runtime classes", e)
+            null
         } catch (e: Exception) {
             WildBosses.logger.warn("[WildBosses] Simple Hats integration could not initialize", e)
             null
@@ -110,7 +116,7 @@ object SimpleHatsCompat {
             val hats = bridge.getHatList.invoke(bridge.registry) as? List<*> ?: return emptyList()
             val loaded = hats.mapNotNull { hat ->
                 val item = hat as? Item ?: return@mapNotNull null
-                val entry = bridge.getHatEntry.invoke(hat) ?: return@mapNotNull null
+                val entry = bridge.hatEntryField.get(hat) ?: return@mapNotNull null
                 val weight = (bridge.getHatWeight.invoke(entry) as? Number)?.toInt() ?: return@mapNotNull null
                 if (weight <= 0) return@mapNotNull null
 
@@ -133,6 +139,9 @@ object SimpleHatsCompat {
                 WildBosses.logger.warn("[WildBosses] Simple Hats integration found no eligible uncommon rare or epic non seasonal hats")
             }
             loaded
+        } catch (e: LinkageError) {
+            WildBosses.logger.warn("[WildBosses] Simple Hats reward pool disabled due to incompatible runtime classes", e)
+            emptyList()
         } catch (e: Exception) {
             WildBosses.logger.warn("[WildBosses] Simple Hats reward pool could not be read", e)
             emptyList()
@@ -165,6 +174,18 @@ object SimpleHatsCompat {
         for (candidate in pool) {
             if (roll < candidate.weight) return candidate
             roll -= candidate.weight
+        }
+        return null
+    }
+
+    private fun findField(type: Class<*>, name: String): Field? {
+        var current: Class<*>? = type
+        while (current != null) {
+            try {
+                return current.getDeclaredField(name)
+            } catch (_: NoSuchFieldException) {
+                current = current.superclass
+            }
         }
         return null
     }
