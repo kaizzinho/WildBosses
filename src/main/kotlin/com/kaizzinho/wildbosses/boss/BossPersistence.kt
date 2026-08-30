@@ -10,13 +10,16 @@ import java.util.UUID
 object BossPersistence {
 
     private const val SPAWN_TICK_TAG_PREFIX = "wildbosses:spawned_at_"
+    private const val CHECKPOINT_RETRY_LIMIT = 40
     private val pendingCheckpoints = linkedMapOf<UUID, PendingCheckpoint>()
     private val pendingLevelCheckpoints = linkedSetOf<ServerLevel>()
     private val pendingClientResyncs = linkedMapOf<UUID, PendingClientResync>()
 
     private data class PendingCheckpoint(
         val entityUuid: UUID,
-        val level: ServerLevel
+        val level: ServerLevel,
+        val entityRef: PokemonEntity,
+        var attempts: Int = 0
     )
 
     private data class PendingClientResync(
@@ -60,25 +63,49 @@ object BossPersistence {
             }
 
             val pending = pendingCheckpoints.values.toList()
-            pendingCheckpoints.clear()
 
             val levelsToSave = linkedSetOf<ServerLevel>()
             levelsToSave += pendingLevelCheckpoints
             pendingLevelCheckpoints.clear()
             for (checkpoint in pending) {
                 val entity = checkpoint.level.getEntity(checkpoint.entityUuid) as? PokemonEntity
-                if (entity == null || entity.isRemoved || !isBossState(entity)) {
-                    WildBosses.logger.info(
-                        "[BossPersistence-DEBUG] CHECKPOINT_SKIP uuid=${checkpoint.entityUuid} " +
-                            "entityPresent=${entity != null} removed=${entity?.isRemoved} " +
-                            "bossTag=${entity?.tags?.contains("wildbosses:is_boss")} registry=${BossRegistry.isBoss(checkpoint.entityUuid)}"
+
+                if (entity == null) {
+                    if (!checkpoint.entityRef.isRemoved && checkpoint.attempts < CHECKPOINT_RETRY_LIMIT) {
+                        checkpoint.attempts++
+                        if (checkpoint.attempts == 1 || checkpoint.attempts % 10 == 0) {
+                            WildBosses.logger.info(
+                                "[BossPersistence-DEBUG] CHECKPOINT_RETRY uuid=${checkpoint.entityUuid} " +
+                                    "attempt=${checkpoint.attempts} registry=${BossRegistry.isBoss(checkpoint.entityUuid)}"
+                            )
+                        }
+                        continue
+                    }
+
+                    pendingCheckpoints.remove(checkpoint.entityUuid)
+                    WildBosses.logger.warn(
+                        "[BossPersistence-DEBUG] CHECKPOINT_GAVE_UP uuid=${checkpoint.entityUuid} " +
+                            "attempts=${checkpoint.attempts} removed=${checkpoint.entityRef.isRemoved} " +
+                            "registry=${BossRegistry.isBoss(checkpoint.entityUuid)}"
                     )
                     continue
                 }
 
+                if (entity.isRemoved || !isBossState(entity)) {
+                    pendingCheckpoints.remove(checkpoint.entityUuid)
+                    WildBosses.logger.info(
+                        "[BossPersistence-DEBUG] CHECKPOINT_SKIP uuid=${checkpoint.entityUuid} " +
+                            "entityPresent=true removed=${entity.isRemoved} " +
+                            "bossTag=${entity.tags.contains("wildbosses:is_boss")} registry=${BossRegistry.isBoss(checkpoint.entityUuid)}"
+                    )
+                    continue
+                }
+
+                pendingCheckpoints.remove(checkpoint.entityUuid)
+                entity.setPersistenceRequired()
                 checkpoint.level.getChunkAt(entity.blockPosition()).setUnsaved(true)
                 levelsToSave += checkpoint.level
-                logState("CHECKPOINT_READY", entity)
+                logState("CHECKPOINT_READY", entity, "attempts=${checkpoint.attempts}")
             }
 
             for (level in levelsToSave) {
@@ -124,7 +151,9 @@ object BossPersistence {
 
     fun requestCheckpoint(entity: PokemonEntity) {
         val level = entity.level() as? ServerLevel ?: return
-        pendingCheckpoints[entity.uuid] = PendingCheckpoint(entity.uuid, level)
+        entity.setPersistenceRequired()
+        level.getChunkAt(entity.blockPosition()).setUnsaved(true)
+        pendingCheckpoints[entity.uuid] = PendingCheckpoint(entity.uuid, level, entity)
         WildBosses.logger.warn(
             "[WildBosses-PERSISTENCE-PROBE] CHECKPOINT_REQUESTED build=${WildBosses.PERSISTENCE_PROBE_BUILD} " +
                 "species=${entity.pokemon.species.name} uuid=${entity.uuid}"

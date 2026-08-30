@@ -77,10 +77,16 @@ object BossOrphanCleanupListener {
             BossPersistence.requestCheckpoint(entity)
         }
 
-        ServerEntityEvents.ENTITY_UNLOAD.register { entity, _ ->
+        ServerEntityEvents.ENTITY_UNLOAD.register { entity, world ->
             if (entity !is PokemonEntity) return@register
             if (!BossRegistry.isBoss(entity.uuid) && !entity.tags.contains("wildbosses:is_boss")) return@register
+
+            BossRegistry.get(entity.uuid)?.let { instance ->
+                instance.lastKnownPos = entity.position()
+                instance.lastKnownLevel = world
+            }
             BossPersistence.logState("ENTITY_UNLOAD", entity)
+            BossPersistence.requestLevelCheckpoint(world)
         }
 
         EntityTrackingEvents.START_TRACKING.register { trackedEntity, player ->

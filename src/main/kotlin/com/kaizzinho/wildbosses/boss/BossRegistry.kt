@@ -29,6 +29,8 @@ object BossRegistry {
             pokemonUuid = entity.pokemon.uuid,
             tier = tier,
             spawnedAtTick = currentTick,
+            lastKnownPos = entity.position(),
+            lastKnownLevel = entity.level() as? ServerLevel,
             speciesName = entity.pokemon.species.name
         )
         activeBosses[entity.uuid] = instance
