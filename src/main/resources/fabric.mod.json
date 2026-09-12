@@ -12,7 +12,7 @@
     "sources": "https://github.com/kaizzinho/WildBosses",
     "issues": "https://github.com/kaizzinho/WildBosses/issues"
   },
-  "license": "MIT",
+  "license": "ARR",
   "icon": "assets/wildbosses/icon.png",
   "environment": "*",
   "entrypoints": {

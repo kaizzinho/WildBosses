@@ -145,6 +145,7 @@ object BattleTierScalingListener {
 
     private fun flushPendingBattleMessage(battleId: UUID) {
         val battle = BattleRegistry.getBattle(battleId) ?: return
+        if (!battle.started) return
         val message = pendingBattleMessages.remove(battleId) ?: return
         battle.broadcastChatMessage(message)
     }

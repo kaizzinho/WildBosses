@@ -5,7 +5,7 @@
 ![Fabric](https://img.shields.io/badge/Fabric-0.17.2%2B-DBB69B?logo=fabric&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-7F52FF?logo=kotlin&logoColor=white)
 ![Cobblemon](https://img.shields.io/badge/Cobblemon-1.8.0-3E8E41)
-![License](https://img.shields.io/badge/license-MIT-blue)
+![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red)
 
 **[Modrinth](https://modrinth.com/mod/wildbosses) · [Source](https://github.com/kaizzinho/WildBosses) · [Issues](https://github.com/kaizzinho/WildBosses/issues)**
 
@@ -589,7 +589,9 @@ Current planned areas include:
 
 ### License
 
-WildBosses is available under the **MIT License**.
+WildBosses is **All Rights Reserved (ARR)**. The original, unmodified mod may be used on public or private Minecraft servers and included in public or private modpacks without requesting permission. Standalone reuploads or mirrors are not allowed. Copying or reusing source code or assets, or publicly distributing modified versions, forks, derivative works, or altered binaries, requires prior written permission from the copyright holder. Copyright notices, attribution, and license text must remain intact.
+
+See [`LICENSE`](LICENSE) for the full terms.
 
 Pokémon, Pokémon names, and related intellectual property belong to their respective rights holders.
 
@@ -1162,6 +1164,8 @@ O JAR compilado é gerado pela saída configurada no projeto Gradle.
 
 ### Licença
 
-WildBosses está disponível sob a **MIT License**.
+WildBosses é distribuído como **Todos os Direitos Reservados (ARR)**. O mod original e sem modificações pode ser usado em servidores Minecraft públicos ou privados e incluído em modpacks públicos ou privados sem necessidade de pedir permissão. Reuploads ou mirrors independentes não são permitidos. Copiar ou reutilizar código-fonte ou assets, ou distribuir publicamente versões modificadas, forks, trabalhos derivados ou binários alterados, exige permissão prévia por escrito do detentor dos direitos autorais. Avisos de copyright, atribuição e texto da licença devem permanecer intactos.
+
+Consulte [`LICENSE`](LICENSE) para os termos completos.
 
 Pokémon, nomes de Pokémon e propriedades intelectuais relacionadas pertencem aos respectivos detentores de direitos.
