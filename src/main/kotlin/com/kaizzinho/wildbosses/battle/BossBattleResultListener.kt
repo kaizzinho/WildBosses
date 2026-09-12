@@ -94,10 +94,7 @@ object BossBattleResultListener {
                 ?: return@subscribe
 
             val pokemonUuid = wildLoser.pokemon.effectedPokemon.uuid
-            val bossInstance = BossRegistry.getByPokemonUuid(pokemonUuid) ?: run {
-                WildBosses.logger.warn("[WildBosses] Player-victory branch: no BossInstance found for pokemonUuid=$pokemonUuid, aborting")
-                return@subscribe
-            }
+            val bossInstance = BossRegistry.getByPokemonUuid(pokemonUuid) ?: return@subscribe
 
             val didEnrage = BossEnrageManager.hasEnraged(bossInstance.entityUuid)
             val wasShiny = wildLoser.pokemon.effectedPokemon.shiny

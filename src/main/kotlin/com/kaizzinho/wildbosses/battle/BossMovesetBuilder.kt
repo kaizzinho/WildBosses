@@ -83,7 +83,9 @@ object BossMovesetBuilder {
         val severeWeaknesses = severeWeaknesses(bossTypes)
         val minimumAccuracy = minimumAccuracyFor(tier.aiSkill)
 
-        val legalMoves = bossPokemon.species.moves.getAllLegalMoves().distinctBy { it.name }
+        val legalMoves = bossPokemon.species.moves.getAllLegalMoves()
+            .distinctBy { it.name }
+            .filterNot { it.name in BossBattleRestrictions.BOSS_AI_FORBIDDEN_MOVES }
         val attackCandidates = legalMoves
             .asSequence()
             .filter { it.damageCategory != DamageCategories.STATUS }

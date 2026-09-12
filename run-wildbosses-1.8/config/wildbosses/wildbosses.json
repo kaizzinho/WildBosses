@@ -1,0 +1,72 @@
+{
+  // versão da config deixa quieta
+  "configVersion": 2,
+
+  // roll de boss padrão um em quinhentos e doze
+  "bossSpawnChance": 0.001953125,
+
+  // cooldown usa ticks do jogo
+  "spawnCooldownTicks": 18000,
+
+  // labels do cobblemon bloqueadas no roll
+  "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
+
+  // nível máximo do boss escalado
+  "maxScaledLevel": 200,
+
+  // enrage rare plus avisa um turno antes
+  "enrageIntervalTurns": 8,
+
+  // estágios por enrage cap da batalha é seis
+  "enrageStatStages": 1,
+
+  // scores e escolhas da ia no console
+  "bossAiDebugLogging": false,
+
+  // boss intocado dura dez min
+  "bossLifetimeTicks": 12000,
+
+  // odds do tier depois do roll de boss
+  "tiers": {
+    "UNCOMMON": {
+      "weight": 54,
+      "levelBonus": 5,
+      "aiSkill": 2,
+      "shinyChance": 0.0,
+      "guaranteedPerfectIVs": false,
+      "megaEvolutionChance": 0.0
+    },
+    "RARE": {
+      "weight": 30,
+      "levelBonus": 10,
+      "aiSkill": 3,
+      "shinyChance": 0.0,
+      "guaranteedPerfectIVs": false,
+      "megaEvolutionChance": 0.0
+    },
+    "EPIC": {
+      "weight": 10,
+      "levelBonus": 15,
+      "aiSkill": 4,
+      "shinyChance": 0.0,
+      "guaranteedPerfectIVs": true,
+      "megaEvolutionChance": 0.0
+    },
+    "LEGENDARY": {
+      "weight": 5,
+      "levelBonus": 20,
+      "aiSkill": 5,
+      "shinyChance": 0.25,
+      "guaranteedPerfectIVs": true,
+      "megaEvolutionChance": 0.5
+    },
+    "MYTHIC": {
+      "weight": 1,
+      "levelBonus": 25,
+      "aiSkill": 5,
+      "shinyChance": 0.45,
+      "guaranteedPerfectIVs": true,
+      "megaEvolutionChance": 1.0
+    }
+  }
+}

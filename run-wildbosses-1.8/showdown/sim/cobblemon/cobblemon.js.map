@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../sim/cobblemon/cobblemon.ts"],
+  "sourcesContent": ["import * as Reg from \"./registries\";\r\n\r\nexport namespace Cobblemon {\r\n\texport const modId = \"cobblemon\";\r\n\ttype RegistryKey = typeof registryKeys[number];\r\n\texport const registryKeys = [\"ability\", \"bagItem\", \"heldItem\", \"move\", \"species\"] as const;\r\n\texport const registries = {\r\n\t\tability: new Reg.AbilityRegistry(),\r\n\t\tbagItem: new Reg.BagItemRegistry(),\r\n\t\theldItem: new Reg.HeldItemRegistry(),\r\n\t\tmove: new Reg.MoveRegistry(),\r\n\t\tspecies: new Reg.SpeciesRegistry()\r\n\t};\r\n\r\n\texport function getRegistry(key: string): Reg.CobbleRegistry<any> | undefined {\r\n\t\tif (registryKeys.includes(key as RegistryKey)) {\r\n\t\t\treturn registries[key as RegistryKey];\r\n\t\t}\r\n\t\treturn undefined;\r\n\t}\r\n}\r\n\r\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,UAAqB;AAEd,IAAU;AAAA,CAAV,CAAUA,eAAV;AACC,EAAMA,WAAA,QAAQ;AAEd,EAAMA,WAAA,eAAe,CAAC,WAAW,WAAW,YAAY,QAAQ,SAAS;AACzE,EAAMA,WAAA,aAAa;AAAA,IACzB,SAAS,IAAI,IAAI,gBAAgB;AAAA,IACjC,SAAS,IAAI,IAAI,gBAAgB;AAAA,IACjC,UAAU,IAAI,IAAI,iBAAiB;AAAA,IACnC,MAAM,IAAI,IAAI,aAAa;AAAA,IAC3B,SAAS,IAAI,IAAI,gBAAgB;AAAA,EAClC;AAEO,WAAS,YAAY,KAAkD;AAC7E,QAAIA,WAAA,aAAa,SAAS,GAAkB,GAAG;AAC9C,aAAOA,WAAA,WAAW,GAAkB;AAAA,IACrC;AACA,WAAO;AAAA,EACR;AALO,EAAAA,WAAS;AAAA,GAZA;",
+  "names": ["Cobblemon"]
+}

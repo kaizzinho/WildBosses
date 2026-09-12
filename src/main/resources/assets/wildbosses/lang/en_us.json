@@ -41,6 +41,7 @@
   "wildbosses.message.lifetime_expired": " disappeared after lingering for too long!",
   "wildbosses.message.scaled_to_level": " scaled to level ",
   "wildbosses.message.scaling_detail": " (Your strongest Pokémon Lv.%s + Tier Bonus)",
+  "wildbosses.message.move_blocked": "%s has no effect on Wild Bosses!",
   "wildbosses.message.defeated_received": " defeated! You've received: ",
   "wildbosses.message.loot_separator": ", ",
   "wildbosses.message.loot_item": "%sx",

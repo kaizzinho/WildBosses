@@ -1,8 +1,11 @@
 package com.kaizzinho.wildbosses.spawn
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents
+import com.cobblemon.mod.common.api.events.entity.SpawnEvent
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import com.cobblemon.mod.common.api.spawning.spawner.PlayerSpawner
+import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.pokemon.properties.UncatchableProperty
 import com.kaizzinho.wildbosses.WildBosses
 import com.kaizzinho.wildbosses.boss.BossEvolutionResolver
@@ -28,11 +31,18 @@ object BossSpawnListener {
         val entityUuid: UUID,
         val targetPlayerUuid: UUID,
         val tier: BossTier,
-        val queuedAtTick: Long
+        val queuedAtTick: Long,
+        val spawnSource: String
     )
 
     private val pendingPromotions = linkedMapOf<UUID, PendingPromotion>()
     private val reservedPlayers = linkedSetOf<UUID>()
+    private val alphaGetter by lazy {
+        Pokemon::class.java.methods.firstOrNull { it.name == "isAlpha" && it.parameterCount == 0 }
+    }
+    private val spawnerGetter by lazy {
+        SpawnEvent::class.java.methods.firstOrNull { it.name == "getSpawner" && it.parameterCount == 0 }
+    }
 
     fun register() {
         ServerLifecycleEvents.SERVER_STOPPED.register {
@@ -41,7 +51,7 @@ object BossSpawnListener {
         }
 
         CobblemonEvents.POKEMON_ENTITY_SPAWN.subscribe { event ->
-            queueNaturalPromotion(event.entity)
+            queueNaturalPromotion(event)
         }
 
         ServerEntityEvents.ENTITY_LOAD.register entityLoad@{ loadedEntity, world ->
@@ -64,7 +74,7 @@ object BossSpawnListener {
 
             WildBosses.logger.info(
                 "[BossPersistence-DEBUG] NATURAL_PROMOTION_FINALIZED species=${entity.pokemon.species.name} " +
-                    "uuid=${entity.uuid} tier=${pending.tier.name}"
+                    "uuid=${entity.uuid} tier=${pending.tier.name} source=${pending.spawnSource}"
             )
 
             applyBossPromotion(
@@ -96,8 +106,13 @@ object BossSpawnListener {
         }
     }
 
-    private fun queueNaturalPromotion(entity: PokemonEntity) {
+    private fun queueNaturalPromotion(event: SpawnEvent<PokemonEntity>) {
+        val entity = event.entity
         if (entity.tags.contains("wildbosses:is_boss")) return
+        if (isAlphaPokemon(entity)) return
+
+        val spawner = resolveSpawner(event)
+        if (spawner != null && spawner !is PlayerSpawner) return
         if (pendingPromotions.containsKey(entity.uuid)) return
         if (Random.nextDouble() >= WildBossesConfig.data.bossSpawnChance) return
 
@@ -118,14 +133,44 @@ object BossSpawnListener {
             entityUuid = entity.uuid,
             targetPlayerUuid = nearestPlayer.uuid,
             tier = tier,
-            queuedAtTick = currentTick
+            queuedAtTick = currentTick,
+            spawnSource = describeSpawner(spawner)
         )
         reservedPlayers += nearestPlayer.uuid
 
         WildBosses.logger.info(
             "[BossPersistence-DEBUG] NATURAL_PROMOTION_QUEUED species=${entity.pokemon.species.name} " +
-                "uuid=${entity.uuid} tier=${tier.name} player=${nearestPlayer.name.string}"
+                "uuid=${entity.uuid} tier=${tier.name} player=${nearestPlayer.name.string} source=${describeSpawner(spawner)}"
         )
+    }
+
+
+    private fun isAlphaPokemon(entity: PokemonEntity): Boolean {
+        return runCatching {
+            alphaGetter?.invoke(entity.pokemon) as? Boolean ?: false
+        }.getOrDefault(false)
+    }
+
+    private fun resolveSpawner(event: SpawnEvent<PokemonEntity>): Any? {
+        return runCatching {
+            spawnerGetter?.invoke(event)
+        }.getOrNull()
+    }
+
+    private fun describeSpawner(spawner: Any?): String {
+        if (spawner == null) return "legacy"
+
+        val name = runCatching {
+            spawner.javaClass.methods.firstOrNull {
+                it.name == "getName" && it.parameterCount == 0
+            }?.invoke(spawner)?.toString()
+        }.getOrNull()
+
+        return if (name.isNullOrBlank()) {
+            spawner.javaClass.simpleName
+        } else {
+            "${spawner.javaClass.simpleName}:$name"
+        }
     }
 
     private fun announceSpawn(entity: PokemonEntity, tier: BossTier, targetPlayer: ServerPlayer) {

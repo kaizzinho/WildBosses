@@ -421,11 +421,11 @@ class WildBossesConfigScreen private constructor(
         mouseY: Int,
         partialTick: Float
     ) {
-// no blur so old screens never bleed through
+        // no blur so old screens never bleed through
     }
 
     override fun renderBlurredBackground(partialTick: Float) {
-// blur stays off for this screen
+        // keep blur off here too
     }
 
     private fun renderFieldLabels(graphics: GuiGraphics) {

@@ -41,6 +41,7 @@
   "wildbosses.message.lifetime_expired": " desapareceu após permanecer por tempo demais!",
   "wildbosses.message.scaled_to_level": " escalado para o nível ",
   "wildbosses.message.scaling_detail": " (Seu Pokémon mais forte Nv.%s + Bônus de Tier)",
+  "wildbosses.message.move_blocked": "%s não tem efeito em Chefes Selvagens!",
   "wildbosses.message.defeated_received": " derrotado! Você recebeu: ",
   "wildbosses.message.loot_separator": ", ",
   "wildbosses.message.loot_item": "%sx",

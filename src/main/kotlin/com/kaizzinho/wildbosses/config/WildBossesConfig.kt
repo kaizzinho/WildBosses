@@ -3,6 +3,8 @@ package com.kaizzinho.wildbosses.config
 import com.google.gson.GsonBuilder
 import com.kaizzinho.wildbosses.WildBosses
 import net.fabricmc.loader.api.FabricLoader
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.Locale
 
 data class TierConfig(
@@ -37,10 +39,9 @@ private fun defaultTiers(): MutableMap<String, TierConfig> = mutableMapOf(
 
 object WildBossesConfig {
     private val GSON = GsonBuilder().setPrettyPrinting().create()
-    private val CONFIG_FILE = FabricLoader.getInstance().configDir
-        .resolve("wildbosses")
-        .resolve("wildbosses.json")
-        .toFile()
+    private val CONFIG_DIR = FabricLoader.getInstance().configDir.resolve("wildbosses")
+    private val CONFIG_FILE = CONFIG_DIR.resolve("wildbosses.json").toFile()
+    private val LEGACY_CONFIG_FILE = FabricLoader.getInstance().configDir.resolve("wildbosses.json").toFile()
 
     private val TEMPLATE_EN = """
         {
@@ -210,6 +211,8 @@ object WildBossesConfig {
     }
 
     private fun load(): WildBossesConfigData {
+        migrateLegacyConfigLocation()
+
         if (!CONFIG_FILE.exists()) {
             CONFIG_FILE.parentFile?.mkdirs()
             val isPortuguese = Locale.getDefault().language.equals("pt", ignoreCase = true)
@@ -224,6 +227,30 @@ object WildBossesConfig {
             sanitize(migrate(raw, sourceText))
         } catch (_: Exception) {
             WildBossesConfigData()
+        }
+    }
+
+    private fun migrateLegacyConfigLocation() {
+        if (CONFIG_FILE.exists() || !LEGACY_CONFIG_FILE.exists()) return
+
+        CONFIG_DIR.toFile().mkdirs()
+
+        runCatching<Unit> {
+            Files.move(
+                LEGACY_CONFIG_FILE.toPath(),
+                CONFIG_FILE.toPath(),
+                StandardCopyOption.REPLACE_EXISTING
+            )
+        }.recoverCatching {
+            // keep old installs from losing their config
+            LEGACY_CONFIG_FILE.copyTo(CONFIG_FILE, overwrite = true)
+            LEGACY_CONFIG_FILE.delete()
+            Unit
+        }.onFailure {
+            WildBosses.logger.warn(
+                "[WildBosses] Could not migrate config to ${CONFIG_FILE.path}",
+                it
+            )
         }
     }
 
