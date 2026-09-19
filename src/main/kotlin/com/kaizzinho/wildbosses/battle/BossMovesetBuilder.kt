@@ -34,9 +34,11 @@ object BossMovesetBuilder {
         "uproar", "thrash", "petaldance", "outrage", "rollout", "iceball"
     )
 
+    // skip attacks that can just whiff without their setup condition
     private val CONDITIONAL_FAIL_MOVES = setOf(
         "dreameater", "lastresort", "synchronoise", "focuspunch",
-        "counter", "mirrorcoat", "metalburst", "bide", "hiddenpower", "upperhand"
+        "counter", "mirrorcoat", "metalburst", "bide", "hiddenpower", "upperhand",
+        "steelroller"
     )
 
     val DELAYED_ATTACK_MOVES = setOf(
