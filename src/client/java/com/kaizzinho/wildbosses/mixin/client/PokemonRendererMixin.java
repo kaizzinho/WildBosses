@@ -3,7 +3,6 @@ package com.kaizzinho.wildbosses.mixin.client;
 import com.cobblemon.mod.common.client.render.pokemon.PokemonRenderer;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.kaizzinho.wildbosses.boss.BossTier;
-import com.kaizzinho.wildbosses.boss.WildBossEntityData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -17,22 +16,24 @@ public abstract class PokemonRendererMixin {
 
     @Inject(method = "resolveBaseLabel", at = @At("HEAD"), cancellable = true, remap = false)
     private void wildbosses$resolveBossLabel(PokemonEntity entity, CallbackInfoReturnable<MutableComponent> cir) {
-        String tierName = entity.getEntityData().get(WildBossEntityData.TIER);
-        boolean syncedBoss = entity.getEntityData().get(WildBossEntityData.IS_BOSS);
-        if ((!syncedBoss || tierName == null || tierName.isBlank()) && entity.getTeam() != null) {
-            String teamName = entity.getTeam().getName();
-            if (teamName.startsWith("wildbosses_")) {
-                tierName = teamName.substring("wildbosses_".length()).toUpperCase();
-            }
-        }
-        if (tierName == null || tierName.isBlank()) {
+        if (entity.getTeam() == null) {
             return;
         }
 
-        BossTier tier;
-        try {
-            tier = BossTier.valueOf(tierName);
-        } catch (IllegalArgumentException e) {
+        String teamName = entity.getTeam().getName();
+        if (!teamName.startsWith("wildbosses_")) {
+            return;
+        }
+
+        String tierName = teamName.substring("wildbosses_".length());
+        BossTier tier = null;
+        for (BossTier candidate : BossTier.values()) {
+            if (candidate.name().equalsIgnoreCase(tierName)) {
+                tier = candidate;
+                break;
+            }
+        }
+        if (tier == null) {
             return;
         }
 

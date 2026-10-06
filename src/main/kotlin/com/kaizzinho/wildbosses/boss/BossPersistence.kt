@@ -53,8 +53,6 @@ object BossPersistence {
                 if (entity.isRemoved) continue
 
                 restoreRuntimeState(entity, resync.tier, resync.spawnedAtTick)
-                entity.entityData.set(WildBossEntityData.IS_BOSS, true, true)
-                entity.entityData.set(WildBossEntityData.TIER, resync.tier.name, true)
                 entity.entityData.set(PokemonEntity.LABEL_LEVEL, -1, true)
                 entity.setGlowingTag(false)
                 entity.setGlowingTag(true)
@@ -134,8 +132,7 @@ object BossPersistence {
         entity.tags.removeIf { it.startsWith("wildbosses:tier_") }
         entity.tags.add("wildbosses:tier_${tier.name}")
 
-        entity.entityData.set(WildBossEntityData.IS_BOSS, true)
-        entity.entityData.set(WildBossEntityData.TIER, tier.name)
+        // tags and team keep boss state without custom synced ids
         entity.entityData.set(PokemonEntity.LABEL_LEVEL, -1)
 
         val scoreboard = entity.server?.scoreboard
@@ -180,35 +177,33 @@ object BossPersistence {
             ?.toLongOrNull()
 
     fun probeState(phase: String, entity: PokemonEntity, extra: String = "") {
-        val syncedBoss = runCatching { entity.entityData.get(WildBossEntityData.IS_BOSS) }.getOrNull()
-        val syncedTier = runCatching { entity.entityData.get(WildBossEntityData.TIER) }.getOrNull()
         val labelLevel = runCatching { entity.entityData.get(PokemonEntity.LABEL_LEVEL) }.getOrNull()
+        val tierTag = entity.tags.firstOrNull { it.startsWith("wildbosses:tier_") }
         val teamName = entity.team?.name ?: "<none>"
         val suffix = if (extra.isBlank()) "" else " $extra"
         WildBosses.logger.warn(
             "[WildBosses-PERSISTENCE-PROBE] $phase build=${WildBosses.PERSISTENCE_PROBE_BUILD} " +
                 "species=${entity.pokemon.species.name} entityUuid=${entity.uuid} pokemonUuid=${entity.pokemon.uuid} " +
                 "registry=${BossRegistry.isBoss(entity.uuid)} bossTag=${entity.tags.contains("wildbosses:is_boss")} " +
-                "syncedBoss=$syncedBoss syncedTier=$syncedTier pokemonLevel=${entity.pokemon.level} " +
-                "labelLevel=$labelLevel team=$teamName glowing=${entity.isCurrentlyGlowing()} " +
-                "persistenceRequired=${entity.isPersistenceRequired()} removed=${entity.isRemoved}$suffix"
+                "tierTag=$tierTag pokemonLevel=${entity.pokemon.level} labelLevel=$labelLevel team=$teamName " +
+                "glowing=${entity.isCurrentlyGlowing()} persistenceRequired=${entity.isPersistenceRequired()} " +
+                "removed=${entity.isRemoved}$suffix"
         )
     }
 
     fun logState(phase: String, entity: PokemonEntity, extra: String = "") {
-        val syncedBoss = runCatching { entity.entityData.get(WildBossEntityData.IS_BOSS) }.getOrNull()
-        val syncedTier = runCatching { entity.entityData.get(WildBossEntityData.TIER) }.getOrNull()
         val labelLevel = runCatching { entity.entityData.get(PokemonEntity.LABEL_LEVEL) }.getOrNull()
         val tierTag = entity.tags.firstOrNull { it.startsWith("wildbosses:tier_") }
         val spawnTag = entity.tags.firstOrNull { it.startsWith(SPAWN_TICK_TAG_PREFIX) }
+        val teamName = entity.team?.name ?: "<none>"
         val suffix = if (extra.isBlank()) "" else " $extra"
 
         WildBosses.logger.info(
             "[BossPersistence-DEBUG] $phase species=${entity.pokemon.species.name} " +
                 "entityUuid=${entity.uuid} pokemonUuid=${entity.pokemon.uuid} " +
                 "registry=${BossRegistry.isBoss(entity.uuid)} bossTag=${entity.tags.contains("wildbosses:is_boss")} " +
-                "tierTag=$tierTag spawnTag=$spawnTag syncedBoss=$syncedBoss syncedTier=$syncedTier " +
-                "pokemonLevel=${entity.pokemon.level} labelLevel=$labelLevel glowing=${entity.isCurrentlyGlowing()} " +
+                "tierTag=$tierTag spawnTag=$spawnTag team=$teamName pokemonLevel=${entity.pokemon.level} " +
+                "labelLevel=$labelLevel glowing=${entity.isCurrentlyGlowing()} " +
                 "persistenceRequired=${entity.isPersistenceRequired()} removed=${entity.isRemoved} " +
                 "dimension=${(entity.level() as? ServerLevel)?.dimension()?.location()} pos=${entity.blockPosition()}$suffix"
         )
@@ -217,5 +212,6 @@ object BossPersistence {
     private fun isBossState(entity: PokemonEntity): Boolean =
         entity.tags.contains("wildbosses:is_boss") ||
             BossRegistry.isBoss(entity.uuid) ||
-            runCatching { entity.entityData.get(WildBossEntityData.IS_BOSS) }.getOrDefault(false)
+            entity.team?.name?.startsWith("wildbosses_") == true
+
 }

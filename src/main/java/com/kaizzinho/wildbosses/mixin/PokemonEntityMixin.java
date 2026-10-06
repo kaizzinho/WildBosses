@@ -1,9 +1,7 @@
 package com.kaizzinho.wildbosses.mixin;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.kaizzinho.wildbosses.boss.WildBossEntityData;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,33 +19,24 @@ public abstract class PokemonEntityMixin {
     private static final String NBT_TIER = "wildbosses:tier";
     private static final String NBT_SPAWNED_AT = "wildbosses:spawned_at";
 
-    @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    private void wildbosses$defineSyncedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
-        builder.define(WildBossEntityData.IS_BOSS, false);
-        builder.define(WildBossEntityData.TIER, "");
-    }
-
     @Inject(method = "saveWithoutId", at = @At("RETURN"))
     private void wildbosses$saveBossState(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> cir) {
         PokemonEntity self = (PokemonEntity) (Object) this;
-        boolean isBoss = self.getTags().contains(BOSS_TAG) || self.getEntityData().get(WildBossEntityData.IS_BOSS);
-        if (!isBoss) {
+        if (!self.getTags().contains(BOSS_TAG)) {
             return;
         }
 
         CompoundTag output = cir.getReturnValue();
         output.putBoolean(NBT_BOSS, true);
 
-        String tier = self.getEntityData().get(WildBossEntityData.TIER);
-        if (tier == null || tier.isBlank()) {
-            for (String tag : self.getTags()) {
-                if (tag.startsWith(TIER_TAG_PREFIX)) {
-                    tier = tag.substring(TIER_TAG_PREFIX.length());
-                    break;
-                }
+        String tier = "";
+        for (String tag : self.getTags()) {
+            if (tag.startsWith(TIER_TAG_PREFIX)) {
+                tier = tag.substring(TIER_TAG_PREFIX.length());
+                break;
             }
         }
-        if (tier != null && !tier.isBlank()) {
+        if (!tier.isBlank()) {
             output.putString(NBT_TIER, tier);
         }
 
@@ -80,7 +69,6 @@ public abstract class PokemonEntityMixin {
 
         self.setPersistenceRequired();
         self.getTags().add(BOSS_TAG);
-        self.getEntityData().set(WildBossEntityData.IS_BOSS, true);
         self.setGlowingTag(true);
 
         String tier = nbt.contains(NBT_TIER) ? nbt.getString(NBT_TIER) : "";
@@ -97,7 +85,6 @@ public abstract class PokemonEntityMixin {
             final String restoredTier = tier;
             self.getTags().removeIf(tag -> tag.startsWith(TIER_TAG_PREFIX));
             self.getTags().add(TIER_TAG_PREFIX + restoredTier);
-            self.getEntityData().set(WildBossEntityData.TIER, restoredTier);
         }
 
         if (nbt.contains(NBT_SPAWNED_AT)) {
@@ -110,7 +97,7 @@ public abstract class PokemonEntityMixin {
                 "[BossPersistence-DEBUG] NBT_LOAD species=" + self.getPokemon().getSpecies().getName() +
                         " entityUuid=" + self.getUUID() +
                         " nbtBoss=" + nbt.getBoolean(NBT_BOSS) +
-                        " legacyBossTag=" + self.getTags().contains(BOSS_TAG) +
+                        " bossTag=" + self.getTags().contains(BOSS_TAG) +
                         " restoredTier=" + (tier.isBlank() ? "<missing>" : tier) +
                         " restoredSpawnedAt=" + (nbt.contains(NBT_SPAWNED_AT) ? nbt.getLong(NBT_SPAWNED_AT) : -1L)
         );

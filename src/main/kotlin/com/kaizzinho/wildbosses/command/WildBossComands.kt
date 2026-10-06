@@ -479,8 +479,6 @@ object WildBossCommands {
         }
 
         val registry = BossRegistry.get(target.uuid)
-        val syncedBoss = runCatching { target.entityData.get(com.kaizzinho.wildbosses.boss.WildBossEntityData.IS_BOSS) }.getOrNull()
-        val syncedTier = runCatching { target.entityData.get(com.kaizzinho.wildbosses.boss.WildBossEntityData.TIER) }.getOrNull()
         val labelLevel = runCatching { target.entityData.get(PokemonEntity.LABEL_LEVEL) }.getOrNull()
         val teamName = target.team?.name ?: "<none>"
         val bossTag = target.tags.contains("wildbosses:is_boss")
@@ -492,7 +490,7 @@ object WildBossCommands {
             "species=${target.pokemon.species.name} entityUuid=${target.uuid} pokemonUuid=${target.pokemon.uuid}",
             "registry=${registry != null} registryTier=${registry?.tier?.name ?: "<none>"}",
             "bossTag=$bossTag tierTags=$tierTags spawnTags=$spawnTags",
-            "syncedBoss=$syncedBoss syncedTier=$syncedTier labelLevel=$labelLevel pokemonLevel=${target.pokemon.level}",
+            "labelLevel=$labelLevel pokemonLevel=${target.pokemon.level}",
             "team=$teamName glowing=${target.isCurrentlyGlowing()} persistenceRequired=${target.isPersistenceRequired()} removed=${target.isRemoved}"
         )
         for (line in lines) {

@@ -14,26 +14,23 @@ object BossOrphanCleanupListener {
 
             val existing = BossRegistry.get(entity.uuid)
             val hasBossTag = entity.tags.contains("wildbosses:is_boss")
-            val hasSyncedBossState = runCatching {
-                entity.entityData.get(WildBossEntityData.IS_BOSS)
-            }.getOrDefault(false)
             val teamTier = recoverTierFromTeam(entity)
             val hasBossTeam = teamTier != null
 
-            if (existing != null || hasBossTag || hasSyncedBossState || hasBossTeam || entity.isPersistenceRequired()) {
+            if (existing != null || hasBossTag || hasBossTeam || entity.isPersistenceRequired()) {
                 BossPersistence.probeState(
                     "ENTITY_LOAD_SEEN",
                     entity,
-                    "existingRegistry=${existing != null} hasBossTag=$hasBossTag hasSyncedBossState=$hasSyncedBossState hasBossTeam=$hasBossTeam"
+                    "existingRegistry=${existing != null} hasBossTag=$hasBossTag hasBossTeam=$hasBossTeam"
                 )
             }
 
-            if (existing == null && !hasBossTag && !hasSyncedBossState && !hasBossTeam) return@register
+            if (existing == null && !hasBossTag && !hasBossTeam) return@register
 
             BossPersistence.logState(
                 "ENTITY_LOAD_PRE",
                 entity,
-                "existingRegistry=${existing != null} hasBossTag=$hasBossTag hasSyncedBossState=$hasSyncedBossState"
+                "existingRegistry=${existing != null} hasBossTag=$hasBossTag hasBossTeam=$hasBossTeam"
             )
 
             val tier = existing?.tier ?: recoverTier(entity) ?: teamTier
@@ -134,18 +131,11 @@ object BossOrphanCleanupListener {
     }
 
     private fun recoverTier(entity: PokemonEntity): BossTier? {
-        val syncedTier = runCatching { entity.entityData.get(WildBossEntityData.TIER) }
-            .getOrNull()
-            ?.takeIf { it.isNotBlank() }
-            ?.let { name -> BossTier.entries.firstOrNull { it.name == name } }
-        if (syncedTier != null) return syncedTier
-
         val tierTag = entity.tags.firstOrNull { it.startsWith("wildbosses:tier_") }
         return tierTag?.removePrefix("wildbosses:tier_")?.let { name ->
-            BossTier.entries.firstOrNull { it.name == name }
+            BossTier.entries.firstOrNull { it.name.equals(name, ignoreCase = true) }
         }
     }
-
 
     private fun recoverTierFromTeam(entity: PokemonEntity): BossTier? {
         val teamName = entity.team?.name ?: return null

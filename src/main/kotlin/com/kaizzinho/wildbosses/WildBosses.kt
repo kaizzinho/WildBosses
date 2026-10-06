@@ -7,20 +7,18 @@ import com.cobblemon.mod.common.Cobblemon
 import com.kaizzinho.wildbosses.advancement.WildBossCriteria
 import com.kaizzinho.wildbosses.boss.BossTier
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import com.kaizzinho.wildbosses.boss.WildBossEntityData
 import com.kaizzinho.wildbosses.config.WildBossesConfig
 
 
 object WildBosses : ModInitializer {
 	const val MOD_ID = "wildbosses"
-	const val PERSISTENCE_PROBE_BUILD = "20260908-cobblemon-1.8-port-2"
+	const val PERSISTENCE_PROBE_BUILD = "20261006-cobblemon-1.8-no-custom-synched-data"
 	val logger = LoggerFactory.getLogger(MOD_ID)!!
 
 	override fun onInitialize() {
 		logger.info("[WildBosses] Initializing Boss System...")
 		logger.warn("[WildBosses-PERSISTENCE-PROBE] build=$PERSISTENCE_PROBE_BUILD loaded")
 
-		WildBossEntityData.IS_BOSS
 		WildBossesConfig.data
 		WildBossCriteria.register()
 
