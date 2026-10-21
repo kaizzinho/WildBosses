@@ -4,7 +4,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?logo=minecraft&logoColor=white)
 ![Fabric](https://img.shields.io/badge/Fabric-Loader%200.17.2%2B-DBB69B?logo=minecraft&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Fabric%20Language%20Kotlin-7F52FF?logo=kotlin&logoColor=white)
-![Cobblemon](https://img.shields.io/badge/Cobblemon-1.8.1-3E8E41)
+![Cobblemon](https://img.shields.io/badge/Cobblemon-1.8.2-3E8E41)
 ![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red)
 
 *Read this in [English](#english) | Leia em [Português](#português)*
@@ -136,7 +136,7 @@ Every value in the table is configurable.
 - Fabric Loader `0.17.2+`
 - Fabric API and Cobblemon's required Fabric dependencies
 - Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
-- Cobblemon `1.8.1+`
+- Cobblemon `1.8.2+`
 
 #### Optional integrations
 
@@ -543,7 +543,7 @@ For multiplayer, use the same WildBosses build on the server and clients that ne
 
 ### Known limitations
 
-- The current target is Minecraft `1.21.1` with Cobblemon `1.8.1+`.
+- The current target is Minecraft `1.21.1` with Cobblemon `1.8.2+`.
 - Mega Evolution depends on compatible external Mega data for the species being fought.
 - Cross-mod integrations can require updates when another mod changes its internal API or resource format.
 - A process killed before an in-progress world save finishes can still lose the newest unsaved state.
@@ -703,7 +703,7 @@ Todos os valores da tabela podem ser configurados.
 - Fabric Loader `0.17.2+`
 - Fabric API e dependências Fabric exigidas pelo Cobblemon
 - Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
-- Cobblemon `1.8.1+`
+- Cobblemon `1.8.2+`
 
 #### Integrações opcionais
 
@@ -1110,7 +1110,7 @@ Em multiplayer, use a mesma build do WildBosses no servidor e nos clientes que p
 
 ### Limitações conhecidas
 
-- O alvo atual é Minecraft `1.21.1` com Cobblemon `1.8.1+`.
+- O alvo atual é Minecraft `1.21.1` com Cobblemon `1.8.2+`.
 - Mega Evolução depende de dados externos compatíveis para a espécie enfrentada.
 - Integrações entre mods podem precisar de atualização quando outro mod muda sua API interna ou formato de resources.
 - Encerrar o processo antes de um save em andamento terminar ainda pode perder o estado mais recente não gravado.
