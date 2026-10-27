@@ -4,7 +4,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?logo=minecraft&logoColor=white)
 ![Fabric](https://img.shields.io/badge/Fabric-Loader%200.17.2%2B-DBB69B?logo=minecraft&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Fabric%20Language%20Kotlin-7F52FF?logo=kotlin&logoColor=white)
-![Cobblemon](https://img.shields.io/badge/Cobblemon-1.8.2-3E8E41)
+![Cobblemon](https://img.shields.io/badge/Cobblemon-1.8.4-3E8E41)
 ![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red)
 
 *Read this in [English](#english) | Leia em [Português](#português)*
@@ -136,7 +136,7 @@ Every value in the table is configurable.
 - Fabric Loader `0.17.2+`
 - Fabric API and Cobblemon's required Fabric dependencies
 - Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
-- Cobblemon `1.8.2+`
+- Cobblemon `1.8.4+`
 
 #### Optional integrations
 
@@ -189,6 +189,8 @@ Bosses cannot be captured.
 Against an active WildBoss, a small set of bypass and extreme-stall moves fail while still consuming the player's action. This includes OHKO moves, Perish Song, Destiny Bond, Endeavor, Pain Split, fractional-HP attacks, Toxic, Leech Seed, Salt Cure, Haze, Clear Smog, Topsy-Turvy, Trick, and Switcheroo.
 
 Curse is blocked only when used by a Ghost-type Pokémon. Normal non-Ghost Curse setup is still allowed. Ordinary non-Boss Cobblemon battles are not changed.
+
+The blocked moves are configurable in `config/wildbosses/wildbosses.json` through `blockedBossMoves`. Remove individual move IDs to allow them, or set `"blockedBossMoves": []` to disable all player move restrictions against WildBosses. Changes apply with `/wb reloadconfig`. This does not affect the Boss AI's separate move exclusions.
 
 ### Aggressive Boss AI
 
@@ -457,6 +459,7 @@ The configuration controls:
 - global Boss spawn chance;
 - per-player spawn cooldown;
 - blocked Cobblemon species labels;
+- player move restrictions against Bosses (`blockedBossMoves`);
 - maximum scaled Boss level;
 - Enrage interval and strength;
 - Boss lifetime;
@@ -543,7 +546,7 @@ For multiplayer, use the same WildBosses build on the server and clients that ne
 
 ### Known limitations
 
-- The current target is Minecraft `1.21.1` with Cobblemon `1.8.2+`.
+- The current target is Minecraft `1.21.1` with Cobblemon `1.8.4+`.
 - Mega Evolution depends on compatible external Mega data for the species being fought.
 - Cross-mod integrations can require updates when another mod changes its internal API or resource format.
 - A process killed before an in-progress world save finishes can still lose the newest unsaved state.
@@ -703,7 +706,7 @@ Todos os valores da tabela podem ser configurados.
 - Fabric Loader `0.17.2+`
 - Fabric API e dependências Fabric exigidas pelo Cobblemon
 - Fabric Language Kotlin `1.13.6+kotlin.2.2.20+`
-- Cobblemon `1.8.2+`
+- Cobblemon `1.8.4+`
 
 #### Integrações opcionais
 
@@ -756,6 +759,8 @@ Bosses não podem ser capturados.
 Contra um WildBoss ativo, um conjunto pequeno de golpes de bypass e stall extremo falha enquanto ainda consome a ação do jogador. Isso inclui golpes de OHKO, Perish Song, Destiny Bond, Endeavor, Pain Split, ataques de HP fracionário, Toxic, Leech Seed, Salt Cure, Haze, Clear Smog, Topsy-Turvy, Trick e Switcheroo.
 
 Curse é bloqueado apenas quando usado por um Pokémon do tipo Ghost. O setup normal de Curse em Pokémon não-Ghost continua permitido. Batalhas normais de Cobblemon sem WildBoss não são alteradas.
+
+Os golpes restritos podem ser editados em `config/wildbosses/wildbosses.json` pela lista `blockedBossMoves`. Remova IDs específicos para liberá-los ou use `"blockedBossMoves": []` para desativar todas as restrições de golpes dos jogadores contra Bosses. Use `/wb reloadconfig` para aplicar as mudanças. Isso não altera os golpes proibidos para a IA dos Bosses.
 
 ### IA agressiva dos Bosses
 
@@ -1024,6 +1029,7 @@ A configuração controla:
 - chance global de Boss;
 - cooldown por jogador;
 - labels de species bloqueadas;
+- golpes de jogadores bloqueados contra Bosses (`blockedBossMoves`);
 - nível máximo escalonado;
 - intervalo e força do Enrage;
 - tempo de vida;
@@ -1110,7 +1116,7 @@ Em multiplayer, use a mesma build do WildBosses no servidor e nos clientes que p
 
 ### Limitações conhecidas
 
-- O alvo atual é Minecraft `1.21.1` com Cobblemon `1.8.2+`.
+- O alvo atual é Minecraft `1.21.1` com Cobblemon `1.8.4+`.
 - Mega Evolução depende de dados externos compatíveis para a espécie enfrentada.
 - Integrações entre mods podem precisar de atualização quando outro mod muda sua API interna ou formato de resources.
 - Encerrar o processo antes de um save em andamento terminar ainda pode perder o estado mais recente não gravado.

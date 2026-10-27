@@ -147,6 +147,8 @@
   "wildbosses.config.option.tier_perfect_ivs.desc": "When enabled, Bosses in this tier spawn with perfect IVs.",
   "wildbosses.config.option.tier_mega_chance": "Mega Evolution Chance (%)",
   "wildbosses.config.option.tier_mega_chance.desc": "Chance for a compatible Boss in this tier to Mega Evolve during battle. Mega Stones are awarded only when Mega Evolution actually happens, once per species per player.",
+  "wildbosses.config.option.blocked_boss_moves": "Blocked Moves",
+  "wildbosses.config.option.blocked_boss_moves.desc": "Comma-separated move IDs blocked for players fighting WildBosses. Clear the field to allow all moves. Curse is blocked only for Ghost types.",
   "wildbosses.config.option.boss_ai_debug": "Boss AI Debug Logging",
   "wildbosses.config.option.boss_ai_debug.desc": "Logs move scores, estimated damage, KO checks, setup/recovery decisions, and the final Boss move every turn. Leave this off for normal play.",
   "wildbosses.command.error.invalid_properties": "Invalid Pokémon properties: %s",

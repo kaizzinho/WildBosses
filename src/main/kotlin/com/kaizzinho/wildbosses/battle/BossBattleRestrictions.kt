@@ -10,32 +10,10 @@ import com.cobblemon.mod.common.battles.ShowdownActionResponse
 import com.cobblemon.mod.common.battles.pokemon.BattlePokemon
 import com.cobblemon.mod.common.battles.actor.PokemonBattleActor
 import com.kaizzinho.wildbosses.boss.BossRegistry
+import com.kaizzinho.wildbosses.config.WildBossesConfig
 import net.minecraft.network.chat.Component
 
 object BossBattleRestrictions {
-    val PLAYER_BLOCKED_MOVES = setOf(
-        "fissure",
-        "guillotine",
-        "horndrill",
-        "sheercold",
-        "perishsong",
-        "destinybond",
-        "endeavor",
-        "painsplit",
-        "superfang",
-        "naturesmadness",
-        "ruination",
-        "toxic",
-        "leechseed",
-        "saltcure",
-        "curse",
-        "haze",
-        "clearsmog",
-        "topsyturvy",
-        "trick",
-        "switcheroo"
-    )
-
     val BOSS_AI_FORBIDDEN_MOVES = setOf(
         "belch"
     )
@@ -48,6 +26,9 @@ object BossBattleRestrictions {
         if (actor.type != ActorType.PLAYER) return responses.toList()
         if (!hasActiveWildBoss(actor)) return responses.toList()
 
+        val blockedMoves = WildBossesConfig.data.blockedBossMoves.toSet()
+        if (blockedMoves.isEmpty()) return responses.toList()
+
         val requestMovesets = actor.request?.active ?: return responses.toList()
 
         return responses.mapIndexed { index, response ->
@@ -58,7 +39,7 @@ object BossBattleRestrictions {
                 ?: return@mapIndexed response
             val moveId = normalizeMoveId(inBattleMove.id)
 
-            if (!isBlockedPlayerMove(moveId, activePokemon.battlePokemon)) {
+            if (!isBlockedPlayerMove(moveId, activePokemon.battlePokemon, blockedMoves)) {
                 return@mapIndexed response
             }
 
@@ -86,8 +67,12 @@ object BossBattleRestrictions {
             }
     }
 
-    private fun isBlockedPlayerMove(moveId: String, battlePokemon: BattlePokemon?): Boolean {
-        if (moveId !in PLAYER_BLOCKED_MOVES) return false
+    private fun isBlockedPlayerMove(
+        moveId: String,
+        battlePokemon: BattlePokemon?,
+        blockedMoves: Set<String>
+    ): Boolean {
+        if (moveId !in blockedMoves) return false
         if (moveId != "curse") return true
 
         val pokemon = battlePokemon?.effectedPokemon ?: return false

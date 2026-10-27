@@ -140,6 +140,18 @@ class WildBossesConfigScreen private constructor(
             "wildbosses.config.option.boss_ai_debug",
             working.bossAiDebugLogging
         ) { working.bossAiDebugLogging = it }
+
+        addStringField(
+            3,
+            "wildbosses.config.option.blocked_boss_moves",
+            working.blockedBossMoves.joinToString(", "),
+            2048
+        ) { value ->
+            working.blockedBossMoves = value.split(',')
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .toMutableList()
+        }
     }
 
     private fun addSpeciesPage() {
@@ -343,9 +355,10 @@ class WildBossesConfigScreen private constructor(
         row: Int,
         translationKey: String,
         initial: String,
+        maxLength: Int = 512,
         setter: (String) -> Unit
     ) {
-        addEditField(row, translationKey, initial, 512, setter)
+        addEditField(row, translationKey, initial, maxLength, setter)
     }
 
     private fun addEditField(
@@ -363,8 +376,8 @@ class WildBossesConfigScreen private constructor(
             20,
             Component.translatable(translationKey)
         )
-        field.setValue(initial)
         field.setMaxLength(maxLength)
+        field.setValue(initial)
         field.setResponder(responder)
         addRenderableWidget(field)
     }
@@ -438,7 +451,9 @@ class WildBossesConfigScreen private constructor(
             )
             Page.BATTLE -> listOf(
                 "wildbosses.config.option.enrage_interval",
-                "wildbosses.config.option.enrage_stages"
+                "wildbosses.config.option.enrage_stages",
+                null,
+                "wildbosses.config.option.blocked_boss_moves"
             )
             Page.SPECIES -> listOf(
                 "wildbosses.config.option.excluded_labels"

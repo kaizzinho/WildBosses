@@ -21,12 +21,36 @@ data class WildBossesConfigData(
     var bossSpawnChance: Double = 1.0 / 512,
     var spawnCooldownTicks: Long = 18000L,
     var excludedSpeciesLabels: MutableList<String> = mutableListOf("legendary", "mythical", "ultra_beast"),
+    var blockedBossMoves: MutableList<String> = defaultBlockedBossMoves(),
     var maxScaledLevel: Int = 200,
     var enrageIntervalTurns: Int = 8,
     var enrageStatStages: Int = 1,
     var bossAiDebugLogging: Boolean = false,
     var bossLifetimeTicks: Long = 12000L,
     var tiers: MutableMap<String, TierConfig> = defaultTiers()
+)
+
+private fun defaultBlockedBossMoves(): MutableList<String> = mutableListOf(
+    "fissure",
+    "guillotine",
+    "horndrill",
+    "sheercold",
+    "perishsong",
+    "destinybond",
+    "endeavor",
+    "painsplit",
+    "superfang",
+    "naturesmadness",
+    "ruination",
+    "toxic",
+    "leechseed",
+    "saltcure",
+    "curse",
+    "haze",
+    "clearsmog",
+    "topsyturvy",
+    "trick",
+    "switcheroo"
 )
 
 private fun defaultTiers(): MutableMap<String, TierConfig> = mutableMapOf(
@@ -56,6 +80,30 @@ object WildBossesConfig {
 
           // cobblemon labels blocked from boss rolls
           "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
+
+          // moves blocked against wild bosses empty list disables restrictions
+          "blockedBossMoves": [
+            "fissure",
+            "guillotine",
+            "horndrill",
+            "sheercold",
+            "perishsong",
+            "destinybond",
+            "endeavor",
+            "painsplit",
+            "superfang",
+            "naturesmadness",
+            "ruination",
+            "toxic",
+            "leechseed",
+            "saltcure",
+            "curse",
+            "haze",
+            "clearsmog",
+            "topsyturvy",
+            "trick",
+            "switcheroo"
+          ],
 
           // max scaled boss level
           "maxScaledLevel": 200,
@@ -131,6 +179,30 @@ object WildBossesConfig {
 
           // labels do cobblemon bloqueadas no roll
           "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
+
+          // golpes bloqueados contra bosses lista vazia permite todos
+          "blockedBossMoves": [
+            "fissure",
+            "guillotine",
+            "horndrill",
+            "sheercold",
+            "perishsong",
+            "destinybond",
+            "endeavor",
+            "painsplit",
+            "superfang",
+            "naturesmadness",
+            "ruination",
+            "toxic",
+            "leechseed",
+            "saltcure",
+            "curse",
+            "haze",
+            "clearsmog",
+            "topsyturvy",
+            "trick",
+            "switcheroo"
+          ],
 
           // nível máximo do boss escalado
           "maxScaledLevel": 200,
@@ -273,9 +345,29 @@ object WildBossesConfig {
 
         if (stillOnOldDefaults || !sourceText.contains("\"configVersion\"")) {
             CONFIG_FILE.writeText(GSON.toJson(raw))
+        } else {
+            addMissingMoveBlacklist(sourceText)
         }
 
         return raw
+    }
+
+    private fun addMissingMoveBlacklist(sourceText: String) {
+        if (Regex("\"blockedBossMoves\"\\s*:").containsMatchIn(stripLineComments(sourceText))) return
+
+        val tiers = Regex("(?m)^[ \t]*\"tiers\"\\s*:").find(sourceText)
+        if (tiers == null) return
+
+        val tierLine = tiers.range.first
+        val lineStart = sourceText.lastIndexOf('\n', tierLine - 2) + 1
+        val previousLine = sourceText.substring(lineStart, tierLine)
+        val insertAt = if (previousLine.trimStart().startsWith("//")) lineStart else tierLine
+        val indent = sourceText.substring(tierLine, sourceText.indexOf('"', tierLine))
+        val moves = defaultBlockedBossMoves().joinToString(",\n") { "${indent}  \"$it\"" }
+        val addition = "${indent}// moves blocked against bosses empty list allows all\n" +
+            "${indent}\"blockedBossMoves\": [\n$moves\n${indent}],\n\n"
+
+        CONFIG_FILE.writeText(sourceText.substring(0, insertAt) + addition + sourceText.substring(insertAt))
     }
 
     private fun sanitize(raw: WildBossesConfigData): WildBossesConfigData {
@@ -288,6 +380,13 @@ object WildBossesConfig {
         raw.enrageIntervalTurns = raw.enrageIntervalTurns.coerceAtLeast(1)
         raw.enrageStatStages = raw.enrageStatStages.coerceIn(0, 6)
         raw.bossLifetimeTicks = raw.bossLifetimeTicks.coerceAtLeast(20L)
+        raw.blockedBossMoves = (raw.blockedBossMoves as? List<*>)
+            ?.mapNotNull { it as? String }
+            ?.map { it.lowercase().filter(Char::isLetterOrDigit) }
+            ?.filter { it.isNotEmpty() }
+            ?.distinct()
+            ?.toMutableList()
+            ?: defaultBlockedBossMoves()
 
         if (raw.excludedSpeciesLabels.isEmpty() && defaults.excludedSpeciesLabels.isNotEmpty()) {
             raw.excludedSpeciesLabels = defaults.excludedSpeciesLabels.toMutableList()
@@ -317,6 +416,7 @@ object WildBossesConfig {
     private fun copyOf(source: WildBossesConfigData): WildBossesConfigData =
         source.copy(
             excludedSpeciesLabels = source.excludedSpeciesLabels.toMutableList(),
+            blockedBossMoves = source.blockedBossMoves.toMutableList(),
             tiers = source.tiers.mapValues { (_, tier) -> tier.copy() }.toMutableMap()
         )
 
