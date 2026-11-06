@@ -5,7 +5,6 @@ import com.kaizzinho.wildbosses.WildBosses
 import net.fabricmc.loader.api.FabricLoader
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.util.Locale
 
 data class TierConfig(
     var weight: Int,
@@ -67,204 +66,6 @@ object WildBossesConfig {
     private val CONFIG_FILE = CONFIG_DIR.resolve("wildbosses.json").toFile()
     private val LEGACY_CONFIG_FILE = FabricLoader.getInstance().configDir.resolve("wildbosses.json").toFile()
 
-    private val TEMPLATE_EN = """
-        {
-          // config version leave it
-          "configVersion": 2,
-
-          // boss roll default one in five hundred twelve
-          "bossSpawnChance": 0.001953125,
-
-          // cooldown uses game ticks
-          "spawnCooldownTicks": 18000,
-
-          // cobblemon labels blocked from boss rolls
-          "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
-
-          // moves blocked against wild bosses empty list disables restrictions
-          "blockedBossMoves": [
-            "fissure",
-            "guillotine",
-            "horndrill",
-            "sheercold",
-            "perishsong",
-            "destinybond",
-            "endeavor",
-            "painsplit",
-            "superfang",
-            "naturesmadness",
-            "ruination",
-            "toxic",
-            "leechseed",
-            "saltcure",
-            "curse",
-            "haze",
-            "clearsmog",
-            "topsyturvy",
-            "trick",
-            "switcheroo"
-          ],
-
-          // max scaled boss level
-          "maxScaledLevel": 200,
-
-          // rare plus enrage warns one turn early
-          "enrageIntervalTurns": 8,
-
-          // stages per enrage battle cap is six
-          "enrageStatStages": 1,
-
-          // ai scores and picks in console
-          "bossAiDebugLogging": false,
-
-          // untouched boss lasts ten mins
-          "bossLifetimeTicks": 12000,
-
-          // tier odds after the boss roll
-          "tiers": {
-            "UNCOMMON": {
-              "weight": 54,
-              "levelBonus": 5,
-              "aiSkill": 2,
-              "shinyChance": 0.0,
-              "guaranteedPerfectIVs": false,
-              "megaEvolutionChance": 0.0
-            },
-            "RARE": {
-              "weight": 30,
-              "levelBonus": 10,
-              "aiSkill": 3,
-              "shinyChance": 0.0,
-              "guaranteedPerfectIVs": false,
-              "megaEvolutionChance": 0.0
-            },
-            "EPIC": {
-              "weight": 10,
-              "levelBonus": 15,
-              "aiSkill": 4,
-              "shinyChance": 0.0,
-              "guaranteedPerfectIVs": true,
-              "megaEvolutionChance": 0.0
-            },
-            "LEGENDARY": {
-              "weight": 5,
-              "levelBonus": 20,
-              "aiSkill": 5,
-              "shinyChance": 0.25,
-              "guaranteedPerfectIVs": true,
-              "megaEvolutionChance": 0.5
-            },
-            "MYTHIC": {
-              "weight": 1,
-              "levelBonus": 25,
-              "aiSkill": 5,
-              "shinyChance": 0.45,
-              "guaranteedPerfectIVs": true,
-              "megaEvolutionChance": 1.0
-            }
-          }
-        }
-    """.trimIndent()
-
-    private val TEMPLATE_PT_BR = """
-        {
-          // versão da config deixa quieta
-          "configVersion": 2,
-
-          // roll de boss padrão um em quinhentos e doze
-          "bossSpawnChance": 0.001953125,
-
-          // cooldown usa ticks do jogo
-          "spawnCooldownTicks": 18000,
-
-          // labels do cobblemon bloqueadas no roll
-          "excludedSpeciesLabels": ["legendary", "mythical", "ultra_beast"],
-
-          // golpes bloqueados contra bosses lista vazia permite todos
-          "blockedBossMoves": [
-            "fissure",
-            "guillotine",
-            "horndrill",
-            "sheercold",
-            "perishsong",
-            "destinybond",
-            "endeavor",
-            "painsplit",
-            "superfang",
-            "naturesmadness",
-            "ruination",
-            "toxic",
-            "leechseed",
-            "saltcure",
-            "curse",
-            "haze",
-            "clearsmog",
-            "topsyturvy",
-            "trick",
-            "switcheroo"
-          ],
-
-          // nível máximo do boss escalado
-          "maxScaledLevel": 200,
-
-          // enrage rare plus avisa um turno antes
-          "enrageIntervalTurns": 8,
-
-          // estágios por enrage cap da batalha é seis
-          "enrageStatStages": 1,
-
-          // scores e escolhas da ia no console
-          "bossAiDebugLogging": false,
-
-          // boss intocado dura dez min
-          "bossLifetimeTicks": 12000,
-
-          // odds do tier depois do roll de boss
-          "tiers": {
-            "UNCOMMON": {
-              "weight": 54,
-              "levelBonus": 5,
-              "aiSkill": 2,
-              "shinyChance": 0.0,
-              "guaranteedPerfectIVs": false,
-              "megaEvolutionChance": 0.0
-            },
-            "RARE": {
-              "weight": 30,
-              "levelBonus": 10,
-              "aiSkill": 3,
-              "shinyChance": 0.0,
-              "guaranteedPerfectIVs": false,
-              "megaEvolutionChance": 0.0
-            },
-            "EPIC": {
-              "weight": 10,
-              "levelBonus": 15,
-              "aiSkill": 4,
-              "shinyChance": 0.0,
-              "guaranteedPerfectIVs": true,
-              "megaEvolutionChance": 0.0
-            },
-            "LEGENDARY": {
-              "weight": 5,
-              "levelBonus": 20,
-              "aiSkill": 5,
-              "shinyChance": 0.25,
-              "guaranteedPerfectIVs": true,
-              "megaEvolutionChance": 0.5
-            },
-            "MYTHIC": {
-              "weight": 1,
-              "levelBonus": 25,
-              "aiSkill": 5,
-              "shinyChance": 0.45,
-              "guaranteedPerfectIVs": true,
-              "megaEvolutionChance": 1.0
-            }
-          }
-        }
-    """.trimIndent()
-
     var data: WildBossesConfigData = load()
         private set
 
@@ -287,16 +88,17 @@ object WildBossesConfig {
 
         if (!CONFIG_FILE.exists()) {
             CONFIG_FILE.parentFile?.mkdirs()
-            val isPortuguese = Locale.getDefault().language.equals("pt", ignoreCase = true)
-            CONFIG_FILE.writeText(if (isPortuguese) TEMPLATE_PT_BR else TEMPLATE_EN)
-            return WildBossesConfigData()
+            val defaults = WildBossesConfigData()
+            CONFIG_FILE.writeText(GSON.toJson(defaults))
+            return defaults
         }
 
         return try {
             val sourceText = CONFIG_FILE.readText()
             val stripped = stripLineComments(sourceText)
             val raw = GSON.fromJson(stripped, WildBossesConfigData::class.java) ?: WildBossesConfigData()
-            sanitize(migrate(raw, sourceText))
+            val hadComments = sourceText.lineSequence().any { it.trimStart().startsWith("//") }
+            sanitize(migrate(raw, stripped, hadComments))
         } catch (_: Exception) {
             WildBossesConfigData()
         }
@@ -328,10 +130,10 @@ object WildBossesConfig {
 
     private fun stripLineComments(json: String): String =
         json.lineSequence()
-            .map { line -> if (line.trimStart().startsWith("//")) "" else line }
+            .filterNot { it.trimStart().startsWith("//") }
             .joinToString("\n")
 
-    private fun migrate(raw: WildBossesConfigData, sourceText: String): WildBossesConfigData {
+    private fun migrate(raw: WildBossesConfigData, sourceText: String, removedComments: Boolean): WildBossesConfigData {
         val legacy = mapOf("UNCOMMON" to 15, "RARE" to 25, "EPIC" to 35, "LEGENDARY" to 45, "MYTHIC" to 55)
         val updated = mapOf("UNCOMMON" to 5, "RARE" to 10, "EPIC" to 15, "LEGENDARY" to 20, "MYTHIC" to 25)
         val stillOnOldDefaults = legacy.all { (name, bonus) -> raw.tiers[name]?.levelBonus == bonus }
@@ -346,28 +148,25 @@ object WildBossesConfig {
         if (stillOnOldDefaults || !sourceText.contains("\"configVersion\"")) {
             CONFIG_FILE.writeText(GSON.toJson(raw))
         } else {
-            addMissingMoveBlacklist(sourceText)
+            val configText = addMissingMoveBlacklist(sourceText)
+            if (removedComments || configText != sourceText) {
+                CONFIG_FILE.writeText(configText)
+            }
         }
 
         return raw
     }
 
-    private fun addMissingMoveBlacklist(sourceText: String) {
-        if (Regex("\"blockedBossMoves\"\\s*:").containsMatchIn(stripLineComments(sourceText))) return
+    private fun addMissingMoveBlacklist(sourceText: String): String {
+        if (Regex("\"blockedBossMoves\"\\s*:").containsMatchIn(sourceText)) return sourceText
 
-        val tiers = Regex("(?m)^[ \t]*\"tiers\"\\s*:").find(sourceText)
-        if (tiers == null) return
-
+        val tiers = Regex("(?m)^[ \t]*\"tiers\"\\s*:").find(sourceText) ?: return sourceText
         val tierLine = tiers.range.first
-        val lineStart = sourceText.lastIndexOf('\n', tierLine - 2) + 1
-        val previousLine = sourceText.substring(lineStart, tierLine)
-        val insertAt = if (previousLine.trimStart().startsWith("//")) lineStart else tierLine
         val indent = sourceText.substring(tierLine, sourceText.indexOf('"', tierLine))
         val moves = defaultBlockedBossMoves().joinToString(",\n") { "${indent}  \"$it\"" }
-        val addition = "${indent}// moves blocked against bosses empty list allows all\n" +
-            "${indent}\"blockedBossMoves\": [\n$moves\n${indent}],\n\n"
+        val addition = "${indent}\"blockedBossMoves\": [\n$moves\n${indent}],\n\n"
 
-        CONFIG_FILE.writeText(sourceText.substring(0, insertAt) + addition + sourceText.substring(insertAt))
+        return sourceText.substring(0, tierLine) + addition + sourceText.substring(tierLine)
     }
 
     private fun sanitize(raw: WildBossesConfigData): WildBossesConfigData {
